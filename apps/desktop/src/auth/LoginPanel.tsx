@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from 'react';
+import type { ReactNode } from 'react';
 
 export interface LoginPanelProps {
   onLogin: (email: string, password: string) => Promise<void>;
   notice?: string | null;
+  windowControls?: ReactNode;
 }
 
-export function LoginPanel({ onLogin, notice = null }: LoginPanelProps) {
+export function LoginPanel({ onLogin, notice = null, windowControls = null }: LoginPanelProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [pending, setPending] = useState(false);
@@ -34,6 +36,7 @@ export function LoginPanel({ onLogin, notice = null }: LoginPanelProps) {
 
   return (
     <main className="fy-login-shell">
+      {windowControls}
       <section className="fy-login-panel" aria-labelledby="fanshuye-login-title">
         <div className="fy-login-panel__mark" aria-hidden="true">
           叶

@@ -31,4 +31,21 @@ describe('LoginPanel', () => {
     expect(document.body).not.toHaveTextContent(secret);
     expect(screen.getByLabelText('密码')).toHaveValue('');
   });
+
+  it('keeps explicit desktop window controls available before login', () => {
+    render(
+      <LoginPanel
+        onLogin={() => Promise.resolve()}
+        windowControls={
+          <div aria-label="窗口控制">
+            <button type="button">收起到托盘</button>
+            <button type="button">退出番薯叶</button>
+          </div>
+        }
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: '收起到托盘' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '退出番薯叶' })).toBeInTheDocument();
+  });
 });

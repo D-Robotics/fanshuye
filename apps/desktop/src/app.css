@@ -156,6 +156,62 @@ textarea {
   color: white;
 }
 
+.fy-window-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fy-window-controls--login {
+  position: absolute;
+  z-index: 30;
+  top: 18px;
+  right: 18px;
+}
+
+.fy-window-controls button {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border: 1px solid var(--fy-line-strong);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--fy-ink);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.fy-window-controls button:hover {
+  border-color: var(--fy-green-deep);
+  background: #fff;
+}
+
+.fy-window-controls .fy-window-controls__quit {
+  border-color: rgba(157, 53, 45, 0.32);
+  color: #8b2f29;
+}
+
+.fy-window-controls__error {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: max-content;
+  max-width: 320px;
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: #fff4f1;
+  color: #8b2f29;
+  font-size: 12px;
+  box-shadow: 0 8px 24px rgba(80, 30, 24, 0.14);
+}
+
+.fy-window-controls--header {
+  position: relative;
+}
+
 .fy-my-toggle {
   display: flex;
   min-height: 36px;
@@ -744,6 +800,7 @@ html[data-reduced-motion] *::after {
 }
 
 .fy-login-shell {
+  position: relative;
   display: grid;
   min-height: 100vh;
   place-items: center;

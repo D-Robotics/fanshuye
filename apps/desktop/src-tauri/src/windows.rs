@@ -440,6 +440,21 @@ pub fn show_main_window(app: AppHandle) -> Result<(), String> {
     show_main(&app)
 }
 
+#[tauri::command]
+pub fn hide_current_window(window: WebviewWindow) -> Result<(), String> {
+    window.hide().map_err(|_| "无法收起当前窗口".to_string())?;
+    if window.label() == "overlay" {
+        publish_overlay_state(&window).map(|_| ())
+    } else {
+        publish_window_visibility(window.app_handle(), window.label(), false)
+    }
+}
+
+#[tauri::command]
+pub fn quit_application(app: AppHandle) {
+    app.exit(0);
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum OverlayToggleAction {
     Hide,

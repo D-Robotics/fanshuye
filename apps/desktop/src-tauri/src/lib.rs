@@ -242,6 +242,8 @@ pub fn run() {
             windows::get_current_window_visibility,
             windows::list_available_monitors,
             windows::show_main_window,
+            windows::hide_current_window,
+            windows::quit_application,
         ])
         .run(tauri::generate_context!())
         .expect("failed to start Fanshuye desktop application");

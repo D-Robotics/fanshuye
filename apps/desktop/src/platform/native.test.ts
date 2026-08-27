@@ -208,6 +208,15 @@ describe('cross-window desktop preference validation', () => {
     expect(nativeSource).toContain('export async function watchNativeWindowVisibility');
   });
 
+  it('exposes explicit hide and process-exit commands to every main-window state', () => {
+    expect(nativeSource).toContain("invokeNative('hide_current_window')");
+    expect(nativeSource).toContain("invokeNative('quit_application')");
+    expect(libRustSource).toContain('windows::hide_current_window');
+    expect(libRustSource).toContain('windows::quit_application');
+    expect(windowsRustSource).toContain('pub fn hide_current_window');
+    expect(windowsRustSource).toContain('pub fn quit_application');
+  });
+
   it('separates production and local-development network policy', () => {
     const config = JSON.parse(tauriConfigSource) as {
       app: { security: { csp: string; devCsp: string } };

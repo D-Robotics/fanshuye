@@ -1,9 +1,17 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { makeTask } from './test/fixtures';
-import { App, buildDependencyMutations, wouldCreateDependencyCycle } from './App';
+import { App, buildDependencyMutations, resolveDemoMode, wouldCreateDependencyCycle } from './App';
 
 describe('desktop app preferences', () => {
+  it('allows native development to opt into the real local service', () => {
+    expect(resolveDemoMode('auto', false, undefined, true)).toBe(true);
+    expect(resolveDemoMode('auto', false, 'false', true)).toBe(false);
+    expect(resolveDemoMode('auto', false, 'true', false)).toBe(true);
+    expect(resolveDemoMode('demo', false, 'false', false)).toBe(true);
+    expect(resolveDemoMode('production', true, 'true', true)).toBe(false);
+  });
+
   it('connects the production shell to the safe login panel when restore is unavailable', async () => {
     render(<App runtimeMode="production" />);
 

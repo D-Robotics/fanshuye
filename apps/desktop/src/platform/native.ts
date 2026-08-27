@@ -292,6 +292,14 @@ export async function showMainWindow(): Promise<void> {
   await invokeNative('show_main_window');
 }
 
+export async function hideCurrentWindow(): Promise<void> {
+  await invokeNative('hide_current_window');
+}
+
+export async function quitApplication(): Promise<void> {
+  await invokeNative('quit_application');
+}
+
 export async function loadDesktopPreferences(): Promise<DesktopPreferences | null> {
   return invokeNative<DesktopPreferences>('load_desktop_preferences');
 }

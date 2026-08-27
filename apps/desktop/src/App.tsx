@@ -23,6 +23,7 @@ import {
   type DesktopWorkspaceSummary,
 } from './auth/workspaces';
 import { createDemoTasks, DEMO_MEMBERS } from './demo-data';
+import { DesktopWindowControls } from './DesktopWindowControls';
 import { notifyTaskAttention } from './notifications';
 import { useOverlayMachine } from './overlay-machine';
 import { UsabilityStudyHarness } from './UsabilityStudyHarness';
@@ -232,14 +233,31 @@ export interface AppProps {
   runtimeMode?: 'auto' | 'demo' | 'production';
 }
 
+export function resolveDemoMode(
+  runtimeMode: NonNullable<AppProps['runtimeMode']>,
+  usabilityStudyMode: boolean,
+  configuredDemoMode: string | undefined,
+  isDevelopment: boolean,
+): boolean {
+  if (runtimeMode === 'demo') return true;
+  if (runtimeMode === 'production') return false;
+  return (
+    usabilityStudyMode ||
+    configuredDemoMode === 'true' ||
+    (isDevelopment && configuredDemoMode !== 'false')
+  );
+}
+
 export function App({ runtimeMode = 'auto' }: AppProps = {}) {
   const windowKind = getWindowKind();
   const usabilityStudyMode =
     new URLSearchParams(window.location.search).get('usability') === '30-task';
-  const demoMode =
-    runtimeMode === 'demo' ||
-    (runtimeMode === 'auto' &&
-      (usabilityStudyMode || import.meta.env.VITE_DEMO_MODE === 'true' || import.meta.env.DEV));
+  const demoMode = resolveDemoMode(
+    runtimeMode,
+    usabilityStudyMode,
+    import.meta.env.VITE_DEMO_MODE,
+    import.meta.env.DEV,
+  );
   const [tasks, setTasks] = useState<TaskItem[]>(() => (demoMode ? createDemoTasks() : []));
   const [members, setMembers] = useState<MemberSummary[]>(demoMode ? DEMO_MEMBERS : []);
   const [syncStatus, setSyncStatus] = useState<SyncViewState['status']>(
@@ -1086,6 +1104,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
   if (!demoMode && authenticationStatus === 'restoring') {
     return (
       <main className="fy-login-shell">
+        {windowKind === 'main' && <DesktopWindowControls />}
         <section className="fy-login-panel" role="status" aria-live="polite">
           <div className="fy-login-panel__mark" aria-hidden="true">
             叶
@@ -1098,12 +1117,19 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
   }
 
   if (!demoMode && authenticationStatus === 'required') {
-    return <LoginPanel onLogin={login} notice={authenticationNotice} />;
+    return (
+      <LoginPanel
+        onLogin={login}
+        notice={authenticationNotice}
+        windowControls={windowKind === 'main' ? <DesktopWindowControls /> : null}
+      />
+    );
   }
 
   if (!demoMode && workspaceStatus === 'loading') {
     return (
       <main className="fy-login-shell">
+        {windowKind === 'main' && <DesktopWindowControls />}
         <section className="fy-login-panel" role="status" aria-live="polite">
           <div className="fy-login-panel__mark" aria-hidden="true">
             叶
@@ -1118,6 +1144,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
   if (!demoMode && workspaceStatus === 'error') {
     return (
       <main className="fy-login-shell">
+        {windowKind === 'main' && <DesktopWindowControls />}
         <section className="fy-login-panel" role="alert">
           <h1>团队空间暂时不可用</h1>
           <p>{workspaceMessage ?? '请检查网络后重试。'}</p>
@@ -1136,6 +1163,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
   if (!demoMode && workspaceStatus === 'empty') {
     return (
       <main className="fy-login-shell">
+        {windowKind === 'main' && <DesktopWindowControls />}
         <section className="fy-login-panel" role="status">
           <h1>还没有可用的团队空间</h1>
           <p>请让团队管理员邀请你，或先在管理端创建团队空间。</p>
@@ -1150,6 +1178,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
   if (!demoMode && workspaceStatus === 'select') {
     return (
       <main className="fy-login-shell">
+        {windowKind === 'main' && <DesktopWindowControls />}
         <section className="fy-login-panel" aria-labelledby="workspace-picker-title">
           <span className="fy-eyebrow">选择任务树</span>
           <h1 id="workspace-picker-title">进入哪个团队空间？</h1>
@@ -1260,6 +1289,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
               完整面板
             </button>
           )}
+          {windowKind === 'main' && <DesktopWindowControls placement="header" />}
         </div>
       </header>
 

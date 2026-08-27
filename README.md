@@ -52,6 +52,13 @@ pnpm --filter @fanshuye/desktop dev:web
 pnpm --filter @fanshuye/desktop dev
 ```
 
+原生开发默认展示无需登录的本地演示数据。要连接上面已经启动的真实本地服务端并验证登录、工作区和同步，请显式关闭演示模式：
+
+```powershell
+$env:VITE_DEMO_MODE='false'
+pnpm --filter @fanshuye/desktop dev
+```
+
 不要让开发迁移或种子连接生产数据库。`NODE_ENV=production` 会启用 PostgreSQL TLS 证书校验；默认本地 Compose PostgreSQL 不提供 TLS，不能用来模拟生产数据库。服务端完整配置项见 [`apps/server/.env.example`](apps/server/.env.example)，运维与部署流程见 [`docs/operations.md`](docs/operations.md)。
 
 ## 验证
