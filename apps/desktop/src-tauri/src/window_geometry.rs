@@ -25,7 +25,7 @@ impl OverlayMode {
 
     pub fn logical_size(self) -> LogicalSize {
         match self {
-            Self::Collapsed => LogicalSize::new(74.0, 92.0),
+            Self::Collapsed => LogicalSize::new(224.0, 272.0),
             Self::Preview => LogicalSize::new(780.0, 680.0),
             Self::Pinned => LogicalSize::new(1_080.0, 760.0),
         }
@@ -298,6 +298,31 @@ mod tests {
     }
 
     #[test]
+    fn collapsed_task_plant_scales_and_stays_inside_the_work_area() {
+        for (scale, expected_width, expected_height) in [
+            (1.0, 224, 272),
+            (1.25, 280, 340),
+            (1.5, 336, 408),
+            (2.0, 448, 544),
+        ] {
+            let placement = place_overlay(
+                OverlayMode::Collapsed,
+                OverlayPresentation::Floating,
+                work_area(),
+                scale,
+                Edge::Right,
+                0.5,
+            );
+            assert_eq!(placement.width, expected_width);
+            assert_eq!(placement.height, expected_height);
+            assert!(placement.x >= work_area().x);
+            assert!(placement.y >= work_area().y);
+            assert!(placement.x as i64 + placement.width as i64 <= 0);
+            assert!(placement.y as i64 + placement.height as i64 <= 1_040);
+        }
+    }
+
+    #[test]
     fn side_panel_uses_work_area_and_requested_edge() {
         let right = place_overlay(
             OverlayMode::Collapsed,
@@ -336,8 +361,8 @@ mod tests {
             PhysicalWindow {
                 x: -100,
                 y: 20,
-                width: 74,
-                height: 92
+                width: 224,
+                height: 272
             },
             &areas,
         ));
@@ -345,8 +370,8 @@ mod tests {
             PhysicalWindow {
                 x: 20,
                 y: 20,
-                width: 74,
-                height: 92
+                width: 224,
+                height: 272
             },
             &areas,
         ));
@@ -354,8 +379,8 @@ mod tests {
             PhysicalWindow {
                 x: i32::MAX,
                 y: i32::MAX,
-                width: 74,
-                height: 92
+                width: 224,
+                height: 272
             },
             &areas,
         ));

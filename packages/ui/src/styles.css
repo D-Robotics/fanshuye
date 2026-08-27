@@ -118,6 +118,295 @@ textarea:focus-visible,
   background: transparent;
 }
 
+/* Persistent sweet-potato task plant */
+.fy-task-plant {
+  position: relative;
+  width: 224px;
+  height: 272px;
+  overflow: visible;
+  filter: drop-shadow(0 12px 13px rgba(18, 57, 36, 0.18));
+  isolation: isolate;
+}
+
+.fy-task-plant button {
+  appearance: none;
+  border: 0;
+  font: inherit;
+}
+
+.fy-task-plant__base {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.fy-task-plant__base > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.fy-task-plant__back-leaves path {
+  fill: #9bcf53;
+  stroke: #397144;
+  stroke-width: 2;
+}
+
+.fy-task-plant__root--left,
+.fy-task-plant__root--right {
+  fill: url(#fy-tuber-light);
+  stroke: #742449;
+  stroke-width: 2;
+}
+
+.fy-task-plant__root--main {
+  fill: url(#fy-tuber-main);
+  stroke: #652143;
+  stroke-width: 2.4;
+}
+
+.fy-task-plant__root-shine {
+  fill: none;
+  stroke: rgba(255, 184, 184, 0.55);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.fy-task-plant__leaf {
+  --leaf-fill: #4b9756;
+  position: absolute;
+  z-index: 2;
+  width: 96px;
+  height: 79px;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  color: #fffef1;
+  cursor: pointer;
+  filter: drop-shadow(0 5px 6px rgba(15, 62, 36, 0.24));
+  transform-origin: 50% 82%;
+  transition:
+    filter 150ms ease,
+    scale 150ms ease;
+}
+
+.fy-task-plant__leaf--bright {
+  --leaf-fill: #94c94d;
+  color: #173e2d;
+}
+
+.fy-task-plant__leaf--mid {
+  --leaf-fill: #4f9b55;
+}
+
+.fy-task-plant__leaf--deep {
+  --leaf-fill: #247044;
+}
+
+.fy-task-plant__leaf--in-progress .fy-task-plant__leaf-shape {
+  fill: color-mix(in srgb, var(--leaf-fill) 82%, #1e8159);
+}
+
+.fy-task-plant__leaf--in-review .fy-task-plant__leaf-shape {
+  fill: color-mix(in srgb, var(--leaf-fill) 76%, #18716b);
+}
+
+.fy-task-plant__leaf-shape {
+  fill: var(--leaf-fill);
+  stroke: #225f3a;
+  stroke-width: 2;
+}
+
+.fy-task-plant__leaf--importance-4 .fy-task-plant__leaf-shape,
+.fy-task-plant__leaf--importance-5 .fy-task-plant__leaf-shape {
+  stroke-width: 3.2;
+}
+
+.fy-task-plant__leaf--blocked .fy-task-plant__leaf-shape {
+  stroke: #aa3939;
+  stroke-dasharray: 5 2;
+}
+
+.fy-task-plant__leaf--overdue .fy-task-plant__leaf-shape {
+  filter: drop-shadow(0 0 2px #ef9c33);
+}
+
+.fy-task-plant__leaf--unassigned .fy-task-plant__leaf-shape {
+  stroke-dasharray: 3 3;
+}
+
+.fy-task-plant__leaf-vein {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  opacity: 0.36;
+}
+
+.fy-task-plant__leaf-title,
+.fy-task-plant__leaf-status {
+  fill: currentColor;
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: color-mix(in srgb, var(--leaf-fill) 72%, transparent);
+  stroke-width: 2.4px;
+  stroke-linejoin: round;
+}
+
+.fy-task-plant__leaf-title {
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0.02em;
+}
+
+.fy-task-plant__leaf-status {
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.fy-task-plant__leaf:hover,
+.fy-task-plant__leaf:focus-visible {
+  z-index: 4;
+  filter: drop-shadow(0 8px 9px rgba(15, 62, 36, 0.32));
+  scale: 1.055;
+}
+
+.fy-task-plant__leaf:focus-visible,
+.fy-task-plant__base:focus-visible,
+.fy-task-plant__overflow:focus-visible {
+  outline: 3px solid #126fd4;
+  outline-offset: 2px;
+}
+
+.fy-task-plant__badge {
+  position: absolute;
+  z-index: 5;
+  display: grid;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 4px;
+  border: 2px solid #fffdf2;
+  border-radius: 999px;
+  color: white;
+  place-items: center;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.fy-task-plant__badge--blocked {
+  top: 7px;
+  right: 7px;
+  background: #a83b3b;
+}
+
+.fy-task-plant__badge--overdue {
+  top: 25px;
+  right: 1px;
+  background: #bd671f;
+}
+
+.fy-task-plant__badge--owner {
+  right: 5px;
+  bottom: 7px;
+  background: #425a51;
+}
+
+.fy-task-plant__overflow {
+  position: absolute;
+  z-index: 6;
+  top: 153px;
+  right: 4px;
+  display: grid;
+  min-width: 38px;
+  height: 31px;
+  padding: 0 8px;
+  border: 2px solid rgba(255, 255, 255, 0.88) !important;
+  border-radius: 999px;
+  background: linear-gradient(145deg, #225f42, #143f31);
+  box-shadow: 0 5px 12px rgba(17, 55, 34, 0.28);
+  color: white;
+  cursor: pointer;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.fy-task-plant__empty {
+  position: absolute;
+  z-index: 1;
+  top: 91px;
+  left: 50%;
+  width: 126px;
+  padding: 10px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.66);
+  border-radius: 16px;
+  background: rgba(245, 250, 235, 0.88);
+  box-shadow: 0 7px 18px rgba(23, 76, 53, 0.14);
+  color: #245b3d;
+  font-size: 12px;
+  font-weight: 760;
+  line-height: 1.5;
+  transform: translateX(-50%);
+}
+
+.fy-task-plant__hint {
+  position: absolute;
+  z-index: 7;
+  right: 24px;
+  bottom: 1px;
+  left: 24px;
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.66);
+  border-radius: 999px;
+  background: rgba(245, 250, 235, 0.88);
+  color: #22573d;
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0.05em;
+  text-align: center;
+  backdrop-filter: blur(6px);
+}
+
+.fy-task-plant--reduced-motion .fy-task-plant__leaf,
+[data-reduced-motion] .fy-task-plant__leaf {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fy-task-plant__leaf {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .fy-task-plant__leaf-shape,
+  .fy-task-plant__root {
+    fill: Canvas;
+    stroke: CanvasText;
+  }
+
+  .fy-task-plant__leaf-title,
+  .fy-task-plant__leaf-status {
+    fill: CanvasText;
+    stroke: Canvas;
+  }
+
+  .fy-task-plant__hint,
+  .fy-task-plant__empty,
+  .fy-task-plant__overflow {
+    color: CanvasText;
+    background: Canvas;
+    border-color: CanvasText !important;
+  }
+}
+
 .fy-icon-button {
   display: inline-grid;
   width: 34px;

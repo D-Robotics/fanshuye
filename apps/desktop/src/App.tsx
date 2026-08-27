@@ -3,6 +3,7 @@ import {
   TaskDetailPanel,
   TaskForm,
   TaskList,
+  TaskPlantOverlay,
   TaskTree,
   isTaskActive,
   type ManualBlock,
@@ -306,12 +307,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
     () => new DesktopAuthenticationClient(API_URL, RUNTIME_SECURE_SESSION),
     [],
   );
-  const overlay = useOverlayMachine(
-    windowKind === 'overlay' ? 'collapsed' : 'pinned',
-    320,
-    520,
-    windowVisible,
-  );
+  const overlay = useOverlayMachine(windowKind === 'overlay' ? 'collapsed' : 'pinned');
   const synchronizeNativeOverlayMode = overlay.synchronizeNativeMode;
   const applyWindowVisibility = useCallback((visible: boolean) => {
     windowVisibleRef.current = visible;
@@ -1075,28 +1071,18 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
   if (usabilityStudyMode) return <UsabilityStudyHarness />;
 
   if (windowKind === 'overlay' && overlay.mode === 'collapsed') {
-    const blockedCount = activeTasks.filter(
-      (task) => task.manualBlock !== null || task.incompletePrerequisites.length > 0,
-    ).length;
     return (
-      <main
-        className="fy-overlay-collapsed"
-        onMouseEnter={overlay.onPointerEnter}
-        onMouseLeave={overlay.onPointerLeave}
-      >
-        <button
-          type="button"
-          onClick={overlay.pin}
-          aria-label={`展开番薯叶，${blockedCount} 个阻塞任务`}
-        >
-          <svg viewBox="0 0 64 78" aria-hidden="true">
-            <path className="fy-bud__stem" d="M34 71 C32 54 31 41 33 25" />
-            <path className="fy-bud__leaf" d="M32 34 C11 33 9 13 11 7 C27 9 35 19 32 34 Z" />
-            <path className="fy-bud__leaf" d="M34 26 C38 10 52 6 58 8 C57 22 48 31 34 26 Z" />
-            <path className="fy-bud__root" d="M34 68 Q24 74 20 71 M34 68 Q42 76 49 71" />
-          </svg>
-          {blockedCount > 0 && <span>{blockedCount}</span>}
-        </button>
+      <main className="fy-overlay-collapsed">
+        <TaskPlantOverlay
+          tasks={activeTasks}
+          privacyMode={preferences.privacyMode}
+          reducedMotion={preferences.reducedMotion}
+          onOpen={overlay.open}
+          onSelectTask={(task) => {
+            setSelectedId(task.id);
+            overlay.open();
+          }}
+        />
       </main>
     );
   }
@@ -1128,16 +1114,14 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
       return (
         <main
           className={`fy-overlay-window fy-overlay-window--${overlay.mode}`}
-          onMouseEnter={overlay.onPointerEnter}
-          onMouseLeave={overlay.onPointerLeave}
-          onMouseDown={() => {
-            if (overlay.mode === 'preview') overlay.pin();
+          onClickCapture={() => {
+            if (overlay.mode === 'preview') overlay.open();
           }}
         >
           <div className="fy-overlay-shell">
             {loginPanel}
             {overlay.mode === 'pinned' && (
-              <button className="fy-unpin-button" type="button" onClick={overlay.unpin}>
+              <button className="fy-unpin-button" type="button" onClick={overlay.close}>
                 收起 · Esc
               </button>
             )}
@@ -1462,12 +1446,12 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
               {...(onlyMine ? { onlyMyTaskIds: myTaskIds } : {})}
               onSelectTask={(task) => {
                 setSelectedId(task.id);
-                if (windowKind === 'overlay') overlay.pin();
+                if (windowKind === 'overlay') overlay.open();
               }}
               onClusterClick={(overflowTasks) => {
                 setListScope(new Set(overflowTasks.map((task) => task.id)));
                 setView('list');
-                if (windowKind === 'overlay') overlay.pin();
+                if (windowKind === 'overlay') overlay.open();
               }}
             />
           ) : (
@@ -1550,16 +1534,14 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
     return (
       <main
         className={`fy-overlay-window fy-overlay-window--${overlay.mode}`}
-        onMouseEnter={overlay.onPointerEnter}
-        onMouseLeave={overlay.onPointerLeave}
-        onMouseDown={() => {
-          if (overlay.mode === 'preview') overlay.pin();
+        onClickCapture={() => {
+          if (overlay.mode === 'preview') overlay.open();
         }}
       >
         <div className="fy-overlay-shell">
           {content}
           {overlay.mode === 'pinned' && (
-            <button className="fy-unpin-button" type="button" onClick={overlay.unpin}>
+            <button className="fy-unpin-button" type="button" onClick={overlay.close}>
               收起 · Esc
             </button>
           )}

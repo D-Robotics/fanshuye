@@ -162,19 +162,34 @@ describe('desktop app preferences', () => {
     expect(screen.getByRole('complementary', { name: '任务详情' })).toHaveTextContent('林工');
   });
 
-  it('pins an overlay preview when actual tree content is pressed', () => {
-    vi.useFakeTimers();
+  it('keeps the overlay collapsed on hover and opens only after a plant click', () => {
     window.history.pushState({}, '', '/?window=overlay');
     try {
       render(<App />);
-      fireEvent.mouseEnter(screen.getByRole('main'));
-      act(() => vi.advanceTimersByTime(320));
+      const plant = screen.getByRole('region', { name: '常驻任务番薯植株' });
+      fireEvent.mouseEnter(plant);
+      fireEvent.mouseLeave(plant);
 
-      fireEvent.mouseDown(screen.getByRole('button', { name: '番薯叶首页' }));
+      expect(screen.queryByRole('button', { name: '收起 · Esc' })).not.toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: '打开番薯叶任务树总览' }));
       expect(screen.getByRole('button', { name: '收起 · Esc' })).toBeInTheDocument();
     } finally {
       window.history.pushState({}, '', '/');
-      vi.useRealTimers();
+    }
+  });
+
+  it('opens a collapsed task leaf directly in the matching detail panel', () => {
+    window.history.pushState({}, '', '/?window=overlay');
+    try {
+      render(<App />);
+      fireEvent.click(screen.getByRole('button', { name: /修复刷新令牌竞争条件.*点击展开/ }));
+
+      expect(screen.getByRole('button', { name: '收起 · Esc' })).toBeInTheDocument();
+      expect(screen.getByRole('complementary', { name: '任务详情' })).toHaveTextContent(
+        '修复刷新令牌竞争条件',
+      );
+    } finally {
+      window.history.pushState({}, '', '/');
     }
   });
 });

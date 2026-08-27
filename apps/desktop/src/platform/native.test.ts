@@ -239,7 +239,7 @@ describe('cross-window desktop preference validation', () => {
     const loginBranch = appSource.slice(loginBranchStart, loginBranchEnd);
     expect(loginBranch).toContain("if (windowKind === 'overlay')");
     expect(loginBranch).toContain('fy-overlay-window--${overlay.mode}');
-    expect(loginBranch).toContain("if (overlay.mode === 'preview') overlay.pin()");
+    expect(loginBranch).toContain("if (overlay.mode === 'preview') overlay.open()");
   });
 
   it('separates production and local-development network policy', () => {

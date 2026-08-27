@@ -130,6 +130,10 @@ mod tests {
         assert_eq!(overlay["decorations"], false);
         assert_eq!(overlay["alwaysOnTop"], true);
         assert_eq!(overlay["focus"], false);
+        assert_eq!(overlay["width"], 224);
+        assert_eq!(overlay["height"], 272);
+        assert_eq!(overlay["minWidth"], 224);
+        assert_eq!(overlay["minHeight"], 272);
 
         let csp = config["app"]["security"]["csp"]
             .as_str()
