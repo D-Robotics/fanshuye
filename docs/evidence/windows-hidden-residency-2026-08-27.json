@@ -1,0 +1,1528 @@
+{
+  "schemaVersion": 1,
+  "processName": "fanshuye-desktop",
+  "rootProcessIdsAtStart": [51852],
+  "startedAt": "2026-08-27T19:12:25.9379134+08:00",
+  "completedAt": "2026-08-27T19:42:26.4058995+08:00",
+  "durationSeconds": 1800,
+  "warmupSeconds": 300,
+  "sampleSeconds": 10,
+  "logicalProcessorCount": 22,
+  "thresholds": {
+    "maxAverageCpuPercent": 1,
+    "maxP95CpuPercent": 3,
+    "maxWorkingSetGrowthMb": 50,
+    "maxEstablishedTcpConnections": 0
+  },
+  "summary": {
+    "averageCpuPercent": 0.0048,
+    "p95CpuPercent": 0.0269,
+    "workingSetGrowthMb": 26.559,
+    "maximumEstablishedTcpConnections": 0,
+    "postWarmupSamples": 125
+  },
+  "passed": true,
+  "failures": [],
+  "samples": [
+    {
+      "elapsedSeconds": 1.932,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 696.605,
+      "privateMemoryMb": 429.484,
+      "handleCount": 4267,
+      "establishedTcpConnections": 2
+    },
+    {
+      "elapsedSeconds": 15.855,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.535,
+      "privateMemoryMb": 430.141,
+      "handleCount": 4272,
+      "establishedTcpConnections": 3
+    },
+    {
+      "elapsedSeconds": 30.054,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0.01,
+      "workingSetMb": 700.551,
+      "privateMemoryMb": 430.125,
+      "handleCount": 4272,
+      "establishedTcpConnections": 1
+    },
+    {
+      "elapsedSeconds": 44.122,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.258,
+      "privateMemoryMb": 429.82,
+      "handleCount": 4268,
+      "establishedTcpConnections": 1
+    },
+    {
+      "elapsedSeconds": 55.836,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0.0061,
+      "workingSetMb": 700.258,
+      "privateMemoryMb": 429.82,
+      "handleCount": 4268,
+      "establishedTcpConnections": 1
+    },
+    {
+      "elapsedSeconds": 67.662,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.762,
+      "privateMemoryMb": 429.805,
+      "handleCount": 4267,
+      "establishedTcpConnections": 1
+    },
+    {
+      "elapsedSeconds": 79.562,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.66,
+      "privateMemoryMb": 429.414,
+      "handleCount": 4245,
+      "establishedTcpConnections": 1
+    },
+    {
+      "elapsedSeconds": 91.95,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.656,
+      "privateMemoryMb": 429.395,
+      "handleCount": 4245,
+      "establishedTcpConnections": 1
+    },
+    {
+      "elapsedSeconds": 103.762,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0.006,
+      "workingSetMb": 700.664,
+      "privateMemoryMb": 429.387,
+      "handleCount": 4241,
+      "establishedTcpConnections": 1
+    },
+    {
+      "elapsedSeconds": 115.337,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.672,
+      "privateMemoryMb": 429.387,
+      "handleCount": 4241,
+      "establishedTcpConnections": 1
+    },
+    {
+      "elapsedSeconds": 126.887,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.641,
+      "privateMemoryMb": 429.297,
+      "handleCount": 4240,
+      "establishedTcpConnections": 1
+    },
+    {
+      "elapsedSeconds": 138.271,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0.0062,
+      "workingSetMb": 700.703,
+      "privateMemoryMb": 429.332,
+      "handleCount": 4236,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 149.819,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.684,
+      "privateMemoryMb": 429.262,
+      "handleCount": 4226,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 161.182,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.684,
+      "privateMemoryMb": 429.262,
+      "handleCount": 4226,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 172.328,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.707,
+      "privateMemoryMb": 429.309,
+      "handleCount": 4223,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 183.734,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.727,
+      "privateMemoryMb": 429.348,
+      "handleCount": 4223,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 195.965,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.773,
+      "privateMemoryMb": 429.41,
+      "handleCount": 4229,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 207.872,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.688,
+      "privateMemoryMb": 429.293,
+      "handleCount": 4229,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 219.554,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.742,
+      "privateMemoryMb": 429.402,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 231.407,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 700.758,
+      "privateMemoryMb": 429.418,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 243.325,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 701.148,
+      "privateMemoryMb": 429.48,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 254.812,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 702.188,
+      "privateMemoryMb": 430.059,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 266.24,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 702.328,
+      "privateMemoryMb": 430.246,
+      "handleCount": 4223,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 278.275,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 701.949,
+      "privateMemoryMb": 429.895,
+      "handleCount": 4222,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 292.382,
+      "includedAfterWarmup": false,
+      "processCount": 9,
+      "cpuPercent": 0.0101,
+      "workingSetMb": 701.785,
+      "privateMemoryMb": 429.895,
+      "handleCount": 4222,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 306.636,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 701.531,
+      "privateMemoryMb": 430.02,
+      "handleCount": 4231,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 318.62,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0059,
+      "workingSetMb": 705.676,
+      "privateMemoryMb": 432.633,
+      "handleCount": 4259,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 330.508,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 705.391,
+      "privateMemoryMb": 432.469,
+      "handleCount": 4259,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 342.011,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 705.422,
+      "privateMemoryMb": 432.516,
+      "handleCount": 4259,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 353.453,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 705.289,
+      "privateMemoryMb": 432.188,
+      "handleCount": 4257,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 364.96,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 703.688,
+      "privateMemoryMb": 430.504,
+      "handleCount": 4257,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 376.335,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 703.461,
+      "privateMemoryMb": 430.289,
+      "handleCount": 4257,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 387.902,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 703.266,
+      "privateMemoryMb": 430.121,
+      "handleCount": 4257,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 399.379,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 703.293,
+      "privateMemoryMb": 430.125,
+      "handleCount": 4257,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 410.918,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0062,
+      "workingSetMb": 703.305,
+      "privateMemoryMb": 430.125,
+      "handleCount": 4257,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 422.539,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 703.172,
+      "privateMemoryMb": 429.836,
+      "handleCount": 4234,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 434.21,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 703.184,
+      "privateMemoryMb": 429.852,
+      "handleCount": 4234,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 445.973,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 703.254,
+      "privateMemoryMb": 429.852,
+      "handleCount": 4234,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 457.639,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 703.25,
+      "privateMemoryMb": 429.867,
+      "handleCount": 4234,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 469.394,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.006,
+      "workingSetMb": 703.254,
+      "privateMemoryMb": 429.867,
+      "handleCount": 4234,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 481.199,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 703.234,
+      "privateMemoryMb": 429.824,
+      "handleCount": 4234,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 493.121,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0179,
+      "workingSetMb": 703.414,
+      "privateMemoryMb": 430.078,
+      "handleCount": 4244,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 506.004,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 703.418,
+      "privateMemoryMb": 430.094,
+      "handleCount": 4244,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 519.735,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0828,
+      "workingSetMb": 758.48,
+      "privateMemoryMb": 484.816,
+      "handleCount": 4246,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 534.466,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 732.008,
+      "privateMemoryMb": 458.062,
+      "handleCount": 4246,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 550.417,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0312,
+      "workingSetMb": 732.801,
+      "privateMemoryMb": 458.91,
+      "handleCount": 4244,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 563.876,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0317,
+      "workingSetMb": 732.418,
+      "privateMemoryMb": 458.594,
+      "handleCount": 4244,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 575.701,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.006,
+      "workingSetMb": 732.422,
+      "privateMemoryMb": 458.578,
+      "handleCount": 4244,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 587.19,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0062,
+      "workingSetMb": 731.941,
+      "privateMemoryMb": 458.547,
+      "handleCount": 4244,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 598.903,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 731.699,
+      "privateMemoryMb": 458.547,
+      "handleCount": 4244,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 610.567,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 731.676,
+      "privateMemoryMb": 458.473,
+      "handleCount": 4244,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 622.098,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 731.477,
+      "privateMemoryMb": 458.066,
+      "handleCount": 4238,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 634.206,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 731.293,
+      "privateMemoryMb": 458.039,
+      "handleCount": 4238,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 647.315,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0271,
+      "workingSetMb": 730.738,
+      "privateMemoryMb": 458.039,
+      "handleCount": 4238,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 661.051,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0207,
+      "workingSetMb": 730.742,
+      "privateMemoryMb": 458.039,
+      "handleCount": 4238,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 674.486,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0264,
+      "workingSetMb": 730.723,
+      "privateMemoryMb": 458,
+      "handleCount": 4240,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 692.277,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.008,
+      "workingSetMb": 730.699,
+      "privateMemoryMb": 457.969,
+      "handleCount": 4240,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 704.841,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 730.684,
+      "privateMemoryMb": 457.941,
+      "handleCount": 4240,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 716.704,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 730.703,
+      "privateMemoryMb": 457.984,
+      "handleCount": 4240,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 728.341,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 730.711,
+      "privateMemoryMb": 457.988,
+      "handleCount": 4240,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 739.961,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 730.711,
+      "privateMemoryMb": 457.988,
+      "handleCount": 4240,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 751.621,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0061,
+      "workingSetMb": 730.703,
+      "privateMemoryMb": 457.945,
+      "handleCount": 4238,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 763.297,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 730.707,
+      "privateMemoryMb": 457.945,
+      "handleCount": 4238,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 775.134,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 730.707,
+      "privateMemoryMb": 457.945,
+      "handleCount": 4238,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 786.93,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 730.711,
+      "privateMemoryMb": 457.965,
+      "handleCount": 4238,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 798.576,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 730.719,
+      "privateMemoryMb": 457.977,
+      "handleCount": 4238,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 810.308,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0061,
+      "workingSetMb": 730.723,
+      "privateMemoryMb": 457.992,
+      "handleCount": 4238,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 821.957,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0061,
+      "workingSetMb": 730.734,
+      "privateMemoryMb": 457.992,
+      "handleCount": 4238,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 833.667,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0121,
+      "workingSetMb": 730.746,
+      "privateMemoryMb": 457.996,
+      "handleCount": 4238,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 845.12,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 730.848,
+      "privateMemoryMb": 458.098,
+      "handleCount": 4243,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 856.76,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 727.57,
+      "privateMemoryMb": 457.738,
+      "handleCount": 4231,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 868.496,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0061,
+      "workingSetMb": 727.621,
+      "privateMemoryMb": 457.816,
+      "handleCount": 4231,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 880.459,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0059,
+      "workingSetMb": 727.543,
+      "privateMemoryMb": 457.699,
+      "handleCount": 4230,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 892.229,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 727.559,
+      "privateMemoryMb": 457.715,
+      "handleCount": 4230,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 904.616,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0057,
+      "workingSetMb": 727.574,
+      "privateMemoryMb": 457.738,
+      "handleCount": 4230,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 916.309,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0061,
+      "workingSetMb": 727.574,
+      "privateMemoryMb": 457.738,
+      "handleCount": 4230,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 928.028,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0061,
+      "workingSetMb": 727.582,
+      "privateMemoryMb": 457.738,
+      "handleCount": 4230,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 940.716,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 729.531,
+      "privateMemoryMb": 459.652,
+      "handleCount": 4230,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 952.658,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.004,
+      "privateMemoryMb": 458.066,
+      "handleCount": 4226,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 964.333,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.004,
+      "privateMemoryMb": 458.066,
+      "handleCount": 4226,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 975.993,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0061,
+      "workingSetMb": 728.004,
+      "privateMemoryMb": 458.066,
+      "handleCount": 4226,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 987.737,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.006,
+      "workingSetMb": 728.004,
+      "privateMemoryMb": 458.066,
+      "handleCount": 4226,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 999.3,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0061,
+      "workingSetMb": 727.875,
+      "privateMemoryMb": 457.926,
+      "handleCount": 4226,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1011.453,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 727.719,
+      "privateMemoryMb": 457.773,
+      "handleCount": 4226,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1023.347,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 727.711,
+      "privateMemoryMb": 457.738,
+      "handleCount": 4226,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1035.255,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.006,
+      "workingSetMb": 727.742,
+      "privateMemoryMb": 457.797,
+      "handleCount": 4226,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1046.932,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 727.773,
+      "privateMemoryMb": 457.855,
+      "handleCount": 4226,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1058.616,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0061,
+      "workingSetMb": 727.77,
+      "privateMemoryMb": 457.863,
+      "handleCount": 4226,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1070.524,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 727.77,
+      "privateMemoryMb": 457.863,
+      "handleCount": 4226,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1082.506,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0178,
+      "workingSetMb": 728.094,
+      "privateMemoryMb": 457.934,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1094.129,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.086,
+      "privateMemoryMb": 457.898,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1105.896,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.086,
+      "privateMemoryMb": 457.898,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1117.54,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.086,
+      "privateMemoryMb": 457.898,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1129.224,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.086,
+      "privateMemoryMb": 457.898,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1140.859,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.086,
+      "privateMemoryMb": 457.898,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1152.351,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.094,
+      "privateMemoryMb": 457.895,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1163.808,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0124,
+      "workingSetMb": 728.094,
+      "privateMemoryMb": 457.895,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1175.525,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.125,
+      "privateMemoryMb": 457.992,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1187.422,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.141,
+      "privateMemoryMb": 457.992,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1199.118,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.141,
+      "privateMemoryMb": 457.992,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1210.66,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.133,
+      "privateMemoryMb": 457.961,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1222.363,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.109,
+      "privateMemoryMb": 457.914,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1233.908,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0062,
+      "workingSetMb": 728.125,
+      "privateMemoryMb": 457.953,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1245.695,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.129,
+      "privateMemoryMb": 457.953,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1257.387,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.133,
+      "privateMemoryMb": 457.953,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1269.045,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.117,
+      "privateMemoryMb": 457.914,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1280.754,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.117,
+      "privateMemoryMb": 457.914,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1292.336,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.105,
+      "privateMemoryMb": 457.902,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1303.834,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.137,
+      "privateMemoryMb": 457.977,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1315.623,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.148,
+      "privateMemoryMb": 457.977,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1327.436,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.156,
+      "privateMemoryMb": 457.984,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1339.152,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.156,
+      "privateMemoryMb": 457.984,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1350.814,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0061,
+      "workingSetMb": 728.156,
+      "privateMemoryMb": 457.984,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1362.6,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.156,
+      "privateMemoryMb": 457.984,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1374.241,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0122,
+      "workingSetMb": 728.156,
+      "privateMemoryMb": 457.984,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1385.886,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0061,
+      "workingSetMb": 728.16,
+      "privateMemoryMb": 457.984,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1397.583,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0061,
+      "workingSetMb": 728.16,
+      "privateMemoryMb": 457.984,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1409.149,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0368,
+      "workingSetMb": 728.133,
+      "privateMemoryMb": 457.918,
+      "handleCount": 4231,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1421.171,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.164,
+      "privateMemoryMb": 457.965,
+      "handleCount": 4231,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1433.272,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.133,
+      "privateMemoryMb": 458.004,
+      "handleCount": 4235,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1444.891,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.121,
+      "privateMemoryMb": 457.988,
+      "handleCount": 4235,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1456.845,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.121,
+      "privateMemoryMb": 457.988,
+      "handleCount": 4235,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1468.794,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0059,
+      "workingSetMb": 728.098,
+      "privateMemoryMb": 457.996,
+      "handleCount": 4235,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1480.661,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.094,
+      "privateMemoryMb": 457.969,
+      "handleCount": 4235,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1492.661,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.094,
+      "privateMemoryMb": 457.969,
+      "handleCount": 4235,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1504.648,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.09,
+      "privateMemoryMb": 457.93,
+      "handleCount": 4235,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1516.407,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.006,
+      "workingSetMb": 728.09,
+      "privateMemoryMb": 457.926,
+      "handleCount": 4235,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1528.065,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.086,
+      "privateMemoryMb": 457.918,
+      "handleCount": 4235,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1539.92,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.09,
+      "privateMemoryMb": 457.934,
+      "handleCount": 4235,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1551.859,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.047,
+      "privateMemoryMb": 457.844,
+      "handleCount": 4231,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1563.854,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 727.996,
+      "privateMemoryMb": 457.73,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1575.738,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.006,
+      "workingSetMb": 728.023,
+      "privateMemoryMb": 457.781,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1587.515,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.027,
+      "privateMemoryMb": 457.781,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1599.344,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.006,
+      "workingSetMb": 727.891,
+      "privateMemoryMb": 457.641,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1611.11,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 727.895,
+      "privateMemoryMb": 457.641,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1622.793,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 727.879,
+      "privateMemoryMb": 457.625,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1634.538,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 727.871,
+      "privateMemoryMb": 457.617,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1646.097,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 727.875,
+      "privateMemoryMb": 457.617,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1657.85,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 727.867,
+      "privateMemoryMb": 457.609,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1669.578,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 727.875,
+      "privateMemoryMb": 457.625,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1682.287,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0056,
+      "workingSetMb": 727.879,
+      "privateMemoryMb": 457.625,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1695.482,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0269,
+      "workingSetMb": 727.887,
+      "privateMemoryMb": 457.633,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1708.946,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0105,
+      "workingSetMb": 727.887,
+      "privateMemoryMb": 457.633,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1725.774,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0338,
+      "workingSetMb": 727.887,
+      "privateMemoryMb": 457.633,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1738.526,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0167,
+      "workingSetMb": 727.895,
+      "privateMemoryMb": 457.633,
+      "handleCount": 4227,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1750.08,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0061,
+      "workingSetMb": 728.004,
+      "privateMemoryMb": 457.719,
+      "handleCount": 4231,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1761.69,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.012,
+      "privateMemoryMb": 457.727,
+      "handleCount": 4231,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1773.071,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.152,
+      "privateMemoryMb": 458.207,
+      "handleCount": 4231,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1784.372,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0.0063,
+      "workingSetMb": 728.086,
+      "privateMemoryMb": 457.867,
+      "handleCount": 4232,
+      "establishedTcpConnections": 0
+    },
+    {
+      "elapsedSeconds": 1795.798,
+      "includedAfterWarmup": true,
+      "processCount": 9,
+      "cpuPercent": 0,
+      "workingSetMb": 728.09,
+      "privateMemoryMb": 457.871,
+      "handleCount": 4232,
+      "establishedTcpConnections": 0
+    }
+  ]
+}

@@ -41,6 +41,25 @@ if ([string]::IsNullOrWhiteSpace($outputDirectoryInput)) {
 $outputDirectory = (Resolve-Path -LiteralPath $outputDirectoryInput -ErrorAction Stop).Path
 $resolvedOutputPath = Join-Path $outputDirectory (Split-Path -Leaf $OutputPath)
 
+# The evidence is invalid if Windows suspends the machine between samples. This
+# execution-state request is scoped to this PowerShell process and is released
+# automatically when the sampler exits; it does not keep the display awake.
+Add-Type -TypeDefinition @'
+using System.Runtime.InteropServices;
+public static class FanshuyeResidencyNativeMethods {
+  [DllImport("kernel32.dll")]
+  public static extern uint SetThreadExecutionState(uint executionState);
+}
+'@
+$executionStateContinuous = [Convert]::ToUInt32('80000000', 16)
+$executionStateSystemRequired = [uint32]0x00000001
+$executionStateResult = [FanshuyeResidencyNativeMethods]::SetThreadExecutionState(
+  $executionStateContinuous -bor $executionStateSystemRequired
+)
+if ($executionStateResult -eq 0) {
+  throw 'Windows did not accept the residency sampler sleep-prevention request.'
+}
+
 function Get-TrackedProcessIds {
   param([int[]]$RootIds)
 
@@ -155,6 +174,17 @@ $acceptedSamples = @($samples | Where-Object { $_.includedAfterWarmup })
 if ($acceptedSamples.Count -lt 2) {
   throw 'Residency measurement produced fewer than two post-warmup samples.'
 }
+$theoreticalPostWarmupSamples = ($DurationSeconds - $WarmupSeconds) / $SampleSeconds
+$minimumPostWarmupSamples = [Math]::Max(
+  2,
+  [Math]::Floor($theoreticalPostWarmupSamples * 0.8)
+)
+$maximumAllowedSampleGapSeconds = $SampleSeconds * 2.5 + 2
+$maximumObservedSampleGapSeconds = 0.0
+for ($index = 1; $index -lt $samples.Count; $index += 1) {
+  $gapSeconds = [double]$samples[$index].elapsedSeconds - [double]$samples[$index - 1].elapsedSeconds
+  $maximumObservedSampleGapSeconds = [Math]::Max($maximumObservedSampleGapSeconds, $gapSeconds)
+}
 $cpuValues = @($acceptedSamples | ForEach-Object { [double]$_.cpuPercent })
 $averageCpu = [double](($cpuValues | Measure-Object -Average).Average)
 $p95Cpu = Get-Percentile95 -Values $cpuValues
@@ -168,6 +198,12 @@ $maximumTcpConnections = if ($knownTcpSamples.Count -eq 0) {
   [int](($knownTcpSamples | Measure-Object -Property establishedTcpConnections -Maximum).Maximum)
 }
 $failures = [System.Collections.Generic.List[string]]::new()
+if ($acceptedSamples.Count -lt $minimumPostWarmupSamples) {
+  $failures.Add('Residency sampling was interrupted and did not collect enough post-warmup samples.')
+}
+if ($maximumObservedSampleGapSeconds -gt $maximumAllowedSampleGapSeconds) {
+  $failures.Add('Residency sampling was interrupted by an excessive sample gap.')
+}
 if ($averageCpu -gt $MaxAverageCpuPercent) {
   $failures.Add('Average hidden CPU exceeded the configured threshold.')
 }
@@ -193,11 +229,13 @@ $result = [ordered]@{
   warmupSeconds = $WarmupSeconds
   sampleSeconds = $SampleSeconds
   logicalProcessorCount = $logicalProcessorCount
+  systemSleepPreventedDuringSampling = $true
   thresholds = [ordered]@{
     maxAverageCpuPercent = $MaxAverageCpuPercent
     maxP95CpuPercent = $MaxP95CpuPercent
     maxWorkingSetGrowthMb = $MaxWorkingSetGrowthMb
     maxEstablishedTcpConnections = $MaxEstablishedTcpConnections
+    maximumAllowedSampleGapSeconds = [Math]::Round($maximumAllowedSampleGapSeconds, 3)
   }
   summary = [ordered]@{
     averageCpuPercent = [Math]::Round($averageCpu, 4)
@@ -205,6 +243,8 @@ $result = [ordered]@{
     workingSetGrowthMb = [Math]::Round($workingSetGrowth, 3)
     maximumEstablishedTcpConnections = $maximumTcpConnections
     postWarmupSamples = $acceptedSamples.Count
+    minimumRequiredPostWarmupSamples = $minimumPostWarmupSamples
+    maximumObservedSampleGapSeconds = [Math]::Round($maximumObservedSampleGapSeconds, 3)
   }
   passed = $failures.Count -eq 0
   failures = @($failures)
