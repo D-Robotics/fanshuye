@@ -118,6 +118,10 @@ function TaskLeaf({ position, privacyMode, selected, dimmed, onActivate, onHover
         className="fy-task-leaf__vein"
         d={`M ${-dimensions.width / 2 + 4} 0 H ${dimensions.width / 2 - 4}`}
       />
+      <path
+        className="fy-task-leaf__vein fy-task-leaf__vein--secondary"
+        d={`M ${-dimensions.width * 0.2} 0 L ${-dimensions.width * 0.04} ${-dimensions.height * 0.45} M ${dimensions.width * 0.04} 0 L ${dimensions.width * 0.2} ${dimensions.height * 0.42}`}
+      />
       <text className="fy-task-leaf__status" x="0" y="4" aria-hidden="true">
         {statusSymbol(task)}
       </text>
@@ -154,6 +158,7 @@ interface TaskHoverCardProps {
 
 function TaskHoverCard({ position, privacyMode }: TaskHoverCardProps) {
   const task = position.task;
+  const placeBelow = position.y < 205;
   const formattedDue =
     task.dueAt === null
       ? '未设置'
@@ -169,7 +174,11 @@ function TaskHoverCard({ position, privacyMode }: TaskHoverCardProps) {
   } as React.CSSProperties;
 
   return (
-    <aside className="fy-task-hover-card" role="tooltip" style={style}>
+    <aside
+      className={`fy-task-hover-card${placeBelow ? ' fy-task-hover-card--below' : ''}`}
+      role="tooltip"
+      style={style}
+    >
       <span className="fy-task-hover-card__level">
         {ACTION_LEVEL_LABELS[task.actionLevel]} · 重要度 {task.importance}
       </span>
@@ -223,6 +232,14 @@ export function TaskTree({
     selectedTaskId === undefined
       ? undefined
       : layout.leaves.find((leaf) => leaf.task.id === selectedTaskId);
+  const levelCounts = useMemo(() => {
+    const activeTasks = [...layout.leaves.map((leaf) => leaf.task), ...layout.overflow];
+    return {
+      NOW: activeTasks.filter((task) => task.actionLevel === 'NOW').length,
+      NEXT: activeTasks.filter((task) => task.actionLevel === 'NEXT').length,
+      LATER: activeTasks.filter((task) => task.actionLevel === 'LATER').length,
+    };
+  }, [layout]);
 
   const dependencyLines = useMemo(() => {
     if (selected === undefined) return [];
@@ -277,21 +294,61 @@ export function TaskTree({
         </defs>
 
         <g className="fy-task-tree__zones" aria-hidden="true">
-          <rect x="24" y="28" width="712" height="194" rx="26" />
-          <rect x="24" y="230" width="712" height="166" rx="26" />
-          <rect x="24" y="404" width="712" height="166" rx="26" />
-          <text x="48" y="62">
-            立即处理
-          </text>
-          <text x="48" y="261">
-            接下来
-          </text>
-          <text x="48" y="435">
-            稍后
-          </text>
+          <rect
+            className="fy-task-tree__zone fy-task-tree__zone--now"
+            x="24"
+            y="28"
+            width="712"
+            height="194"
+            rx="28"
+          />
+          <rect
+            className="fy-task-tree__zone fy-task-tree__zone--next"
+            x="24"
+            y="230"
+            width="712"
+            height="166"
+            rx="28"
+          />
+          <rect
+            className="fy-task-tree__zone fy-task-tree__zone--later"
+            x="24"
+            y="404"
+            width="712"
+            height="166"
+            rx="28"
+          />
+          <g className="fy-task-tree__zone-label fy-task-tree__zone-label--now">
+            <circle cx="51" cy="58" r="5" />
+            <text x="65" y="62">
+              立即处理
+            </text>
+            <text className="fy-task-tree__zone-count" x="129" y="62">
+              {levelCounts.NOW} 项
+            </text>
+          </g>
+          <g className="fy-task-tree__zone-label fy-task-tree__zone-label--next">
+            <circle cx="51" cy="260" r="5" />
+            <text x="65" y="264">
+              接下来
+            </text>
+            <text className="fy-task-tree__zone-count" x="116" y="264">
+              {levelCounts.NEXT} 项
+            </text>
+          </g>
+          <g className="fy-task-tree__zone-label fy-task-tree__zone-label--later">
+            <circle cx="51" cy="434" r="5" />
+            <text x="65" y="438">
+              稍后
+            </text>
+            <text className="fy-task-tree__zone-count" x="103" y="438">
+              {levelCounts.LATER} 项
+            </text>
+          </g>
         </g>
 
         <g className="fy-task-tree__plant" aria-hidden="true">
+          <ellipse className="fy-task-tree__soil" cx="386" cy="574" rx="112" ry="18" />
           <path className="fy-task-tree__trunk-shadow" d="M 393 574 C 368 430 393 270 377 74" />
           <path
             className="fy-task-tree__trunk"
@@ -308,6 +365,14 @@ export function TaskTree({
           <path className="fy-task-tree__root" d="M 386 565 Q 340 584 306 574" />
           <path className="fy-task-tree__root" d="M 388 565 Q 426 590 466 573" />
           <path className="fy-task-tree__root" d="M 386 566 Q 374 593 360 600" />
+          <path
+            className="fy-task-tree__sprout"
+            d="M 378 86 C 355 79 349 59 352 47 C 371 51 382 65 378 86 Z"
+          />
+          <path
+            className="fy-task-tree__sprout"
+            d="M 378 76 C 386 53 405 45 418 49 C 414 68 399 80 378 76 Z"
+          />
         </g>
 
         <g className="fy-task-tree__dependencies" aria-label="当前任务的直接依赖">

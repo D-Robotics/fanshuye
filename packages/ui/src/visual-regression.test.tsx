@@ -52,10 +52,10 @@ describe('component visual contracts', () => {
     const offlineBanner = visualDigest(offline.container);
 
     expect({ treeAndCard, detailPanel, taskList, privacyTree, offlineBanner }).toEqual({
-      treeAndCard: '358203a5ac60f309f89a09bf32ff1f2b3d0651773542a8c13e2f5df1e9077973',
+      treeAndCard: '9f3ae902652b04ac887181c8e722b69877c63395a9bce78c625b4dc230710927',
       detailPanel: 'a55c3359208c3746a6a3daacb560c851156e06ee0e9ffeeaa2923d12ad9b052b',
       taskList: '67d3c8ea4551951cd75b5c62efb2ac53a8bd362878099a72196fe3d061430ed5',
-      privacyTree: '7ee66cbcfee9b4b5f0d0110bba040a5f44706dda0e049b3c4a4cae02103b651a',
+      privacyTree: 'fc709e5fd03d715c910d49af9410a69485af2adeeb38bd4995ba8e50dcefb621',
       offlineBanner: '8500689c20847adbd4122e6dc109dd6ad714b8115cca2017398b050348762993',
     });
   });

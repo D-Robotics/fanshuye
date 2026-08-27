@@ -1,20 +1,20 @@
 :root {
-  --fy-ink: #173126;
-  --fy-ink-soft: #52695d;
-  --fy-paper: #fbfaf4;
-  --fy-paper-raised: #ffffff;
-  --fy-line: rgba(35, 68, 51, 0.15);
-  --fy-line-strong: rgba(35, 68, 51, 0.3);
-  --fy-accent: #e7663b;
-  --fy-accent-dark: #ad3e23;
-  --fy-green: #2f7d50;
-  --fy-green-bright: #63ad70;
-  --fy-green-deep: #164d35;
-  --fy-gold: #c28e2c;
-  --fy-danger: #a83e31;
+  --fy-ink: #17352a;
+  --fy-ink-soft: #5b7066;
+  --fy-paper: #f8f6ed;
+  --fy-paper-raised: #fffef9;
+  --fy-line: rgba(34, 76, 55, 0.12);
+  --fy-line-strong: rgba(34, 76, 55, 0.24);
+  --fy-accent: #ed7048;
+  --fy-accent-dark: #ad4429;
+  --fy-green: #377f50;
+  --fy-green-bright: #79b966;
+  --fy-green-deep: #174c35;
+  --fy-gold: #c99732;
+  --fy-danger: #a54135;
   --fy-focus: #1473e6;
-  --fy-trunk-light: #a9633f;
-  --fy-trunk-dark: #63351f;
+  --fy-trunk-light: #b46c42;
+  --fy-trunk-dark: #683a24;
   color: var(--fy-ink);
   font-family:
     Inter, 'Segoe UI Variable', 'Microsoft YaHei UI', 'PingFang SC', system-ui, sans-serif;
@@ -82,7 +82,8 @@ textarea:focus-visible,
   transition:
     transform 150ms ease,
     border-color 150ms ease,
-    background 150ms ease;
+    background 150ms ease,
+    box-shadow 150ms ease;
 }
 
 .fy-button {
@@ -97,6 +98,7 @@ textarea:focus-visible,
 .fy-icon-button:hover:not(:disabled) {
   transform: translateY(-1px);
   border-color: var(--fy-green);
+  box-shadow: 0 8px 22px rgba(23, 76, 53, 0.12);
 }
 
 .fy-button:disabled,
@@ -106,10 +108,10 @@ textarea:focus-visible,
 }
 
 .fy-button--primary {
-  border-color: var(--fy-green-deep);
-  background: var(--fy-green-deep);
+  border-color: #174b35;
+  background: linear-gradient(145deg, #2f8051, #174b35);
   color: white;
-  box-shadow: 0 7px 20px rgba(22, 77, 53, 0.18);
+  box-shadow: 0 9px 22px rgba(22, 77, 53, 0.2);
 }
 
 .fy-button--quiet {
@@ -133,9 +135,9 @@ textarea:focus-visible,
   align-items: center;
   gap: 0.48rem;
   padding: 0.38rem 0.7rem;
-  border: 1px solid var(--fy-line);
+  border: 1px solid rgba(44, 112, 73, 0.16);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--fy-paper-raised) 88%, transparent);
+  background: color-mix(in srgb, #f4fbf2 88%, transparent);
   color: var(--fy-ink-soft);
   font-size: 0.72rem;
   white-space: nowrap;
@@ -184,22 +186,28 @@ textarea:focus-visible,
   width: 100%;
   min-width: 320px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 27px;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 30px;
   background:
-    radial-gradient(circle at 50% 18%, rgba(246, 222, 155, 0.2), transparent 31%),
-    linear-gradient(155deg, rgba(245, 249, 236, 0.96), rgba(225, 239, 217, 0.92));
+    radial-gradient(circle at 50% 9%, rgba(255, 236, 175, 0.42), transparent 27%),
+    radial-gradient(circle at 8% 90%, rgba(136, 178, 103, 0.2), transparent 32%),
+    linear-gradient(155deg, rgba(249, 250, 241, 0.98), rgba(226, 239, 217, 0.97));
   box-shadow:
-    0 22px 55px rgba(32, 77, 52, 0.16),
-    inset 0 1px 0 white;
+    0 28px 70px rgba(32, 77, 52, 0.14),
+    0 4px 14px rgba(32, 77, 52, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
   isolation: isolate;
 }
 
 .fy-task-tree::before {
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(42, 88, 56, 0.08) 0.7px, transparent 0.7px);
-  background-size: 11px 11px;
+  background-image:
+    radial-gradient(rgba(42, 88, 56, 0.065) 0.7px, transparent 0.8px),
+    linear-gradient(115deg, transparent 49%, rgba(255, 255, 255, 0.22) 50%, transparent 51%);
+  background-size:
+    13px 13px,
+    84px 84px;
   content: '';
   pointer-events: none;
 }
@@ -209,21 +217,55 @@ textarea:focus-visible,
   z-index: 1;
   display: block;
   width: 100%;
-  height: auto;
-  min-height: 410px;
+  height: 100%;
+  min-height: 420px;
 }
 
-.fy-task-tree__zones rect {
-  fill: rgba(255, 255, 255, 0.16);
+.fy-task-tree__zone {
   stroke: rgba(37, 86, 55, 0.08);
-  stroke-dasharray: 2 7;
+  stroke-width: 1px;
 }
 
-.fy-task-tree__zones text {
+.fy-task-tree__zone--now {
+  fill: rgba(255, 247, 232, 0.54);
+}
+
+.fy-task-tree__zone--next {
+  fill: rgba(245, 250, 236, 0.52);
+}
+
+.fy-task-tree__zone--later {
+  fill: rgba(235, 243, 225, 0.44);
+}
+
+.fy-task-tree__zone-label text {
   fill: var(--fy-green-deep);
-  font-size: 13px;
-  font-weight: 780;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  font-weight: 820;
+  letter-spacing: 0.06em;
+}
+
+.fy-task-tree__zone-label circle {
+  fill: var(--fy-green);
+}
+
+.fy-task-tree__zone-label--now circle {
+  fill: var(--fy-accent);
+}
+
+.fy-task-tree__zone-label--next circle {
+  fill: var(--fy-green);
+}
+
+.fy-task-tree__zone-label--later circle {
+  fill: #8aa17c;
+}
+
+.fy-task-tree__zone-label .fy-task-tree__zone-count {
+  fill: var(--fy-ink-soft);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0;
 }
 
 .fy-task-tree__trunk-shadow,
@@ -235,22 +277,34 @@ textarea:focus-visible,
 }
 
 .fy-task-tree__trunk-shadow {
-  stroke: rgba(46, 45, 25, 0.12);
-  stroke-width: 20px;
+  stroke: rgba(54, 47, 25, 0.1);
+  stroke-width: 22px;
 }
 
 .fy-task-tree__trunk {
-  stroke-width: 12px;
+  stroke-width: 13px;
 }
 
 .fy-task-tree__branch {
-  stroke: #7a4b2e;
-  stroke-width: 4px;
+  stroke: #815038;
+  stroke-width: 4.2px;
+  filter: drop-shadow(0 2px 1px rgba(69, 43, 28, 0.08));
 }
 
 .fy-task-tree__root {
   stroke: #714229;
   stroke-width: 8px;
+}
+
+.fy-task-tree__soil {
+  fill: rgba(100, 70, 38, 0.11);
+  filter: blur(0.5px);
+}
+
+.fy-task-tree__sprout {
+  fill: #77ae66;
+  stroke: #275e3d;
+  stroke-width: 2px;
 }
 
 .fy-task-tree__dependencies line {
@@ -266,6 +320,7 @@ textarea:focus-visible,
 
 .fy-task-leaf {
   cursor: pointer;
+  filter: drop-shadow(0 3px 3px rgba(24, 73, 43, 0.12));
   transition:
     opacity 180ms ease,
     filter 180ms ease,
@@ -273,9 +328,9 @@ textarea:focus-visible,
 }
 
 .fy-task-leaf__body {
-  fill: #79b764;
+  fill: #83bc6c;
   stroke: #285b3a;
-  stroke-width: 2px;
+  stroke-width: 1.8px;
   vector-effect: non-scaling-stroke;
   transition:
     fill 180ms ease,
@@ -284,10 +339,15 @@ textarea:focus-visible,
 
 .fy-task-leaf__vein {
   fill: none;
-  stroke: rgba(16, 69, 41, 0.65);
-  stroke-width: 1.5px;
+  stroke: rgba(16, 69, 41, 0.58);
+  stroke-width: 1.35px;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
+}
+
+.fy-task-leaf__vein--secondary {
+  opacity: 0.64;
+  stroke-width: 1px;
 }
 
 .fy-task-leaf__status {
@@ -300,11 +360,11 @@ textarea:focus-visible,
 }
 
 .fy-task-leaf--todo .fy-task-leaf__body {
-  fill: #a9cf87;
+  fill: #b8d996;
 }
 
 .fy-task-leaf--in-progress .fy-task-leaf__body {
-  fill: #4e9e5b;
+  fill: #55a963;
 }
 
 .fy-task-leaf--in-progress .fy-task-leaf__vein {
@@ -313,13 +373,13 @@ textarea:focus-visible,
 }
 
 .fy-task-leaf--in-review .fy-task-leaf__body {
-  fill: #78a890;
+  fill: #83ad9a;
   stroke-width: 3px;
   stroke-dasharray: 2 2;
 }
 
 .fy-task-leaf--unassigned .fy-task-leaf__body {
-  fill: rgba(249, 252, 241, 0.9);
+  fill: rgba(255, 254, 247, 0.94);
   stroke-dasharray: 5 4;
   stroke-width: 2.5px;
 }
@@ -346,8 +406,11 @@ textarea:focus-visible,
 }
 
 .fy-task-leaf:hover .fy-task-leaf__body {
-  fill: #8dcd75;
-  filter: drop-shadow(0 6px 5px rgba(21, 64, 39, 0.22));
+  fill: #91cf79;
+}
+
+.fy-task-leaf:hover {
+  filter: drop-shadow(0 9px 7px rgba(21, 64, 39, 0.25)) brightness(1.03);
 }
 
 .fy-task-leaf--dimmed {
@@ -374,7 +437,7 @@ textarea:focus-visible,
 }
 
 .fy-task-cluster path {
-  fill: #eff5dc;
+  fill: rgba(255, 254, 246, 0.94);
   stroke: var(--fy-green-deep);
   stroke-width: 2px;
   stroke-dasharray: 4 3;
@@ -389,7 +452,7 @@ textarea:focus-visible,
 
 .fy-task-cluster:hover path,
 .fy-task-cluster:focus-visible path {
-  fill: #d8edbd;
+  fill: #e2f1cc;
   stroke: var(--fy-focus);
 }
 
@@ -398,16 +461,23 @@ textarea:focus-visible,
   z-index: 4;
   top: var(--fy-card-y);
   left: var(--fy-card-x);
-  width: min(270px, calc(100% - 28px));
-  padding: 0.85rem 0.9rem;
-  border: 1px solid rgba(30, 71, 47, 0.18);
-  border-radius: 17px;
-  background: rgba(255, 255, 251, 0.97);
-  box-shadow: 0 16px 42px rgba(28, 61, 41, 0.22);
+  width: min(286px, calc(100% - 28px));
+  padding: 0.95rem 1rem;
+  border: 1px solid rgba(30, 71, 47, 0.15);
+  border-radius: 19px;
+  background: rgba(255, 254, 249, 0.97);
+  box-shadow:
+    0 20px 52px rgba(28, 61, 41, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
   pointer-events: none;
   transform: translate(-50%, -106%);
   animation: fy-card-in 130ms ease-out;
   backdrop-filter: blur(16px);
+}
+
+.fy-task-hover-card--below {
+  transform: translate(-50%, 16px);
+  animation-name: fy-card-in-below;
 }
 
 .fy-task-hover-card strong {
@@ -494,6 +564,13 @@ textarea:focus-visible,
   }
 }
 
+@keyframes fy-card-in-below {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+}
+
 .fy-task-detail,
 .fy-task-list,
 .fy-task-form {
@@ -506,7 +583,8 @@ textarea:focus-visible,
   min-width: 310px;
   flex-direction: column;
   overflow: hidden;
-  background: var(--fy-paper-raised);
+  background:
+    linear-gradient(180deg, rgba(248, 251, 242, 0.72), transparent 170px), var(--fy-paper-raised);
 }
 
 .fy-task-detail__header,
@@ -518,6 +596,7 @@ textarea:focus-visible,
   gap: 1rem;
   padding: 1.25rem 1.35rem 1rem;
   border-bottom: 1px solid var(--fy-line);
+  background: linear-gradient(180deg, rgba(250, 252, 245, 0.9), rgba(255, 254, 249, 0.72));
 }
 
 .fy-task-detail h2,
@@ -539,6 +618,10 @@ textarea:focus-visible,
 
 .fy-task-detail__facts div {
   min-width: 0;
+  padding: 0.58rem 0.65rem;
+  border: 1px solid rgba(35, 83, 57, 0.08);
+  border-radius: 11px;
+  background: rgba(248, 250, 243, 0.72);
 }
 
 .fy-task-detail__facts dt {
@@ -702,6 +785,9 @@ textarea:focus-visible,
 
 .fy-task-list {
   padding: 0 1.25rem 1.25rem;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(119, 174, 102, 0.08), transparent 28%),
+    rgba(255, 254, 249, 0.94);
 }
 
 .fy-task-list__header {
@@ -760,6 +846,7 @@ textarea:focus-visible,
   border-radius: 10px;
   background: white;
   color: var(--fy-ink);
+  box-shadow: inset 0 1px 2px rgba(29, 66, 44, 0.04);
 }
 
 .fy-task-list__filters input,
@@ -812,7 +899,7 @@ textarea:focus-visible,
 
 .fy-task-list__rows {
   display: grid;
-  gap: 0.45rem;
+  gap: 0.55rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -824,10 +911,10 @@ textarea:focus-visible,
   grid-template-columns: 12px minmax(160px, 1fr) minmax(100px, 0.3fr) minmax(80px, auto);
   gap: 0.8rem;
   align-items: center;
-  padding: 0.75rem;
+  padding: 0.82rem 0.85rem;
   border: 1px solid var(--fy-line);
   border-radius: 13px;
-  background: white;
+  background: rgba(255, 255, 252, 0.94);
   color: var(--fy-ink);
   cursor: pointer;
   text-align: left;
@@ -835,7 +922,9 @@ textarea:focus-visible,
 
 .fy-task-list__rows button:hover {
   border-color: var(--fy-green);
-  box-shadow: 0 7px 22px rgba(24, 67, 42, 0.08);
+  background: #fffef8;
+  box-shadow: 0 10px 28px rgba(24, 67, 42, 0.1);
+  transform: translateY(-1px);
 }
 
 .fy-list-status {
@@ -904,8 +993,9 @@ textarea:focus-visible,
 .fy-task-form {
   width: min(720px, 100%);
   overflow: auto;
-  border-radius: 20px;
-  background: white;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 24px;
+  background: var(--fy-paper-raised);
 }
 
 .fy-task-form__grid {
