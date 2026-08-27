@@ -2,7 +2,7 @@
 
 Last verified: 2026-08-27 (Asia/Shanghai)
 
-This record maps every checked OpenSpec task to implementation or executable evidence. A task stays unchecked when its acceptance condition requires a native Windows environment, signing material, or a human exercise that has not actually run.
+This record maps every checked OpenSpec task to implementation or executable evidence. On 2026-08-27 the product owner moved the full physical Windows matrix, trusted installer signing lifecycle and formal human timing study to post-MVP release gates so that the current stage can focus on core task functionality. Those gates remain documented and must not be reported as completed without real evidence.
 
 ## Final automated gate
 
@@ -37,7 +37,7 @@ cargo metadata --manifest-path apps/desktop/src-tauri/Cargo.toml --locked --no-d
 pnpm --filter @fanshuye/desktop build:native
 ```
 
-All 26 native Rust tests passed. The build used Visual Studio Build Tools 2022 17.14.39, MSVC 14.44.35207, Windows SDK 10.0.26100.0, Rust 1.98.0 and WebView2 Runtime 151.0.4129.107. It produced the release executable and the NSIS installer `番薯叶_0.1.0_x64-setup.exe`. The installer inspection correctly reports `NotSigned`; release signing remains a separate unchecked gate.
+All 26 native Rust tests passed. The build used Visual Studio Build Tools 2022 17.14.39, MSVC 14.44.35207, Windows SDK 10.0.26100.0, Rust 1.98.0 and WebView2 Runtime 151.0.4129.107. It produced the release executable and the NSIS installer `番薯叶_0.1.0_x64-setup.exe`. The installer inspection correctly reports `NotSigned`; trusted release signing is tracked as a post-MVP public-release gate.
 
 The compiled release desktop process and the development server were also started simultaneously. While the desktop process was running, `GET http://127.0.0.1:4310/health` returned HTTP 200 with status `ok`; both processes then stopped cleanly. This completes the native/server startup requirement in task 1.2.
 
@@ -114,10 +114,10 @@ The installer now uses current-user mode for the developer pilot. This corporate
 
 The 30-minute hidden-process evidence is recorded in `docs/evidence/windows-hidden-residency-2026-08-27.json` and independently recomputed from its raw samples before task 7.8 was checked. The sampler now prevents automatic system sleep and fails closed on missing samples or excessive gaps after an earlier interrupted attempt exposed that risk. The full native evidence manifest and all 6 release cases remain incomplete because the other physical observations and signing trust anchor do not yet exist. The native matrix includes an explicit Windows Credential Manager/isolation case, requires case-specific notes, rejects text files and false media extensions, and accepts resource evidence only when it is a passing 30-minute measurement JSON. The usability prerequisite suite passed 3/3, but its result deliberately remains `OBSERVER_ATTESTATION_REQUIRED`.
 
-Remaining gates are therefore:
+Post-MVP public-release gates are therefore:
 
-- the Windows native E2E matrix (10.5)
-- signed installer install/upgrade/uninstall validation (10.7)
-- a timed human 30-task developer usability study (10.9)
+- the Windows native E2E matrix (R1, formerly 10.5)
+- signed installer install/upgrade/uninstall validation (R2, formerly 10.7)
+- a timed human 30-task developer usability study (R3, formerly 10.9)
 
-These gates must remain unchecked until their actual native or human evidence exists.
+They no longer block the functional MVP or the next feature iteration. They still require actual native, signing or human evidence before a wider/public release can claim them as complete.

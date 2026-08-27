@@ -12,6 +12,8 @@
 - 版本冲突、幂等命令、审计事件和工作区隔离。
 - 不包含 Agent、自动进度、Git 集成或离线写入。
 
+当前阶段是功能 MVP：优先打磨任务创建、认领、协作、状态流转、阻塞、依赖和任务树反馈。完整多显示器/DPI 实机矩阵、可信安装包签名和正式真人计时研究保留为扩大试点或公开发布前的门槛，不阻塞当前功能开发。
+
 ## 本地开发
 
 要求：Node.js 22、pnpm 11，以及 Docker Desktop 或可访问的 PostgreSQL 17。只有原生桌面开发和打包需要 Rust stable、MSVC 与 Windows SDK；纯 Web UI 不需要 Rust。
@@ -73,6 +75,6 @@ pnpm scope:check
 openspec validate build-fanshuye-desktop-mvp --type change --strict
 ```
 
-`pnpm build` 构建 Web UI 与服务端 JavaScript；它不构建 Windows 安装包。真实 PostgreSQL 集成测试的隔离库准备方式见 [`apps/server/README.md`](apps/server/README.md)，Windows 原生开发、打包、签名与验收见 [`docs/windows-validation.md`](docs/windows-validation.md)。任何一项命令失败都应视为发布阻断。
+`pnpm build` 构建 Web UI 与服务端 JavaScript；它不构建 Windows 安装包。真实 PostgreSQL 集成测试的隔离库准备方式见 [`apps/server/README.md`](apps/server/README.md)，Windows 原生开发、打包、签名与验收见 [`docs/windows-validation.md`](docs/windows-validation.md)。上述自动化命令失败会阻断功能分支合并；完整实机矩阵与可信签名则在扩大试点或公开发布前执行。
 
 架构与运维细节见 [docs/architecture.md](docs/architecture.md) 和 [docs/operations.md](docs/operations.md)。规范源位于 `openspec/changes/build-fanshuye-desktop-mvp/`。
