@@ -1,0 +1,44 @@
+{
+  "name": "@fanshuye/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "powershell -NoProfile -ExecutionPolicy Bypass -File ../../scripts/run-tauri.ps1 -TauriCommand dev",
+    "dev:web": "vite",
+    "build": "vite build",
+    "build:native": "powershell -NoProfile -ExecutionPolicy Bypass -File ../../scripts/run-tauri.ps1 -TauriCommand build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:usability": "vitest run src/usability-study.test.tsx",
+    "study:usability": "vite --host 127.0.0.1 --port 1420 --strictPort --open /?usability=30-task",
+    "tauri": "tauri",
+    "tauri:info": "powershell -NoProfile -ExecutionPolicy Bypass -File ../../scripts/run-tauri.ps1 -TauriCommand info"
+  },
+  "dependencies": {
+    "@fanshuye/contracts": "workspace:*",
+    "@fanshuye/ui": "workspace:*",
+    "@tauri-apps/api": "^2.2.0",
+    "@tauri-apps/plugin-autostart": "^2.2.0",
+    "@tauri-apps/plugin-global-shortcut": "^2.2.0",
+    "@tauri-apps/plugin-notification": "^2.2.0",
+    "@tauri-apps/plugin-sql": "^2.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.2.2",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "vitest": "^3.2.4"
+  }
+}

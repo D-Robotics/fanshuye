@@ -1,0 +1,27 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 512 512"
+  role="img"
+  aria-labelledby="title description"
+>
+  <title id="title">番薯叶</title>
+  <desc id="description">一片绿色心形番薯叶连接紫色番薯根</desc>
+  <g transform="translate(25.6 25.6) scale(0.9)">
+    <path
+      fill="#247A45"
+      d="M256 314c-18-38-55-54-98-77-65-35-97-89-80-139 18-52 89-58 136-17 20 18 34 39 42 63 8-24 22-45 42-63 47-41 118-35 136 17 17 50-15 104-80 139-43 23-80 39-98 77Z"
+    />
+    <path
+      fill="none"
+      stroke="#A8D36B"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="15"
+      d="M256 296V142M256 219l-63-65M256 218l64-64M256 265l-67-43M256 264l68-45"
+    />
+    <path
+      fill="#955083"
+      d="M217 286c21 14 57 14 78 0 25 29 41 57 39 91-3 45-32 84-68 105-17 10-30-2-27-24 3-23-9-39-27-62-25-32-35-66-18-89 7-10 15-16 23-21Z"
+    />
+  </g>
+</svg>

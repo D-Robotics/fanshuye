@@ -1,0 +1,1074 @@
+:root {
+  --fy-ink: #173126;
+  --fy-ink-soft: #52695d;
+  --fy-paper: #fbfaf4;
+  --fy-paper-raised: #ffffff;
+  --fy-line: rgba(35, 68, 51, 0.15);
+  --fy-line-strong: rgba(35, 68, 51, 0.3);
+  --fy-accent: #e7663b;
+  --fy-accent-dark: #ad3e23;
+  --fy-green: #2f7d50;
+  --fy-green-bright: #63ad70;
+  --fy-green-deep: #164d35;
+  --fy-gold: #c28e2c;
+  --fy-danger: #a83e31;
+  --fy-focus: #1473e6;
+  --fy-trunk-light: #a9633f;
+  --fy-trunk-dark: #63351f;
+  color: var(--fy-ink);
+  font-family:
+    Inter, 'Segoe UI Variable', 'Microsoft YaHei UI', 'PingFang SC', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a,
+input,
+select,
+textarea,
+[role='button'] {
+  outline: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role='button']:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fy-focus) 35%, transparent);
+  outline: 2px solid var(--fy-focus);
+  outline-offset: 2px;
+}
+
+.fy-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.fy-eyebrow {
+  display: block;
+  color: var(--fy-accent-dark);
+  font-size: 0.72rem;
+  font-weight: 760;
+  letter-spacing: 0.11em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.fy-button,
+.fy-icon-button {
+  border: 1px solid var(--fy-line-strong);
+  background: var(--fy-paper-raised);
+  color: var(--fy-ink);
+  cursor: pointer;
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    background 150ms ease;
+}
+
+.fy-button {
+  min-height: 38px;
+  padding: 0.55rem 0.82rem;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 690;
+}
+
+.fy-button:hover:not(:disabled),
+.fy-icon-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--fy-green);
+}
+
+.fy-button:disabled,
+.fy-icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.fy-button--primary {
+  border-color: var(--fy-green-deep);
+  background: var(--fy-green-deep);
+  color: white;
+  box-shadow: 0 7px 20px rgba(22, 77, 53, 0.18);
+}
+
+.fy-button--quiet {
+  background: transparent;
+}
+
+.fy-icon-button {
+  display: inline-grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  padding: 0;
+  border-radius: 50%;
+  place-items: center;
+  font-size: 1.3rem;
+}
+
+.fy-sync-status {
+  display: flex;
+  min-height: 32px;
+  align-items: center;
+  gap: 0.48rem;
+  padding: 0.38rem 0.7rem;
+  border: 1px solid var(--fy-line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--fy-paper-raised) 88%, transparent);
+  color: var(--fy-ink-soft);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.fy-sync-status strong {
+  color: var(--fy-ink);
+}
+
+.fy-sync-status__symbol {
+  width: 9px;
+  height: 9px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.fy-sync-status--online .fy-sync-status__symbol {
+  border-color: var(--fy-green);
+  background: var(--fy-green);
+}
+
+.fy-sync-status--reconnecting .fy-sync-status__symbol,
+.fy-sync-status--recovering .fy-sync-status__symbol {
+  border-top-color: transparent;
+  animation: fy-spin 1s linear infinite;
+}
+
+.fy-sync-status--offline {
+  border-style: dashed;
+}
+
+.fy-sync-status--conflict {
+  border-color: var(--fy-danger);
+  color: var(--fy-danger);
+}
+
+@keyframes fy-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fy-task-tree {
+  position: relative;
+  width: 100%;
+  min-width: 320px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 27px;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(246, 222, 155, 0.2), transparent 31%),
+    linear-gradient(155deg, rgba(245, 249, 236, 0.96), rgba(225, 239, 217, 0.92));
+  box-shadow:
+    0 22px 55px rgba(32, 77, 52, 0.16),
+    inset 0 1px 0 white;
+  isolation: isolate;
+}
+
+.fy-task-tree::before {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(42, 88, 56, 0.08) 0.7px, transparent 0.7px);
+  background-size: 11px 11px;
+  content: '';
+  pointer-events: none;
+}
+
+.fy-task-tree svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 410px;
+}
+
+.fy-task-tree__zones rect {
+  fill: rgba(255, 255, 255, 0.16);
+  stroke: rgba(37, 86, 55, 0.08);
+  stroke-dasharray: 2 7;
+}
+
+.fy-task-tree__zones text {
+  fill: var(--fy-green-deep);
+  font-size: 13px;
+  font-weight: 780;
+  letter-spacing: 0.08em;
+}
+
+.fy-task-tree__trunk-shadow,
+.fy-task-tree__trunk,
+.fy-task-tree__branch,
+.fy-task-tree__root {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.fy-task-tree__trunk-shadow {
+  stroke: rgba(46, 45, 25, 0.12);
+  stroke-width: 20px;
+}
+
+.fy-task-tree__trunk {
+  stroke-width: 12px;
+}
+
+.fy-task-tree__branch {
+  stroke: #7a4b2e;
+  stroke-width: 4px;
+}
+
+.fy-task-tree__root {
+  stroke: #714229;
+  stroke-width: 8px;
+}
+
+.fy-task-tree__dependencies line {
+  stroke: var(--fy-danger);
+  stroke-width: 2.25px;
+  stroke-dasharray: 5 5;
+  vector-effect: non-scaling-stroke;
+}
+
+.fy-task-tree__dependencies marker path {
+  fill: var(--fy-danger);
+}
+
+.fy-task-leaf {
+  cursor: pointer;
+  transition:
+    opacity 180ms ease,
+    filter 180ms ease,
+    transform 230ms ease;
+}
+
+.fy-task-leaf__body {
+  fill: #79b764;
+  stroke: #285b3a;
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+  transition:
+    fill 180ms ease,
+    stroke 180ms ease;
+}
+
+.fy-task-leaf__vein {
+  fill: none;
+  stroke: rgba(16, 69, 41, 0.65);
+  stroke-width: 1.5px;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.fy-task-leaf__status {
+  fill: #123c28;
+  font-size: 11px;
+  font-weight: 850;
+  text-anchor: middle;
+  transform: rotate(var(--fy-leaf-counter-rotation, 0deg));
+  pointer-events: none;
+}
+
+.fy-task-leaf--todo .fy-task-leaf__body {
+  fill: #a9cf87;
+}
+
+.fy-task-leaf--in-progress .fy-task-leaf__body {
+  fill: #4e9e5b;
+}
+
+.fy-task-leaf--in-progress .fy-task-leaf__vein {
+  stroke-dasharray: 4 3;
+  animation: fy-vein-flow 2.4s linear infinite;
+}
+
+.fy-task-leaf--in-review .fy-task-leaf__body {
+  fill: #78a890;
+  stroke-width: 3px;
+  stroke-dasharray: 2 2;
+}
+
+.fy-task-leaf--unassigned .fy-task-leaf__body {
+  fill: rgba(249, 252, 241, 0.9);
+  stroke-dasharray: 5 4;
+  stroke-width: 2.5px;
+}
+
+.fy-task-leaf--manual-blocked .fy-task-leaf__body,
+.fy-task-leaf--dependency-blocked .fy-task-leaf__body {
+  stroke: var(--fy-danger);
+  stroke-width: 3px;
+}
+
+.fy-task-leaf--dependency-blocked .fy-task-leaf__body {
+  stroke-dasharray: 3 3;
+}
+
+.fy-task-leaf--overdue .fy-task-leaf__body {
+  filter: saturate(0.7);
+  stroke: #7f251d;
+}
+
+.fy-task-leaf--selected .fy-task-leaf__body,
+.fy-task-leaf:focus-visible .fy-task-leaf__body {
+  stroke: var(--fy-focus);
+  stroke-width: 4px;
+}
+
+.fy-task-leaf:hover .fy-task-leaf__body {
+  fill: #8dcd75;
+  filter: drop-shadow(0 6px 5px rgba(21, 64, 39, 0.22));
+}
+
+.fy-task-leaf--dimmed {
+  opacity: 0.22;
+}
+
+.fy-task-leaf__badge circle,
+.fy-task-leaf__badge rect {
+  fill: var(--fy-paper-raised);
+  stroke: var(--fy-danger);
+  stroke-width: 1.6px;
+  vector-effect: non-scaling-stroke;
+}
+
+.fy-task-leaf__badge text {
+  fill: var(--fy-danger);
+  font-size: 9px;
+  font-weight: 900;
+  text-anchor: middle;
+}
+
+.fy-task-cluster {
+  cursor: pointer;
+}
+
+.fy-task-cluster path {
+  fill: #eff5dc;
+  stroke: var(--fy-green-deep);
+  stroke-width: 2px;
+  stroke-dasharray: 4 3;
+}
+
+.fy-task-cluster text {
+  fill: var(--fy-green-deep);
+  font-size: 16px;
+  font-weight: 850;
+  text-anchor: middle;
+}
+
+.fy-task-cluster:hover path,
+.fy-task-cluster:focus-visible path {
+  fill: #d8edbd;
+  stroke: var(--fy-focus);
+}
+
+.fy-task-hover-card {
+  position: absolute;
+  z-index: 4;
+  top: var(--fy-card-y);
+  left: var(--fy-card-x);
+  width: min(270px, calc(100% - 28px));
+  padding: 0.85rem 0.9rem;
+  border: 1px solid rgba(30, 71, 47, 0.18);
+  border-radius: 17px;
+  background: rgba(255, 255, 251, 0.97);
+  box-shadow: 0 16px 42px rgba(28, 61, 41, 0.22);
+  pointer-events: none;
+  transform: translate(-50%, -106%);
+  animation: fy-card-in 130ms ease-out;
+  backdrop-filter: blur(16px);
+}
+
+.fy-task-hover-card strong {
+  display: block;
+  margin: 0.28rem 0 0.54rem;
+  font-size: 0.96rem;
+  line-height: 1.35;
+}
+
+.fy-task-hover-card__level {
+  color: var(--fy-accent-dark);
+  font-size: 0.68rem;
+  font-weight: 760;
+  letter-spacing: 0.05em;
+}
+
+.fy-task-hover-card dl {
+  display: grid;
+  gap: 0.22rem;
+  margin: 0;
+  font-size: 0.72rem;
+}
+
+.fy-task-hover-card dl div {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 0.45rem;
+}
+
+.fy-task-hover-card dt {
+  color: var(--fy-ink-soft);
+}
+
+.fy-task-hover-card dd {
+  margin: 0;
+  font-weight: 650;
+}
+
+.fy-task-hover-card p {
+  margin: 0.42rem 0 0;
+  color: var(--fy-ink-soft);
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+.fy-task-hover-card__reason {
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--fy-line);
+}
+
+.fy-task-tree__empty {
+  position: absolute;
+  z-index: 3;
+  inset: 36% 15% auto;
+  display: grid;
+  justify-items: center;
+  color: var(--fy-ink-soft);
+  text-align: center;
+}
+
+.fy-task-tree__empty > span {
+  font-size: 2.2rem;
+}
+
+.fy-task-tree__empty strong {
+  color: var(--fy-ink);
+}
+
+.fy-task-tree__empty p {
+  margin: 0.3rem 0;
+  font-size: 0.8rem;
+}
+
+@keyframes fy-vein-flow {
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+
+@keyframes fy-card-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -100%);
+  }
+}
+
+.fy-task-detail,
+.fy-task-list,
+.fy-task-form {
+  color: var(--fy-ink);
+}
+
+.fy-task-detail {
+  display: flex;
+  height: 100%;
+  min-width: 310px;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--fy-paper-raised);
+}
+
+.fy-task-detail__header,
+.fy-task-list__header,
+.fy-task-form > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.35rem 1rem;
+  border-bottom: 1px solid var(--fy-line);
+}
+
+.fy-task-detail h2,
+.fy-task-list h2,
+.fy-task-form h2 {
+  margin: 0.18rem 0 0;
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+
+.fy-task-detail__facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 1rem 1.35rem;
+  border-bottom: 1px solid var(--fy-line);
+}
+
+.fy-task-detail__facts div {
+  min-width: 0;
+}
+
+.fy-task-detail__facts dt {
+  color: var(--fy-ink-soft);
+  font-size: 0.7rem;
+}
+
+.fy-task-detail__facts dd {
+  margin: 0.12rem 0 0;
+  overflow: hidden;
+  font-size: 0.82rem;
+  font-weight: 680;
+  text-overflow: ellipsis;
+}
+
+.fy-task-detail__section {
+  padding: 0.95rem 1.35rem;
+  border-bottom: 1px solid var(--fy-line);
+}
+
+.fy-task-detail__section h3 {
+  margin: 0 0 0.42rem;
+  color: var(--fy-ink-soft);
+  font-size: 0.7rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.fy-task-detail__section p,
+.fy-task-detail__section li {
+  margin: 0.25rem 0;
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.fy-task-detail__section--blocked {
+  margin: 0.75rem 0.9rem;
+  padding: 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--fy-danger) 28%, transparent);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--fy-danger) 7%, white);
+}
+
+.fy-preserve-lines {
+  white-space: pre-wrap;
+}
+
+.fy-dependency-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.fy-dependency-columns strong {
+  font-size: 0.75rem;
+}
+
+.fy-dependency-columns ul,
+.fy-reference-list {
+  margin: 0.3rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.fy-reference-list a {
+  color: var(--fy-green-deep);
+  font-weight: 650;
+}
+
+.fy-timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fy-timeline li {
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  gap: 0.55rem;
+  padding-bottom: 0.65rem;
+}
+
+.fy-timeline__dot {
+  width: 9px;
+  height: 9px;
+  margin-top: 0.3rem;
+  border: 2px solid var(--fy-green);
+  border-radius: 50%;
+}
+
+.fy-timeline strong,
+.fy-timeline small {
+  display: block;
+}
+
+.fy-timeline small {
+  margin-top: 0.1rem;
+  color: var(--fy-ink-soft);
+}
+
+.fy-task-detail__footer {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  gap: 0.6rem;
+  margin-top: auto;
+  padding: 0.85rem 1.1rem;
+  border-top: 1px solid var(--fy-line);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+}
+
+.fy-task-detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.fy-block-form {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.35fr) 1fr auto;
+  gap: 0.45rem;
+  align-items: end;
+  padding: 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--fy-danger) 25%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--fy-danger) 5%, white);
+}
+
+.fy-block-form label {
+  display: grid;
+  gap: 0.25rem;
+  color: var(--fy-ink-soft);
+  font-size: 0.68rem;
+}
+
+.fy-block-form input,
+.fy-block-form select {
+  min-height: 37px;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--fy-line-strong);
+  border-radius: 9px;
+  background: white;
+}
+
+.fy-inline-alert {
+  display: grid;
+  gap: 0.16rem;
+  margin: 0.75rem 1.2rem 0;
+  padding: 0.7rem 0.8rem;
+  border: 1px dashed var(--fy-gold);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--fy-gold) 8%, white);
+  color: #675016;
+  font-size: 0.76rem;
+}
+
+.fy-inline-alert--danger {
+  border-color: var(--fy-danger);
+  color: var(--fy-danger);
+}
+
+.fy-task-list {
+  padding: 0 1.25rem 1.25rem;
+}
+
+.fy-task-list__header {
+  margin: 0 -1.25rem;
+}
+
+.fy-segmented {
+  display: flex;
+  padding: 3px;
+  border: 1px solid var(--fy-line);
+  border-radius: 11px;
+  background: #edf2e9;
+}
+
+.fy-segmented button {
+  padding: 0.38rem 0.68rem;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--fy-ink-soft);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.fy-segmented button[aria-pressed='true'] {
+  background: white;
+  color: var(--fy-ink);
+  box-shadow: 0 2px 7px rgba(27, 61, 40, 0.12);
+}
+
+.fy-task-list__filters {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) repeat(3, minmax(120px, auto)) auto;
+  gap: 0.65rem;
+  align-items: end;
+  padding: 1rem 0;
+}
+
+.fy-task-list__filters label,
+.fy-field {
+  display: grid;
+  gap: 0.3rem;
+  color: var(--fy-ink-soft);
+  font-size: 0.69rem;
+  font-weight: 650;
+}
+
+.fy-task-list__filters input,
+.fy-task-list__filters select,
+.fy-field input,
+.fy-field select,
+.fy-field textarea {
+  width: 100%;
+  border: 1px solid var(--fy-line-strong);
+  border-radius: 10px;
+  background: white;
+  color: var(--fy-ink);
+}
+
+.fy-task-list__filters input,
+.fy-task-list__filters select,
+.fy-field input,
+.fy-field select {
+  min-height: 39px;
+  padding: 0.45rem 0.65rem;
+}
+
+.fy-field textarea {
+  padding: 0.6rem 0.7rem;
+  resize: vertical;
+}
+
+.fy-search-field {
+  position: relative;
+}
+
+.fy-search-field > span[aria-hidden='true'] {
+  position: absolute;
+  bottom: 10px;
+  left: 11px;
+  color: var(--fy-ink-soft);
+}
+
+.fy-search-field input {
+  padding-left: 2rem;
+}
+
+.fy-check-field {
+  display: flex !important;
+  min-height: 39px;
+  align-items: center;
+  gap: 0.45rem !important;
+  padding: 0 0.4rem;
+  white-space: nowrap;
+}
+
+.fy-check-field input {
+  width: 17px !important;
+  min-height: auto !important;
+}
+
+.fy-task-list__summary {
+  padding: 0 0 0.55rem;
+  color: var(--fy-ink-soft);
+  font-size: 0.72rem;
+}
+
+.fy-task-list__rows {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fy-task-list__rows button {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 12px minmax(160px, 1fr) minmax(100px, 0.3fr) minmax(80px, auto);
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid var(--fy-line);
+  border-radius: 13px;
+  background: white;
+  color: var(--fy-ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.fy-task-list__rows button:hover {
+  border-color: var(--fy-green);
+  box-shadow: 0 7px 22px rgba(24, 67, 42, 0.08);
+}
+
+.fy-list-status {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--fy-green-deep);
+  border-radius: 50%;
+}
+
+.fy-list-status--in-progress {
+  border-radius: 2px;
+  background: var(--fy-green);
+}
+
+.fy-list-status--in-review {
+  border-style: dashed;
+  transform: rotate(45deg);
+}
+
+.fy-list-status--done {
+  background: var(--fy-green-deep);
+}
+
+.fy-list-status--canceled {
+  border-radius: 0;
+  transform: rotate(45deg);
+}
+
+.fy-task-list__title {
+  min-width: 0;
+}
+
+.fy-task-list__title strong,
+.fy-task-list__title small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fy-task-list__title small,
+.fy-task-list__owner,
+.fy-task-list__state {
+  margin-top: 0.16rem;
+  color: var(--fy-ink-soft);
+  font-size: 0.72rem;
+}
+
+.fy-empty-state {
+  display: grid;
+  min-height: 220px;
+  place-content: center;
+  color: var(--fy-ink-soft);
+  text-align: center;
+}
+
+.fy-empty-state strong {
+  color: var(--fy-ink);
+}
+
+.fy-empty-state p {
+  margin: 0.35rem 0;
+  font-size: 0.8rem;
+}
+
+.fy-task-form {
+  width: min(720px, 100%);
+  overflow: auto;
+  border-radius: 20px;
+  background: white;
+}
+
+.fy-task-form__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  padding: 0 1.25rem;
+}
+
+.fy-task-form > .fy-field {
+  margin: 0.9rem 1.25rem;
+}
+
+.fy-duplicate-notice {
+  margin: -0.25rem 1.25rem 1rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--fy-gold) 35%, transparent);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--fy-gold) 8%, white);
+}
+
+.fy-duplicate-notice > strong,
+.fy-duplicate-notice > p {
+  font-size: 0.76rem;
+}
+
+.fy-duplicate-notice > p {
+  margin: 0.2rem 0 0.5rem;
+  color: var(--fy-ink-soft);
+}
+
+.fy-duplicate-notice ul {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fy-duplicate-notice li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(117, 87, 27, 0.13);
+  font-size: 0.74rem;
+}
+
+.fy-duplicate-notice small {
+  color: var(--fy-ink-soft);
+}
+
+.fy-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin: 1rem 1.25rem;
+  padding: 0.85rem;
+  border: 1px solid var(--fy-line);
+  border-radius: 13px;
+}
+
+.fy-choice-grid legend {
+  padding: 0 0.35rem;
+  color: var(--fy-ink-soft);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.fy-choice-grid label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.76rem;
+}
+
+.fy-choice-grid p {
+  margin: 0;
+  color: var(--fy-ink-soft);
+  font-size: 0.75rem;
+}
+
+.fy-task-form > footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding: 0.9rem 1.25rem;
+  border-top: 1px solid var(--fy-line);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+}
+
+@media (max-width: 860px) {
+  .fy-task-list__filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .fy-search-field {
+    grid-column: 1 / -1;
+  }
+
+  .fy-task-list__rows button {
+    grid-template-columns: 12px minmax(140px, 1fr) auto;
+  }
+
+  .fy-task-list__owner {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .fy-task-detail__facts,
+  .fy-dependency-columns,
+  .fy-task-form__grid,
+  .fy-choice-grid,
+  .fy-task-list__filters {
+    grid-template-columns: 1fr;
+  }
+
+  .fy-task-list__rows button {
+    grid-template-columns: 12px minmax(130px, 1fr);
+  }
+
+  .fy-task-list__state {
+    display: none;
+  }
+}
+
+.fy-reduced-motion *,
+.fy-reduced-motion *::before,
+.fy-reduced-motion *::after {
+  scroll-behavior: auto !important;
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .fy-task-leaf__body,
+  .fy-task-cluster path,
+  .fy-list-status,
+  .fy-sync-status__symbol {
+    fill: Canvas !important;
+    stroke: CanvasText !important;
+    forced-color-adjust: auto;
+  }
+
+  .fy-task-leaf--manual-blocked .fy-task-leaf__body,
+  .fy-task-leaf--dependency-blocked .fy-task-leaf__body,
+  .fy-task-leaf--overdue .fy-task-leaf__body {
+    stroke: Mark !important;
+  }
+}

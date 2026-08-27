@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "tester": null,
+  "executedAt": null,
+  "windowsBuild": null,
+  "webView2Version": null,
+  "appVersion": "0.1.0",
+  "cases": [
+    {
+      "id": "display.single-monitor",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "display.dual-monitor",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "dpi.100",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "dpi.125",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "dpi.150",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "dpi.200",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "display.primary-switch",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "display.unplug-resume",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "overlay.hover-delay",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "overlay.pin-escape",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "overlay.editor-focus",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "tray.toggle-exit",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "shortcut.single-instance-autostart",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "runtime.restart-session-entry",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "security.credential-manager-isolation",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "runtime.server-health-snapshot",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "resource.hidden-cpu-memory",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "fallback.side-panel",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "privacy.dnd-reduced-motion",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "sync.offline-reconnect-conflict",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "name": "fanshuye",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.19.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "pnpm -r --if-present build",
+    "dev": "pnpm --parallel --filter @fanshuye/server --filter @fanshuye/desktop dev",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
+    "test:run": "pnpm -r --if-present test:run",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test:run && pnpm build && pnpm verify:server-bundle && pnpm scope:check",
+    "rust:check": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --check && cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml --locked",
+    "precommit": "pnpm check && pnpm rust:check",
+    "perf:baseline": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/performance-baseline.ps1",
+    "native:preflight": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/windows-native-preflight.ps1",
+    "native:preflight:signing": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/windows-native-preflight.ps1 -RequireSigning",
+    "native:e2e:validate": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/validate-windows-evidence.ps1 -Kind native-e2e",
+    "native:installer:inspect": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/inspect-windows-installer.ps1",
+    "native:residency:measure": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/measure-windows-residency.ps1",
+    "native:release:validate": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/validate-windows-evidence.ps1 -Kind release",
+    "scope:check": "node scripts/check-mvp-scope.mjs",
+    "verify:server-bundle": "node --input-type=module --eval \"await import('./apps/server/dist/main.js')\"",
+    "db:migrate": "pnpm --filter @fanshuye/server db:migrate",
+    "db:seed": "pnpm --filter @fanshuye/server db:seed"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.11.0",
+    "prettier": "^3.9.6",
+    "tsx": "^4.23.12",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.68.0",
+    "vitest": "^4.1.11"
+  }
+}

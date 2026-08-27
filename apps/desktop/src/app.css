@@ -1,0 +1,850 @@
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  margin: 0;
+}
+
+html {
+  background: transparent;
+}
+
+body {
+  overflow: hidden;
+  background: transparent;
+  color: var(--fy-ink);
+  user-select: none;
+}
+
+input,
+textarea {
+  user-select: text;
+}
+
+.fy-main-window {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(231, 102, 59, 0.08), transparent 28%),
+    linear-gradient(145deg, #f7f5eb, #eef3e8);
+}
+
+.fy-app-header {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  min-height: 68px;
+  align-items: center;
+  gap: 1.3rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--fy-line);
+  background: rgba(251, 250, 244, 0.92);
+  box-shadow: 0 7px 26px rgba(27, 58, 39, 0.05);
+  backdrop-filter: blur(18px);
+}
+
+.fy-brand {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--fy-ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.fy-brand__mark {
+  display: grid;
+  width: 41px;
+  height: 41px;
+  place-items: center;
+  border-radius: 13px 13px 13px 4px;
+  background: linear-gradient(145deg, #2c8150, #174d35);
+  color: white;
+  box-shadow: 0 8px 18px rgba(23, 77, 53, 0.22);
+  font-family: Georgia, serif;
+  font-size: 1.08rem;
+  transform: rotate(-4deg);
+}
+
+.fy-brand strong,
+.fy-brand small {
+  display: block;
+}
+
+.fy-brand strong {
+  font-family: Georgia, 'Noto Serif SC', serif;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+}
+
+.fy-brand small {
+  margin-top: 0.06rem;
+  color: var(--fy-ink-soft);
+  font-size: 0.63rem;
+  letter-spacing: 0.06em;
+}
+
+.fy-app-header nav {
+  display: flex;
+  gap: 0.12rem;
+  align-self: stretch;
+}
+
+.fy-app-header nav button {
+  position: relative;
+  padding: 0.45rem 0.7rem;
+  border: 0;
+  background: transparent;
+  color: var(--fy-ink-soft);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 690;
+}
+
+.fy-app-header nav button[aria-current='page'] {
+  color: var(--fy-ink);
+}
+
+.fy-app-header nav button[aria-current='page']::after {
+  position: absolute;
+  right: 0.7rem;
+  bottom: 0;
+  left: 0.7rem;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--fy-accent);
+  content: '';
+}
+
+.fy-app-header__actions {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.45rem;
+  margin-left: auto;
+}
+
+.fy-header-button {
+  min-height: 36px;
+  padding: 0.45rem 0.68rem;
+  border: 1px solid var(--fy-line-strong);
+  border-radius: 10px;
+  background: white;
+  color: var(--fy-ink);
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.fy-header-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.fy-header-button--primary {
+  border-color: var(--fy-accent-dark);
+  background: var(--fy-accent);
+  color: white;
+}
+
+.fy-my-toggle {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 0.36rem;
+  padding: 0 0.58rem;
+  border: 1px solid var(--fy-line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.66);
+  color: var(--fy-ink-soft);
+  font-size: 0.68rem;
+  font-weight: 680;
+  white-space: nowrap;
+}
+
+.fy-my-toggle input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--fy-green);
+}
+
+.fy-settings-popover {
+  position: fixed;
+  z-index: 60;
+  top: 63px;
+  right: 14px;
+  display: grid;
+  width: 320px;
+  max-height: calc(100vh - 78px);
+  gap: 0.2rem;
+  padding: 0.55rem;
+  border: 1px solid var(--fy-line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 20px 48px rgba(24, 55, 37, 0.22);
+  backdrop-filter: blur(18px);
+  overflow-y: auto;
+}
+
+.fy-settings-popover label {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.fy-settings-popover label:hover {
+  background: #f1f5ec;
+}
+
+.fy-settings-popover input {
+  width: 31px;
+  height: 18px;
+  accent-color: var(--fy-green);
+}
+
+.fy-settings-popover strong,
+.fy-settings-popover small {
+  display: block;
+}
+
+.fy-settings-popover .fy-settings-field {
+  grid-template-columns: 1fr;
+  align-items: stretch;
+}
+
+.fy-settings-field select {
+  width: 100%;
+  min-height: 36px;
+  padding: 0 0.55rem;
+  border: 1px solid var(--fy-line);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--fy-ink);
+  font: inherit;
+}
+
+.fy-settings-popover > .fy-header-button {
+  width: 100%;
+}
+
+.fy-settings-popover strong {
+  font-size: 0.76rem;
+}
+
+.fy-settings-popover small {
+  margin-top: 0.08rem;
+  color: var(--fy-ink-soft);
+  font-size: 0.64rem;
+}
+
+.fy-app-body {
+  display: grid;
+  height: calc(100% - 68px);
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.fy-app-body--detail {
+  grid-template-columns: minmax(420px, 1fr) minmax(330px, 390px);
+}
+
+.fy-app-content {
+  min-width: 0;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.fy-app-content > .fy-task-tree {
+  width: min(900px, 100%);
+  max-height: calc(100vh - 100px);
+  margin: 0 auto;
+}
+
+.fy-app-content > .fy-task-list {
+  min-height: 100%;
+  border: 1px solid var(--fy-line);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.fy-app-detail-drawer {
+  min-width: 0;
+  overflow: auto;
+  border-left: 1px solid var(--fy-line);
+  box-shadow: -10px 0 34px rgba(26, 57, 38, 0.06);
+}
+
+.fy-app-detail-drawer .fy-task-detail {
+  overflow-y: auto;
+}
+
+.fy-modal-backdrop {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  padding: 1.5rem;
+  overflow: auto;
+  background: rgba(17, 40, 27, 0.45);
+  place-items: center;
+  backdrop-filter: blur(7px);
+}
+
+.fy-task-form {
+  max-height: calc(100vh - 3rem);
+  box-shadow: 0 30px 80px rgba(15, 43, 26, 0.34);
+}
+
+.fy-completion-feedback {
+  position: fixed;
+  z-index: 130;
+  bottom: 28px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.72rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: var(--fy-green-deep);
+  color: white;
+  box-shadow: 0 15px 35px rgba(17, 60, 39, 0.26);
+  font-size: 0.78rem;
+  font-weight: 700;
+  transform: translateX(-50%);
+  animation: fy-complete-feedback 1.2s ease both;
+}
+
+.fy-completion-feedback span {
+  color: #bfe39b;
+  animation: fy-fall-leaf 1.1s ease-in both;
+}
+
+.fy-completion-feedback--static,
+.fy-completion-feedback--static span {
+  animation: none;
+}
+
+@keyframes fy-complete-feedback {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+  15%,
+  78% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes fy-fall-leaf {
+  to {
+    opacity: 0.3;
+    transform: translate(5px, 6px) rotate(70deg);
+  }
+}
+
+.fy-overlay-collapsed {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: end center;
+}
+
+.fy-overlay-collapsed button {
+  position: relative;
+  width: 64px;
+  height: 78px;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  filter: drop-shadow(0 9px 10px rgba(18, 57, 36, 0.24));
+}
+
+.fy-overlay-collapsed svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.fy-bud__stem,
+.fy-bud__root {
+  fill: none;
+  stroke: #74432a;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.fy-bud__leaf {
+  fill: #4b9c59;
+  stroke: #1c5a39;
+  stroke-width: 2;
+}
+
+.fy-overlay-collapsed button > span {
+  position: absolute;
+  top: 3px;
+  right: 0;
+  display: grid;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border: 2px solid white;
+  border-radius: 999px;
+  background: var(--fy-danger);
+  color: white;
+  place-items: center;
+  font-size: 0.66rem;
+  font-weight: 850;
+}
+
+.fy-overlay-window {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  overflow: hidden;
+  background: transparent;
+}
+
+.fy-overlay-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 24px;
+  background: rgba(247, 247, 239, 0.97);
+  box-shadow: 0 20px 56px rgba(17, 55, 34, 0.24);
+  backdrop-filter: blur(20px);
+}
+
+.fy-overlay-shell .fy-app-header {
+  min-height: 58px;
+  padding: 0.48rem 0.68rem;
+}
+
+.fy-overlay-shell .fy-brand__mark {
+  width: 34px;
+  height: 34px;
+}
+
+.fy-overlay-shell .fy-brand small,
+.fy-overlay-shell .fy-app-header nav,
+.fy-overlay-shell .fy-my-toggle,
+.fy-overlay-shell .fy-sync-status span:not(.fy-sync-status__symbol) {
+  display: none;
+}
+
+.fy-overlay-shell .fy-app-body {
+  height: calc(100% - 58px);
+}
+
+.fy-overlay-shell .fy-app-body--detail {
+  grid-template-columns: minmax(350px, 1fr) minmax(300px, 360px);
+}
+
+.fy-overlay-shell .fy-app-content {
+  padding: 0.55rem;
+}
+
+.fy-overlay-shell .fy-app-content > .fy-task-tree {
+  max-height: calc(100vh - 88px);
+}
+
+.fy-overlay-window--preview .fy-app-detail-drawer {
+  display: none;
+}
+
+.fy-overlay-window--preview .fy-app-body--detail {
+  grid-template-columns: 1fr;
+}
+
+.fy-unpin-button {
+  position: absolute;
+  z-index: 50;
+  right: 12px;
+  bottom: 10px;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--fy-line);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--fy-ink-soft);
+  cursor: pointer;
+  font-size: 0.64rem;
+}
+
+html[data-window-hidden] *,
+html[data-window-hidden] *::before,
+html[data-window-hidden] *::after {
+  animation-play-state: paused !important;
+}
+
+html[data-reduced-motion] *,
+html[data-reduced-motion] *::before,
+html[data-reduced-motion] *::after {
+  scroll-behavior: auto !important;
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+@media (max-width: 940px) {
+  .fy-app-header {
+    gap: 0.6rem;
+  }
+
+  .fy-app-header .fy-sync-status,
+  .fy-my-toggle {
+    display: none;
+  }
+
+  .fy-app-body--detail {
+    grid-template-columns: minmax(350px, 1fr) minmax(310px, 350px);
+  }
+}
+
+@media (max-width: 720px) {
+  .fy-brand small,
+  .fy-app-header nav {
+    display: none;
+  }
+
+  .fy-app-body--detail {
+    grid-template-columns: 1fr;
+  }
+
+  .fy-app-detail-drawer {
+    position: absolute;
+    z-index: 30;
+    inset: 68px 0 0;
+    background: white;
+  }
+}
+
+.fy-usability-study {
+  min-height: 100%;
+  padding: 18px;
+  overflow: auto;
+  background: linear-gradient(145deg, #f7f5eb, #eef3e8);
+  color: var(--fy-ink);
+}
+
+.fy-usability-study__header,
+.fy-usability-study__controls,
+.fy-usability-study__results {
+  width: min(1120px, 100%);
+  margin: 0 auto 14px;
+  border: 1px solid var(--fy-line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 30px rgba(27, 58, 39, 0.07);
+}
+
+.fy-usability-study__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 20px;
+}
+
+.fy-usability-study__header h1,
+.fy-usability-study__header p {
+  margin: 4px 0 0;
+}
+
+.fy-usability-study__header > div > span,
+.fy-usability-study__prompt > span {
+  color: var(--fy-accent-dark);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.fy-usability-study__header dl {
+  display: flex;
+  gap: 18px;
+  margin: 0;
+}
+
+.fy-usability-study__header dl div {
+  min-width: 82px;
+}
+
+.fy-usability-study__header dt,
+.fy-usability-study__results th {
+  color: var(--fy-ink-soft);
+  font-size: 0.66rem;
+}
+
+.fy-usability-study__header dd {
+  margin: 3px 0 0;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.fy-usability-study__controls {
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) minmax(300px, 1fr) 100px auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+}
+
+.fy-usability-study__controls label,
+.fy-usability-study__results label {
+  display: grid;
+  gap: 5px;
+  color: var(--fy-ink-soft);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.fy-usability-study__controls input,
+.fy-usability-study__results textarea {
+  padding: 8px 10px;
+  border: 1px solid var(--fy-line-strong);
+  border-radius: 9px;
+  background: white;
+  color: var(--fy-ink);
+}
+
+.fy-usability-study__controls button {
+  min-height: 38px;
+  padding: 7px 11px;
+  border: 1px solid var(--fy-accent-dark);
+  border-radius: 10px;
+  background: var(--fy-accent);
+  color: white;
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.fy-usability-study__controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.fy-usability-study__prompt strong,
+.fy-usability-study__prompt p {
+  display: block;
+  margin: 3px 0 0;
+}
+
+.fy-usability-study__timer {
+  font-variant-numeric: tabular-nums;
+  font-weight: 850;
+  text-align: center;
+}
+
+.fy-usability-study__controls form {
+  display: flex;
+  align-items: end;
+  gap: 7px;
+}
+
+.fy-usability-study__tree {
+  width: min(1120px, 100%);
+  height: min(670px, calc(100vh - 250px));
+  min-height: 520px;
+  margin: 0 auto 14px;
+  overflow: hidden;
+  border: 1px solid var(--fy-line);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.fy-usability-study__tree .fy-task-tree {
+  height: 100%;
+}
+
+.fy-usability-study__mask {
+  display: grid;
+  height: 100%;
+  place-content: center;
+  gap: 8px;
+  padding: 24px;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(47, 125, 80, 0.045) 0,
+      rgba(47, 125, 80, 0.045) 14px,
+      rgba(255, 255, 255, 0.55) 14px,
+      rgba(255, 255, 255, 0.55) 28px
+    ),
+    #f5f8f1;
+  color: var(--fy-ink-soft);
+  text-align: center;
+}
+
+.fy-usability-study__mask strong {
+  color: var(--fy-ink);
+  font-size: 20px;
+}
+
+.fy-usability-study__problems {
+  width: min(1120px, 100%);
+  margin: 0 auto 14px;
+  padding: 12px 16px;
+  border: 1px solid var(--fy-danger);
+  border-radius: 12px;
+  background: #fff4f1;
+}
+
+.fy-usability-study__results {
+  padding: 14px 16px;
+}
+
+.fy-usability-study__results table {
+  width: 100%;
+  margin-bottom: 12px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.fy-usability-study__results th,
+.fy-usability-study__results td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--fy-line);
+}
+
+.fy-usability-study__results textarea {
+  min-height: 220px;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  user-select: text;
+}
+
+@media (max-width: 900px) {
+  .fy-usability-study__header,
+  .fy-usability-study__controls {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .fy-usability-study__header dl {
+    flex-wrap: wrap;
+  }
+}
+
+.fy-login-shell {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 32px;
+  background:
+    radial-gradient(circle at 20% 12%, rgba(205, 229, 178, 0.72), transparent 36%),
+    linear-gradient(145deg, #f7f8ef, #eef4e7 56%, #e4eddb);
+}
+
+.fy-login-panel {
+  width: min(430px, 100%);
+  padding: 34px;
+  border: 1px solid rgba(59, 94, 48, 0.18);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 24px 70px rgba(48, 73, 42, 0.16);
+}
+
+.fy-login-panel__mark {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 18px;
+  place-items: center;
+  border-radius: 18px 8px 18px 8px;
+  background: var(--fy-green-deep);
+  color: #fff;
+  font-size: 25px;
+  font-weight: 850;
+  transform: rotate(-4deg);
+}
+
+.fy-login-panel h1 {
+  margin: 7px 0 8px;
+  color: var(--fy-ink);
+  font-size: 30px;
+}
+
+.fy-login-panel > p {
+  margin: 0 0 24px;
+  color: var(--fy-muted);
+  line-height: 1.65;
+}
+
+.fy-login-panel form,
+.fy-login-panel label {
+  display: grid;
+  gap: 8px;
+}
+
+.fy-login-panel form {
+  gap: 16px;
+}
+
+.fy-login-panel label > span {
+  color: var(--fy-ink-soft);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.fy-login-panel input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--fy-line-strong);
+  border-radius: 11px;
+  background: #fff;
+  color: var(--fy-ink);
+}
+
+.fy-login-panel .fy-button {
+  min-height: 44px;
+  margin-top: 2px;
+}
+
+.fy-workspace-list {
+  display: grid;
+  max-height: 280px;
+  gap: 8px;
+  margin: 18px 0;
+  overflow-y: auto;
+}
+
+.fy-workspace-list > button {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid var(--fy-line);
+  border-radius: 12px;
+  background: #f8faf4;
+  color: var(--fy-ink);
+  text-align: left;
+}
+
+.fy-workspace-list > button:hover,
+.fy-workspace-list > button:focus-visible {
+  border-color: var(--fy-green);
+  background: #eef5e7;
+}
+
+.fy-workspace-list small {
+  color: var(--fy-muted);
+}

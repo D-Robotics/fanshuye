@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "tester": null,
+  "executedAt": null,
+  "windowsBuild": null,
+  "webView2Version": null,
+  "appVersion": "0.1.0",
+  "previousVersion": null,
+  "installerPath": null,
+  "installerSha256": null,
+  "signatureStatus": null,
+  "signerSubject": null,
+  "cases": [
+    {
+      "id": "install.clean",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "install.upgrade",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "runtime.single-instance",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "runtime.normal-exit",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "uninstall.application-removed",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    },
+    {
+      "id": "uninstall.cache-policy",
+      "status": "not_run",
+      "evidence": null,
+      "evidenceSha256": null,
+      "notes": null
+    }
+  ]
+}
