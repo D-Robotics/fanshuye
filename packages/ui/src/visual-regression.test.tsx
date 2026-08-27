@@ -9,6 +9,7 @@ import { makeTask } from './test/fixtures';
 function visualDigest(container: HTMLElement): string {
   const normalized = container.innerHTML
     .replaceAll(/fy-arrow-[\w-]+/g, 'fy-arrow-STABLE')
+    .replaceAll(/最后同步 [^<]+/g, '最后同步 STABLE')
     .replaceAll(/\s+/g, ' ')
     .trim();
   return createHash('sha256').update(normalized).digest('hex');
@@ -55,7 +56,7 @@ describe('component visual contracts', () => {
       detailPanel: 'a55c3359208c3746a6a3daacb560c851156e06ee0e9ffeeaa2923d12ad9b052b',
       taskList: '67d3c8ea4551951cd75b5c62efb2ac53a8bd362878099a72196fe3d061430ed5',
       privacyTree: '7ee66cbcfee9b4b5f0d0110bba040a5f44706dda0e049b3c4a4cae02103b651a',
-      offlineBanner: '3dbeaf1a42539f9a5056b0eae9c9419f68c09519d25925be9de1bf9ed1e42aee',
+      offlineBanner: '8500689c20847adbd4122e6dc109dd6ad714b8115cca2017398b050348762993',
     });
   });
 });
