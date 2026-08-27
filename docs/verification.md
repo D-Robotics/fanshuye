@@ -1,6 +1,6 @@
 # MVP verification record
 
-Last verified: 2026-08-26 (Asia/Shanghai)
+Last verified: 2026-08-27 (Asia/Shanghai)
 
 This record maps every checked OpenSpec task to implementation or executable evidence. A task stays unchecked when its acceptance condition requires a native Windows environment, signing material, or a human exercise that has not actually run.
 
@@ -28,14 +28,18 @@ Both skipped scenarios then passed through `pnpm perf:baseline`. The final run m
 
 The real-network synchronization test reported 43.039 ms from client A's command submission until client B received the event and refreshed the authoritative projection. After client B disconnected at cursor 4, it recovered sequences 5 and 6 and resumed at cursor 6.
 
-Rust formatting and locked metadata resolution also passed using the installed Rust toolchain:
+Rust formatting, tests, locked metadata resolution and the full native release build passed using the installed Rust and Windows toolchains:
 
 ```powershell
 cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --check
+cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked
 cargo metadata --manifest-path apps/desktop/src-tauri/Cargo.toml --locked --no-deps --format-version 1
+pnpm --filter @fanshuye/desktop build:native
 ```
 
-`cargo check` cannot reach the application crate on this machine: the MSVC Rust target resolves Git's GNU `D:\Git\usr\bin\link.exe`, while Visual Studio Build Tools and the Windows SDK are absent. The failure occurs while linking third-party dependency build scripts, before native application code is compiled. The repository preflight independently reports missing `cl.exe`, the MSVC linker, MSBuild and a Windows SDK; WebView2 151.0.4129.107 and Rust 1.98.0 are present.
+All 26 native Rust tests passed. The build used Visual Studio Build Tools 2022 17.14.39, MSVC 14.44.35207, Windows SDK 10.0.26100.0, Rust 1.98.0 and WebView2 Runtime 151.0.4129.107. It produced the release executable and the NSIS installer `番薯叶_0.1.0_x64-setup.exe`. The installer inspection correctly reports `NotSigned`; release signing remains a separate unchecked gate.
+
+The compiled release desktop process and the development server were also started simultaneously. While the desktop process was running, `GET http://127.0.0.1:4310/health` returned HTTP 200 with status `ok`; both processes then stopped cleanly. This completes the native/server startup requirement in task 1.2.
 
 OpenSpec strict validation returned `valid: true` with no issues.
 
@@ -52,6 +56,7 @@ An independent verifier who did not implement the application followed the docum
 | OpenSpec task | Evidence                                                                                                                                                                                                        |
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1.1           | Root pnpm workspace and five implementation packages; full `pnpm check` passed.                                                                                                                                 |
+| 1.2           | Compiled Tauri release shell and development server ran simultaneously; the exact desktop process stayed alive while `/health` returned HTTP 200 `ok`, then both stopped cleanly.                               |
 | 1.3           | `compose.yaml`, migration runner and isolated-schema helpers; migration and real PostgreSQL suites passed.                                                                                                      |
 | 1.4           | TypeScript, ESLint, Prettier, Rustfmt, precommit and CI configuration; all available checks plus Rust format/metadata passed.                                                                                   |
 | 1.5           | Root/server environment examples, Zod configuration and `config.test.ts`; readable missing-secret and production-email failures passed.                                                                         |
@@ -90,7 +95,7 @@ An independent verifier who did not implement the application followed the docum
 | 10.10         | Final `check-mvp-scope.mjs` pass confirms no Agent, automatic progress, Git integration, Neo4j, graph deployment, message queue, offline writes or outbox.                                                      |
 | 10.11         | OpenSpec strict validation returned `valid: true`; this record maps every checked task to executable or independent evidence, and no developer pilot has started.                                               |
 
-## Implemented native surface awaiting executable evidence
+## Implemented native surface awaiting observational evidence
 
 The remaining tasks have not been abandoned. Their repository-side implementation and validation harnesses now include:
 
@@ -102,13 +107,12 @@ The remaining tasks have not been abandoned. Their repository-side implementatio
 - native summary notifications, privacy-safe count-only notification content, do-not-disturb, reduced motion, cross-window authoritative preferences and hidden-window animation/polling suspension;
 - transparent production icon assets (`icon.svg`, PNG sizes and a multi-frame ICO), native preflight, 20-case E2E evidence validation, signed-installer inspection, six-case release validation, a 30-minute process-tree residency measurement and a 30-task human-study harness.
 
-Automated coverage proves the pure geometry, state machines, validation, rollback policy, browser/native boundary and UI behavior. It cannot prove Windows APIs actually accepted a shortcut, autostart entry, notification, credential, focus transition or monitor movement. These tasks therefore remain unchecked because this machine lacks MSVC C++ Build Tools and the Windows SDK, so no native executable can be built. No signing certificate, previous signed release, clean Windows test machine or observed developer participant is available.
+Automated coverage proves the pure geometry, state machines, validation, rollback policy, browser/native boundary and UI behavior, and the installed native toolchain now proves that the Windows application and NSIS bundle compile. A build alone cannot prove that Windows APIs accepted a shortcut, autostart entry, notification, credential, focus transition or monitor movement across the required physical display/DPI matrix. Those behavior tasks therefore remain unchecked until their actual case evidence exists. No signing certificate, previous signed release, clean Windows test machine or observed developer participant is available.
 
 The evidence validators were run against their untouched templates and correctly failed closed: all 20 native cases and all 6 release cases remain `not_run`, with no local evidence files or signing trust anchor. The native matrix includes an explicit Windows Credential Manager/isolation case, requires case-specific notes, rejects text files and false media extensions, and accepts resource evidence only when it is a passing 30-minute measurement JSON. The usability prerequisite suite passed 3/3, but its result deliberately remains `OBSERVER_ATTESTATION_REQUIRED`.
 
 Remaining gates are therefore:
 
-- simultaneous native Tauri shell and server startup (1.2)
 - native Windows behavior and resource validation (7.1–7.8)
 - the Windows native E2E matrix (10.5)
 - signed installer install/upgrade/uninstall validation (10.7)

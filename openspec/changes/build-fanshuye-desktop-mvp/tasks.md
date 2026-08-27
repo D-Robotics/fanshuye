@@ -1,7 +1,7 @@
 ## 1. 基础工程与边界
 
 - [x] 1.1 建立 pnpm 单仓库，创建 `apps/desktop`、`apps/server`、`packages/contracts`、`packages/domain` 和 `packages/ui`，并提供根级 lint、typecheck、test、build 命令。
-- [ ] 1.2 初始化 Tauri 2 + React/TypeScript 桌面端和 TypeScript 模块化单体服务端，验证桌面壳与 `/health` 服务接口可同时启动。
+- [x] 1.2 初始化 Tauri 2 + React/TypeScript 桌面端和 TypeScript 模块化单体服务端，验证桌面壳与 `/health` 服务接口可同时启动。
 - [x] 1.3 配置 PostgreSQL 本地开发环境、数据库迁移工具和隔离测试数据库，验证空数据库可一次性升级到最新模式。
 - [x] 1.4 建立 TypeScript、Rust、格式化、静态检查和提交前检查配置，并让故意引入的类型或编译错误能够阻断构建。
 - [x] 1.5 建立分环境配置校验、`.env.example` 和密钥忽略规则，缺少必需配置时以可读错误停止启动。

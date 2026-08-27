@@ -1,5 +1,5 @@
 use serde::Serialize;
-use tauri::{Emitter, WebviewWindow};
+use tauri::{Emitter, Manager, WebviewWindow};
 
 pub const AUTH_STATE_EVENT: &str = "desktop-auth-state-changed";
 
