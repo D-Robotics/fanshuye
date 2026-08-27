@@ -1117,13 +1117,35 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
   }
 
   if (!demoMode && authenticationStatus === 'required') {
-    return (
+    const loginPanel = (
       <LoginPanel
         onLogin={login}
         notice={authenticationNotice}
         windowControls={windowKind === 'main' ? <DesktopWindowControls /> : null}
       />
     );
+    if (windowKind === 'overlay') {
+      return (
+        <main
+          className={`fy-overlay-window fy-overlay-window--${overlay.mode}`}
+          onMouseEnter={overlay.onPointerEnter}
+          onMouseLeave={overlay.onPointerLeave}
+          onMouseDown={() => {
+            if (overlay.mode === 'preview') overlay.pin();
+          }}
+        >
+          <div className="fy-overlay-shell">
+            {loginPanel}
+            {overlay.mode === 'pinned' && (
+              <button className="fy-unpin-button" type="button" onClick={overlay.unpin}>
+                收起 · Esc
+              </button>
+            )}
+          </div>
+        </main>
+      );
+    }
+    return loginPanel;
   }
 
   if (!demoMode && workspaceStatus === 'loading') {

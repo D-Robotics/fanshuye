@@ -80,31 +80,23 @@ pnpm native:installer:inspect `
 ```
 
 `native:installer:inspect` 只有在签名有效、可信时间戳存在且所有给定期望值均匹配时才返回成功。
-`pnpm build` 只构建 Web 与服务端 JavaScript，不会生成安装包。当前 Tauri 配置只生成 NSIS、采用 per-machine 安装；安装与卸载验证需要管理员权限。不得把未签名产物标记为公开发布候选。
+`pnpm build` 只构建 Web 与服务端 JavaScript，不会生成安装包。当前 Tauri 配置只生成 NSIS、采用 current-user 安装，写入 HKCU 且不要求管理员权限，适合首批开发者试点；如后续提供 per-machine 企业包，必须在独立配置和受管测试机中验证 UAC、组织策略与卸载。不得把未签名产物标记为公开发布候选。
 
 ## 签名与产物校验
 
-证书指纹和时间戳 URL 由发布平台以受保护环境变量注入。下面的命令只引用指纹，不导出私钥：
+证书指纹、预期签名主体和时间戳 URL 由发布平台以受保护环境变量注入。下面的命令只引用证书存储中的指纹，不导出私钥：
 
 ```powershell
-if (-not $env:WINDOWS_CERT_THUMBPRINT) { throw 'WINDOWS_CERT_THUMBPRINT is required' }
-if (-not $env:WINDOWS_TIMESTAMP_URL) { throw 'WINDOWS_TIMESTAMP_URL is required' }
-
 $installer = Get-ChildItem -LiteralPath 'apps/desktop/src-tauri/target/release/bundle/nsis' `
   -Filter '*.exe' -File |
   Sort-Object LastWriteTime |
   Select-Object -Last 1
 if (-not $installer) { throw 'NSIS installer was not produced' }
 
-signtool.exe sign /sha1 $env:WINDOWS_CERT_THUMBPRINT /fd SHA256 `
-  /tr $env:WINDOWS_TIMESTAMP_URL /td SHA256 $installer.FullName
-signtool.exe verify /pa /v $installer.FullName
-$signature = Get-AuthenticodeSignature -LiteralPath $installer.FullName
-if ($signature.Status -ne 'Valid') { throw "Invalid Authenticode signature: $($signature.Status)" }
-Get-FileHash -Algorithm SHA256 -LiteralPath $installer.FullName
+pnpm native:installer:sign -InstallerPath $installer.FullName
 ```
 
-签名之后重新记录 SHA-256；分发清单中的哈希必须是最终签名文件的哈希。签名、哈希或时间戳验证失败都阻断发布。
+签名脚本会拒绝空的外部签名主体、非 HTTPS 时间戳、无私钥/非代码签名/过期证书和主体不匹配，随后调用 Windows SDK `signtool` 完成 SHA-256 Authenticode 签名与 RFC 3161 时间戳，并再次用系统信任链验证。签名之后重新记录 SHA-256；分发清单中的哈希必须是最终签名文件的哈希。签名、哈希或时间戳验证失败都阻断发布。
 
 ## 发布候选验收矩阵
 

@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-27T16:55:00+08:00",
+  "appVersion": "0.1.1",
+  "environment": {
+    "os": "Windows 11 23H2",
+    "osBuild": "22631.7219",
+    "displayCount": 1,
+    "displayBounds": "2880x1800",
+    "workArea": "2880x1704",
+    "dpi": 192,
+    "scalePercent": 200,
+    "webView2": "151.0.4129.107"
+  },
+  "nativeCases": [
+    {
+      "id": "overlay.hover-delay",
+      "status": "pass",
+      "observed": "148x184 remained collapsed at 200 ms and expanded to 1560x1360 after 600 ms"
+    },
+    {
+      "id": "overlay.pin-escape",
+      "status": "pass",
+      "observed": "click expanded preview to 2160x1520 pinned mode; Escape restored 148x184 collapsed mode"
+    },
+    {
+      "id": "shortcut.toggle",
+      "status": "pass",
+      "observed": "Control+Shift+Space showed, hid, and showed the overlay"
+    },
+    {
+      "id": "runtime.single-instance",
+      "status": "pass",
+      "observed": "second launch kept one process and opened the main window"
+    },
+    {
+      "id": "runtime.main-overlay-mutual-exclusion",
+      "status": "pass",
+      "observed": "opening main hid the always-on-top overlay; hiding main restored the collapsed entry"
+    },
+    {
+      "id": "runtime.normal-exit",
+      "status": "pass",
+      "observed": "the visible exit control terminated the process without a residual fanshuye-desktop process"
+    },
+    {
+      "id": "runtime.restart",
+      "status": "pass",
+      "observed": "restart restored the floating collapsed entry at 2704,323 with 148x184 physical bounds"
+    },
+    {
+      "id": "fallback.side-panel",
+      "status": "pass",
+      "observed": "FANSHUYE_SIDE_PANEL=1 produced 2040,0 840x1704 and clearing it restored floating mode"
+    }
+  ],
+  "deterministicGeometry": {
+    "status": "pass",
+    "rustTests": 26,
+    "coveredScalePercents": [100, 125, 150, 200],
+    "coveredRecovery": [
+      "monitor unplug/replug selection",
+      "primary fallback",
+      "saved anchor",
+      "out-of-bounds recovery"
+    ]
+  },
+  "installer": {
+    "path": "apps/desktop/src-tauri/target/release/bundle/nsis/番薯叶_0.1.1_x64-setup.exe",
+    "lengthBytes": 2015584,
+    "sha256": "e6668b0f84f3e298ac68feff942f59af04b568dbfa383b28cfd8c57699c881da",
+    "productVersion": "0.1.1",
+    "signatureStatus": "NotSigned",
+    "executionStatus": "blocked_by_host_policy",
+    "executionError": "Win32 error 1223: operation canceled by user"
+  },
+  "remainingExternalMatrix": [
+    "physical dual-monitor, primary-switch, and unplug/replug evidence",
+    "physical 100%, 125%, and 150% DPI evidence",
+    "tray UI and editor-focus recording",
+    "production offline/reconnect recording",
+    "organization code-signing certificate with private-key access",
+    "trusted RFC 3161 timestamp endpoint",
+    "signed clean install, upgrade, and uninstall on an isolated Windows machine"
+  ]
+}

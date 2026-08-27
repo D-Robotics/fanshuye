@@ -202,11 +202,11 @@ fn apply_overlay_runtime(
     state: &mut SavedOverlayState,
 ) -> Result<OverlayPresentation, String> {
     let presentation = configure_presentation(window, requested_presentation)?;
-    if !mode.accepts_keyboard_focus() {
-        window
-            .set_focusable(false)
-            .map_err(|_| "无法保持悬浮窗非聚焦状态".to_string())?;
-    }
+    window
+        // Preview must accept an intentional click so it can transition to
+        // pinned, but merely hovering it must not move editor focus.
+        .set_focusable(mode != OverlayMode::Collapsed)
+        .map_err(|_| "无法更新悬浮窗焦点策略".to_string())?;
 
     let app = window.app_handle();
     let preferences = preferences::read_desktop_preferences(app);
@@ -242,8 +242,7 @@ fn apply_overlay_runtime(
 
     if mode.accepts_keyboard_focus() {
         window
-            .set_focusable(true)
-            .and_then(|_| window.set_focus())
+            .set_focus()
             .map_err(|_| "无法聚焦固定任务树".to_string())?;
     }
     Ok(presentation)
@@ -427,6 +426,12 @@ pub fn list_available_monitors(app: AppHandle) -> Result<Vec<AvailableMonitor>, 
 }
 
 pub fn show_main(app: &AppHandle) -> Result<(), String> {
+    if let Some(overlay) = app.get_webview_window("overlay") {
+        overlay
+            .hide()
+            .map_err(|_| "无法在打开主面板前隐藏悬浮任务树".to_string())?;
+        publish_overlay_state(&overlay)?;
+    }
     let window = app
         .get_webview_window("main")
         .ok_or_else(|| "主窗口不可用".to_string())?;
@@ -446,8 +451,20 @@ pub fn hide_current_window(window: WebviewWindow) -> Result<(), String> {
     if window.label() == "overlay" {
         publish_overlay_state(&window).map(|_| ())
     } else {
-        publish_window_visibility(window.app_handle(), window.label(), false)
+        publish_window_visibility(window.app_handle(), window.label(), false)?;
+        show_overlay_entry(window.app_handle())
     }
+}
+
+fn show_overlay_entry(app: &AppHandle) -> Result<(), String> {
+    let overlay = app
+        .get_webview_window("overlay")
+        .ok_or_else(|| "悬浮窗口不可用".to_string())?;
+    apply_overlay_mode(&overlay, OverlayMode::Collapsed.as_str())?;
+    overlay
+        .show()
+        .map_err(|_| "无法恢复悬浮任务入口".to_string())?;
+    publish_overlay_state(&overlay).map(|_| ())
 }
 
 #[tauri::command]
@@ -566,6 +583,7 @@ pub fn handle_window_event(window: &Window, event: &WindowEvent) {
                 }
             } else {
                 let _ = publish_window_visibility(window.app_handle(), window.label(), false);
+                let _ = show_overlay_entry(window.app_handle());
             }
         }
         return;

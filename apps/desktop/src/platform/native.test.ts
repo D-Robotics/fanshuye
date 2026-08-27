@@ -206,6 +206,9 @@ describe('cross-window desktop preference validation', () => {
     expect(nativeSource).toContain("invokeNative<unknown>('get_current_window_visibility')");
     expect(nativeSource).toContain("invokeNative<unknown>('list_available_monitors')");
     expect(nativeSource).toContain('export async function watchNativeWindowVisibility');
+    expect(windowsRustSource).toContain('.set_focusable(mode != OverlayMode::Collapsed)');
+    expect(windowsRustSource).toContain('if mode.accepts_keyboard_focus()');
+    expect(windowsRustSource).toContain('window.set_focus()');
   });
 
   it('exposes explicit hide and process-exit commands to every main-window state', () => {
@@ -215,6 +218,28 @@ describe('cross-window desktop preference validation', () => {
     expect(libRustSource).toContain('windows::quit_application');
     expect(windowsRustSource).toContain('pub fn hide_current_window');
     expect(windowsRustSource).toContain('pub fn quit_application');
+    const showMainStart = windowsRustSource.indexOf('pub fn show_main(app: &AppHandle)');
+    const showMainEnd = windowsRustSource.indexOf('#[tauri::command]\npub fn show_main_window');
+    const showMainSource = windowsRustSource.slice(showMainStart, showMainEnd);
+    expect(showMainSource.indexOf('overlay.hide()')).toBeLessThan(
+      showMainSource.indexOf('window.show()'),
+    );
+    const hideCurrentStart = windowsRustSource.indexOf('pub fn hide_current_window');
+    const overlayEntryStart = windowsRustSource.indexOf('fn show_overlay_entry');
+    expect(windowsRustSource.slice(hideCurrentStart, overlayEntryStart)).toContain(
+      'show_overlay_entry(window.app_handle())',
+    );
+    expect(windowsRustSource.slice(overlayEntryStart)).toContain(
+      'apply_overlay_mode(&overlay, OverlayMode::Collapsed.as_str())',
+    );
+    const loginBranchStart = appSource.indexOf(
+      "if (!demoMode && authenticationStatus === 'required')",
+    );
+    const loginBranchEnd = appSource.indexOf("if (!demoMode && workspaceStatus === 'loading')");
+    const loginBranch = appSource.slice(loginBranchStart, loginBranchEnd);
+    expect(loginBranch).toContain("if (windowKind === 'overlay')");
+    expect(loginBranch).toContain('fy-overlay-window--${overlay.mode}');
+    expect(loginBranch).toContain("if (overlay.mode === 'preview') overlay.pin()");
   });
 
   it('separates production and local-development network policy', () => {

@@ -1,6 +1,6 @@
 [package]
 name = "fanshuye-desktop"
-version = "0.1.0"
+version = "0.1.1"
 description = "番薯叶开发团队任务态势桌面端"
 authors = ["Fanshuye Team"]
 edition = "2021"

@@ -1,6 +1,6 @@
 {
   "name": "fanshuye",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "packageManager": "pnpm@11.19.0",
   "engines": {
@@ -23,6 +23,7 @@
     "native:preflight:signing": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/windows-native-preflight.ps1 -RequireSigning",
     "native:e2e:validate": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/validate-windows-evidence.ps1 -Kind native-e2e",
     "native:installer:inspect": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/inspect-windows-installer.ps1",
+    "native:installer:sign": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/sign-windows-installer.ps1",
     "native:residency:measure": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/measure-windows-residency.ps1",
     "native:release:validate": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/validate-windows-evidence.ps1 -Kind release",
     "scope:check": "node scripts/check-mvp-scope.mjs",

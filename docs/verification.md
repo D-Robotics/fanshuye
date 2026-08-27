@@ -101,19 +101,21 @@ The remaining tasks have not been abandoned. Their repository-side implementatio
 
 - strict production/development CSP separation, a minimal event/SQLite capability file, `main` and `overlay` windows, and transparent/side-panel presentations;
 - tray, single instance, visibility commands, rollback-safe configurable shortcuts, authoritative autostart settings and startup-focus protection;
-- native/React overlay state synchronization, delayed hover/collapse, pin/Escape behavior, non-focusable preview and focusable pinned mode;
+- native/React overlay state synchronization, delayed hover/collapse, click-capable preview without active focus, and focusable pin/Escape behavior;
 - work-area-aware placement, persisted monitor/edge choice, monitor unplug recovery and deterministic 100/125/150/200% DPI geometry tests;
 - a fixed Windows Credential Manager slot containing a versioned account/refresh envelope, in-memory access credentials, Web Lock rotation, login/workspace selection, 401/WS revocation handling and immediate authenticated-UI clearing;
 - native summary notifications, privacy-safe count-only notification content, do-not-disturb, reduced motion, cross-window authoritative preferences and hidden-window animation/polling suspension;
 - transparent production icon assets (`icon.svg`, PNG sizes and a multi-frame ICO), native preflight, 20-case E2E evidence validation, signed-installer inspection, six-case release validation, a 30-minute process-tree residency measurement and a 30-task human-study harness.
 
-Automated coverage proves the pure geometry, state machines, validation, rollback policy, browser/native boundary and UI behavior, and the installed native toolchain now proves that the Windows application and NSIS bundle compile. A build alone cannot prove that Windows APIs accepted a shortcut, autostart entry, notification, credential, focus transition or monitor movement across the required physical display/DPI matrix. Those behavior tasks therefore remain unchecked until their actual case evidence exists. No signing certificate, previous signed release, clean Windows test machine or observed developer participant is available.
+Automated coverage proves the pure geometry, state machines, validation, rollback policy, browser/native boundary and UI behavior, and the installed native toolchain proves that the Windows application and NSIS bundle compile. On 2026-08-27 the 0.1.1 candidate also passed a real Windows 11 smoke run on the available 2880×1800, 200% DPI display: hover delay, click-to-pin, Escape, global shortcut, single instance, restart, explicit hide/exit, main/overlay mutual exclusion and the forced side-panel presentation. The run exposed and fixed two production-only defects: the always-on-top overlay covered the main-window exit controls, and the unauthenticated preview bypassed the overlay click-to-pin shell. Detailed observations are in `docs/evidence/windows-local-smoke-2026-08-27.json`.
+
+The installer now uses current-user mode for the developer pilot. This corporate host blocks unsigned NSIS setup executables before process creation with Win32 error 1223 even though it permits the standalone unsigned application executable. A fail-closed Authenticode signing command now requires an external signer subject, an installed code-signing certificate/private key, an HTTPS timestamp, successful `signtool` verification and a trusted timestamp. No suitable certificate is installed, so the unavailable physical display/DPI/network cases and signed installation lifecycle remain open.
 
 The evidence validators were run against their untouched templates and correctly failed closed: all 20 native cases and all 6 release cases remain `not_run`, with no local evidence files or signing trust anchor. The native matrix includes an explicit Windows Credential Manager/isolation case, requires case-specific notes, rejects text files and false media extensions, and accepts resource evidence only when it is a passing 30-minute measurement JSON. The usability prerequisite suite passed 3/3, but its result deliberately remains `OBSERVER_ATTESTATION_REQUIRED`.
 
 Remaining gates are therefore:
 
-- native Windows behavior and resource validation (7.1–7.8)
+- 30-minute hidden-process resource validation (7.8)
 - the Windows native E2E matrix (10.5)
 - signed installer install/upgrade/uninstall validation (10.7)
 - a timed human 30-task developer usability study (10.9)
