@@ -1079,7 +1079,6 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
           tasks={activeTasks}
           privacyMode={preferences.privacyMode}
           reducedMotion={preferences.reducedMotion}
-          onOpen={() => void showMainWindow()}
           onDragStart={() => void startNativeOverlayDrag()}
           onSelectTask={(task) => {
             setSelectedId(task.id);
@@ -1098,7 +1097,6 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
           selectedTaskId={selectedId}
           privacyMode={preferences.privacyMode}
           reducedMotion={preferences.reducedMotion}
-          onOpen={() => void showMainWindow()}
           onDragStart={() => void startNativeOverlayDrag()}
           onSelectTask={(task) => setSelectedId(task.id)}
         />

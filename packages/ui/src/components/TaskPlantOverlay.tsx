@@ -138,7 +138,6 @@ export interface TaskPlantOverlayProps {
   selectedTaskId?: string | null;
   privacyMode?: boolean;
   reducedMotion?: boolean;
-  onOpen: () => void;
   onSelectTask: (task: TaskItem) => void;
   onDragStart?: () => void;
   relationshipScorer?: TaskPlantRelationshipScorer;
@@ -202,12 +201,11 @@ export function TaskPlantOverlay({
   selectedTaskId = null,
   privacyMode = false,
   reducedMotion = false,
-  onOpen,
   onSelectTask,
   onDragStart,
   relationshipScorer,
 }: TaskPlantOverlayProps) {
-  const { branches, visible, overflow } = selectTaskPlantTasks(tasks, relationshipScorer);
+  const { branches, visible } = selectTaskPlantTasks(tasks, relationshipScorer);
   const placedTasks = branches.flatMap((branch) => {
     const leftSlot = BINARY_TASK_LEAF_SLOTS.find(
       (slot) => slot.pair === branch.pair && slot.side === 'left',
@@ -430,17 +428,6 @@ export function TaskPlantOverlay({
           onDragStart?.();
         }}
       ></button>
-
-      {overflow.length > 0 && (
-        <button
-          className="fy-task-plant__overflow"
-          type="button"
-          aria-label={`另有 ${overflow.length} 个活跃任务，打开任务树`}
-          onClick={onOpen}
-        >
-          +{overflow.length}
-        </button>
-      )}
     </section>
   );
 }

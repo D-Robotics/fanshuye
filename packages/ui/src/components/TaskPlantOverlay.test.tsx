@@ -91,20 +91,15 @@ describe('TaskPlantOverlay', () => {
     expect(selection.visible).toHaveLength(8);
     expect(selection.overflow).toHaveLength(3);
 
-    const { container } = render(
-      <TaskPlantOverlay tasks={[tasks[0]!]} onOpen={vi.fn()} onSelectTask={vi.fn()} />,
-    );
+    const { container } = render(<TaskPlantOverlay tasks={[tasks[0]!]} onSelectTask={vi.fn()} />);
     const onlyLeaf = container.querySelector('[data-task-id]');
     expect(onlyLeaf).toHaveAttribute('data-pair', '0');
     expect(onlyLeaf).toHaveAttribute('data-side', 'left');
     expect(onlyLeaf).toHaveAttribute('data-outward-rank', '0');
   });
 
-  it('renders the hand-drawn natural tree silhouette without avatars and opens overflow', () => {
-    const onOpen = vi.fn();
-    const { container } = render(
-      <TaskPlantOverlay tasks={tasks} onOpen={onOpen} onSelectTask={vi.fn()} />,
-    );
+  it('renders the hand-drawn natural tree without avatars or an overflow badge', () => {
+    const { container } = render(<TaskPlantOverlay tasks={tasks} onSelectTask={vi.fn()} />);
 
     expect(screen.getByRole('region', { name: '常驻二叉任务树' })).toBeInTheDocument();
     expect(container.querySelectorAll('[data-task-id]')).toHaveLength(8);
@@ -136,8 +131,9 @@ describe('TaskPlantOverlay', () => {
     );
     expect(container.innerHTML).not.toContain('M79 185 C65 184 59 194 65 204 C71 214 83 207');
 
-    fireEvent.click(screen.getByRole('button', { name: '另有 3 个活跃任务，打开任务树' }));
-    expect(onOpen).toHaveBeenCalledOnce();
+    expect(container.querySelector('.fy-task-plant__overflow')).not.toBeInTheDocument();
+    expect(screen.queryByText('+3')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /另有 .*活跃任务/ })).not.toBeInTheDocument();
   });
 
   it('draws a right twig only when a related right leaf exists', () => {
@@ -145,11 +141,7 @@ describe('TaskPlantOverlay', () => {
     const related = makeTask({ id: 'related', importance: 4, workstreamId: 'one' });
     const unrelated = makeTask({ id: 'unrelated', importance: 3, workstreamId: 'two' });
     const { container } = render(
-      <TaskPlantOverlay
-        tasks={[unrelated, related, solo]}
-        onOpen={vi.fn()}
-        onSelectTask={vi.fn()}
-      />,
+      <TaskPlantOverlay tasks={[unrelated, related, solo]} onSelectTask={vi.fn()} />,
     );
 
     expect(
@@ -167,7 +159,7 @@ describe('TaskPlantOverlay', () => {
   it('selects tasks only on click or keyboard activation and never on hover', async () => {
     const user = userEvent.setup();
     const onSelectTask = vi.fn();
-    render(<TaskPlantOverlay tasks={tasks} onOpen={vi.fn()} onSelectTask={onSelectTask} />);
+    render(<TaskPlantOverlay tasks={tasks} onSelectTask={onSelectTask} />);
     const leaf = screen.getByRole('button', { name: /任务叶0.*第 1 对左叶.*点击展开/ });
 
     fireEvent.mouseEnter(leaf);
@@ -181,17 +173,11 @@ describe('TaskPlantOverlay', () => {
     expect(onSelectTask).toHaveBeenCalledTimes(2);
   });
 
-  it('starts native dragging from the trunk without opening or selecting a task', () => {
+  it('starts native dragging from the trunk without selecting a task', () => {
     const onDragStart = vi.fn();
-    const onOpen = vi.fn();
     const onSelectTask = vi.fn();
     render(
-      <TaskPlantOverlay
-        tasks={tasks}
-        onOpen={onOpen}
-        onSelectTask={onSelectTask}
-        onDragStart={onDragStart}
-      />,
+      <TaskPlantOverlay tasks={tasks} onSelectTask={onSelectTask} onDragStart={onDragStart} />,
     );
 
     const dragHandle = screen.getByRole('button', { name: '拖动悬浮窗' });
@@ -200,7 +186,6 @@ describe('TaskPlantOverlay', () => {
     expect(screen.queryByText('按住主干移动')).not.toBeInTheDocument();
     fireEvent.pointerDown(dragHandle, { button: 0 });
     expect(onDragStart).toHaveBeenCalledOnce();
-    expect(onOpen).not.toHaveBeenCalled();
     expect(onSelectTask).not.toHaveBeenCalled();
   });
 
@@ -228,7 +213,6 @@ describe('TaskPlantOverlay', () => {
       <TaskPlantOverlay
         tasks={[dependent, selected, prerequisite]}
         selectedTaskId="selected"
-        onOpen={vi.fn()}
         onSelectTask={vi.fn()}
       />,
     );
@@ -253,12 +237,7 @@ describe('TaskPlantOverlay', () => {
   it('removes real titles and people from the collapsed DOM in privacy mode', () => {
     const privateTask = makeTask({ title: '机密发布计划', ownerName: '艾达', importance: 5 });
     const { container } = render(
-      <TaskPlantOverlay
-        tasks={[privateTask]}
-        privacyMode
-        onOpen={vi.fn()}
-        onSelectTask={vi.fn()}
-      />,
+      <TaskPlantOverlay tasks={[privateTask]} privacyMode onSelectTask={vi.fn()} />,
     );
 
     expect(container.innerHTML).not.toContain('机密发布计划');

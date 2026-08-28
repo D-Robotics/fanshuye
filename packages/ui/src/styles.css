@@ -276,11 +276,6 @@ textarea:focus-visible,
   scale: 1.055;
 }
 
-.fy-task-plant__overflow:focus-visible {
-  outline: 3px solid #126fd4;
-  outline-offset: 2px;
-}
-
 .fy-task-plant__leaf:focus-visible {
   outline: none;
 }
@@ -317,26 +312,6 @@ textarea:focus-visible,
   right: 5px;
   bottom: 7px;
   background: #425a51;
-}
-
-.fy-task-plant__overflow {
-  position: absolute;
-  z-index: 6;
-  top: 153px;
-  right: 4px;
-  display: grid;
-  min-width: 38px;
-  height: 31px;
-  padding: 0 8px;
-  border: 2px solid rgba(255, 255, 255, 0.88) !important;
-  border-radius: 999px;
-  background: linear-gradient(145deg, #225f42, #143f31);
-  box-shadow: 0 5px 12px rgba(17, 55, 34, 0.28);
-  color: white;
-  cursor: pointer;
-  place-items: center;
-  font-size: 12px;
-  font-weight: 900;
 }
 
 .fy-task-plant__empty {
@@ -381,8 +356,7 @@ textarea:focus-visible,
     stroke: Canvas;
   }
 
-  .fy-task-plant__empty,
-  .fy-task-plant__overflow {
+  .fy-task-plant__empty {
     color: CanvasText;
     background: Canvas;
     border-color: CanvasText !important;
@@ -628,15 +602,6 @@ textarea:focus-visible,
 .fy-task-plant__drag-handle:focus-visible {
   outline: 3px solid #126fd4;
   outline-offset: 1px;
-}
-
-.fy-task-plant__overflow {
-  top: 158px;
-  right: 3px;
-  min-width: 31px;
-  height: 25px;
-  padding: 0 6px;
-  font-size: 10px;
 }
 
 .fy-task-plant__empty {
