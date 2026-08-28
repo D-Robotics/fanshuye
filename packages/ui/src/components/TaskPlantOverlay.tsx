@@ -20,14 +20,14 @@ export interface BinaryTaskLeafSlot {
 }
 
 export const BINARY_TASK_LEAF_SLOTS: readonly BinaryTaskLeafSlot[] = [
-  { pair: 0, side: 'left', outwardRank: 0, x: 0, y: 118, tilt: -18 },
-  { pair: 0, side: 'right', outwardRank: 0, x: 118, y: 114, tilt: 18 },
-  { pair: 1, side: 'left', outwardRank: 1, x: 4, y: 66, tilt: -12 },
-  { pair: 1, side: 'right', outwardRank: 1, x: 114, y: 62, tilt: 14 },
-  { pair: 2, side: 'left', outwardRank: 2, x: 37, y: 3, tilt: -5 },
-  { pair: 2, side: 'right', outwardRank: 2, x: 82, y: 2, tilt: 7 },
-  { pair: 3, side: 'left', outwardRank: 3, x: 27, y: 36, tilt: -22 },
-  { pair: 3, side: 'right', outwardRank: 3, x: 95, y: 34, tilt: 20 },
+  { pair: 0, side: 'left', outwardRank: 0, x: 22, y: 116, tilt: -30 },
+  { pair: 0, side: 'right', outwardRank: 0, x: 116, y: 112, tilt: 30 },
+  { pair: 1, side: 'left', outwardRank: 1, x: 33, y: 66, tilt: -45 },
+  { pair: 1, side: 'right', outwardRank: 1, x: 105, y: 62, tilt: 45 },
+  { pair: 2, side: 'left', outwardRank: 2, x: 49, y: 4, tilt: -10 },
+  { pair: 2, side: 'right', outwardRank: 2, x: 89, y: 4, tilt: 12 },
+  { pair: 3, side: 'left', outwardRank: 3, x: 34, y: 37, tilt: -28 },
+  { pair: 3, side: 'right', outwardRank: 3, x: 104, y: 35, tilt: 30 },
 ] as const;
 
 export interface TaskPlantSelection {
@@ -127,14 +127,14 @@ export function TaskPlantOverlay({
             strokeLinejoin="round"
           >
             <path d="M88 194 C88 165 87 132 87 102 C88 76 87 52 89 29" strokeWidth="11" />
-            <path d="M88 165 C69 157 49 149 28 150" strokeWidth="7" />
-            <path d="M88 165 C108 154 128 147 148 146" strokeWidth="7" />
-            <path d="M63 155 C47 139 37 121 33 108" strokeWidth="4.5" />
-            <path d="M113 153 C129 136 139 118 143 104" strokeWidth="4.5" />
-            <path d="M87 126 C76 111 65 95 56 80" strokeWidth="5.5" />
-            <path d="M87 126 C100 109 113 94 124 78" strokeWidth="5.5" />
-            <path d="M76 108 C71 86 68 65 66 48" strokeWidth="3.8" />
-            <path d="M102 107 C105 87 109 65 111 47" strokeWidth="3.8" />
+            <path d="M88 165 C70 157 55 154 41 160" strokeWidth="7" />
+            <path d="M88 165 C106 155 121 151 135 156" strokeWidth="7" />
+            <path d="M63 155 C53 143 51 124 52 112" strokeWidth="4.5" />
+            <path d="M113 153 C123 139 125 120 124 108" strokeWidth="4.5" />
+            <path d="M87 126 C75 111 63 94 53 84" strokeWidth="5.5" />
+            <path d="M87 126 C100 109 113 94 123 82" strokeWidth="5.5" />
+            <path d="M76 108 C73 86 70 66 68 50" strokeWidth="3.8" />
+            <path d="M102 107 C105 87 107 67 108 50" strokeWidth="3.8" />
           </g>
           <g className="fy-task-plant__binary-nodes">
             <circle cx="88" cy="165" r="4" />
@@ -175,27 +175,27 @@ export function TaskPlantOverlay({
               onSelectTask(task);
             }}
           >
-            <svg viewBox="0 0 100 82" aria-hidden="true">
+            <svg viewBox="0 0 72 96" aria-hidden="true">
               <path
                 className="fy-task-plant__leaf-shape"
-                d="M50 79 C42 63 7 60 5 29 C3 7 28 0 49 22 C69 0 96 7 95 30 C94 59 60 65 50 79Z"
+                d="M36 92 C24 76 15 58 19 41 C23 24 33 12 43 4 C46 21 55 37 52 53 C49 70 42 84 36 92Z"
               />
               <path
                 className="fy-task-plant__leaf-vein"
-                d="M50 72 L49 25 M49 44 L27 24 M49 52 L73 29 M48 59 L27 48 M51 62 L73 49"
+                d="M36 88 C36 68 37 43 42 12 M37 61 L25 48 M38 52 L49 36 M36 72 L27 62 M38 66 L47 55"
               />
-              <text className="fy-task-plant__leaf-rank" x="50" y="18">
+              <text className="fy-task-plant__leaf-rank" x="36" y="32">
                 {index + 1}
               </text>
-              <text className="fy-task-plant__leaf-title" x="50" y={secondLine === '' ? 43 : 35}>
+              <text className="fy-task-plant__leaf-title" x="36" y={secondLine === '' ? 56 : 49}>
                 {firstLine}
               </text>
               {secondLine !== '' && (
-                <text className="fy-task-plant__leaf-title" x="50" y="48">
+                <text className="fy-task-plant__leaf-title" x="36" y="61">
                   {secondLine}
                 </text>
               )}
-              <text className="fy-task-plant__leaf-status" x="50" y="65">
+              <text className="fy-task-plant__leaf-status" x="36" y="78">
                 {statusSymbol(task)}
               </text>
             </svg>

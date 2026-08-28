@@ -438,16 +438,16 @@ textarea:focus-visible,
 }
 
 .fy-task-plant__leaf {
-  --leaf-fill: #4f9851;
-  width: 58px;
-  height: 48px;
+  --leaf-fill: #58a52c;
+  width: 38px;
+  height: 52px;
   color: #fbfff2;
-  filter: drop-shadow(0 3px 4px rgba(20, 68, 31, 0.25));
+  filter: drop-shadow(0 3px 3px rgba(20, 68, 31, 0.24));
   transform-origin: 50% 94%;
 }
 
 .fy-task-plant__leaf--in-progress {
-  --leaf-fill: #3b8b50;
+  --leaf-fill: #3f963d;
 }
 
 .fy-task-plant__leaf--in-review {
@@ -456,13 +456,13 @@ textarea:focus-visible,
 
 .fy-task-plant__leaf--importance-4,
 .fy-task-plant__leaf--importance-5 {
-  --leaf-fill: #67a93d;
+  --leaf-fill: #68ad24;
 }
 
 .fy-task-plant__leaf-shape {
   fill: var(--leaf-fill);
   stroke: #245f35;
-  stroke-width: 2.4;
+  stroke-width: 2.1;
 }
 
 .fy-task-plant__leaf--importance-5 .fy-task-plant__leaf-shape {
@@ -498,18 +498,18 @@ textarea:focus-visible,
 }
 
 .fy-task-plant__leaf-title {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
   letter-spacing: 0;
 }
 
 .fy-task-plant__leaf-status {
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 900;
 }
 
 .fy-task-plant__leaf-rank {
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 900;
 }
 
@@ -520,21 +520,21 @@ textarea:focus-visible,
 }
 
 .fy-task-plant__badge {
-  min-width: 14px;
-  height: 14px;
+  min-width: 12px;
+  height: 12px;
   padding: 0 2px;
   border-width: 1px;
-  font-size: 7px;
+  font-size: 6px;
 }
 
 .fy-task-plant__badge--blocked {
-  top: 3px;
-  right: 3px;
+  top: 8px;
+  right: -1px;
 }
 
 .fy-task-plant__badge--overdue {
-  top: 17px;
-  right: 0;
+  top: 23px;
+  right: -3px;
 }
 
 .fy-task-plant__drag-handle {

@@ -53,7 +53,7 @@ describe('TaskPlantOverlay', () => {
     expect(onlyLeaf).toHaveAttribute('data-outward-rank', '0');
   });
 
-  it('reuses the broad sweet-potato leaf silhouette without avatars and opens overflow', () => {
+  it('renders the reference-inspired lanceolate leaf silhouette without avatars and opens overflow', () => {
     const onOpen = vi.fn();
     const { container } = render(
       <TaskPlantOverlay tasks={tasks} onOpen={onOpen} onSelectTask={vi.fn()} />,
@@ -64,7 +64,7 @@ describe('TaskPlantOverlay', () => {
     expect(container.querySelectorAll('.fy-task-plant__leaf-shape')).toHaveLength(8);
     expect(container.querySelector('.fy-task-plant__leaf-shape')).toHaveAttribute(
       'd',
-      'M50 79 C42 63 7 60 5 29 C3 7 28 0 49 22 C69 0 96 7 95 30 C94 59 60 65 50 79Z',
+      'M36 92 C24 76 15 58 19 41 C23 24 33 12 43 4 C46 21 55 37 52 53 C49 70 42 84 36 92Z',
     );
     expect(container.querySelector('img')).not.toBeInTheDocument();
     expect(container.querySelector('[class*="avatar"]')).not.toBeInTheDocument();
