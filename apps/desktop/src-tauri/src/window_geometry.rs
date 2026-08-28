@@ -25,7 +25,7 @@ impl OverlayMode {
 
     pub fn logical_size(self) -> LogicalSize {
         match self {
-            Self::Collapsed => LogicalSize::new(224.0, 272.0),
+            Self::Collapsed => LogicalSize::new(176.0, 216.0),
             Self::Preview => LogicalSize::new(780.0, 680.0),
             Self::Pinned => LogicalSize::new(1_080.0, 760.0),
         }
@@ -156,6 +156,24 @@ pub fn vertical_anchor(
     (relative as f64 / available as f64).clamp(0.0, 1.0)
 }
 
+pub fn horizontal_anchor(
+    window_x: i32,
+    window_width: u32,
+    work_area: PhysicalRect,
+    scale: f64,
+) -> f64 {
+    let margin = scaled(FLOATING_MARGIN_LOGICAL, scale);
+    let available = work_area
+        .width
+        .saturating_sub(window_width)
+        .saturating_sub(margin.saturating_mul(2));
+    if available == 0 {
+        return 0.0;
+    }
+    let relative = window_x as i64 - work_area.x as i64 - margin as i64;
+    (relative as f64 / available as f64).clamp(0.0, 1.0)
+}
+
 pub fn place_overlay(
     mode: OverlayMode,
     presentation: OverlayPresentation,
@@ -163,6 +181,7 @@ pub fn place_overlay(
     scale: f64,
     edge: Edge,
     saved_vertical_anchor: f64,
+    saved_horizontal_anchor: Option<f64>,
 ) -> WindowPlacement {
     let scale = sanitize_scale(scale);
     let anchor = if saved_vertical_anchor.is_finite() {
@@ -199,12 +218,21 @@ pub fn place_overlay(
         .max(1);
     let width = scaled(logical_size.width, scale).min(max_width);
     let height = scaled(logical_size.height, scale).min(max_height);
-    let x = match edge {
-        Edge::Left => saturating_i32(work_area.x as i64 + margin as i64),
-        Edge::Right => saturating_i32(
-            work_area.x as i64 + work_area.width as i64 - width as i64 - margin as i64,
-        ),
+    let default_horizontal_anchor = match edge {
+        Edge::Left => 0.0,
+        Edge::Right => 1.0,
     };
+    let horizontal = saved_horizontal_anchor
+        .filter(|value| value.is_finite())
+        .unwrap_or(default_horizontal_anchor)
+        .clamp(0.0, 1.0);
+    let available_x = work_area
+        .width
+        .saturating_sub(width)
+        .saturating_sub(margin.saturating_mul(2));
+    let x = saturating_i32(
+        work_area.x as i64 + margin as i64 + (available_x as f64 * horizontal).round() as i64,
+    );
     let available_y = work_area
         .height
         .saturating_sub(height)
@@ -287,6 +315,7 @@ mod tests {
                 scale,
                 Edge::Right,
                 0.5,
+                None,
             );
             assert_eq!(placement.width, expected_width);
             assert_eq!(placement.height, expected_height);
@@ -300,10 +329,10 @@ mod tests {
     #[test]
     fn collapsed_task_plant_scales_and_stays_inside_the_work_area() {
         for (scale, expected_width, expected_height) in [
-            (1.0, 224, 272),
-            (1.25, 280, 340),
-            (1.5, 336, 408),
-            (2.0, 448, 544),
+            (1.0, 176, 216),
+            (1.25, 220, 270),
+            (1.5, 264, 324),
+            (2.0, 352, 432),
         ] {
             let placement = place_overlay(
                 OverlayMode::Collapsed,
@@ -312,6 +341,7 @@ mod tests {
                 scale,
                 Edge::Right,
                 0.5,
+                None,
             );
             assert_eq!(placement.width, expected_width);
             assert_eq!(placement.height, expected_height);
@@ -331,6 +361,7 @@ mod tests {
             1.25,
             Edge::Right,
             0.9,
+            None,
         );
         assert_eq!(
             right,
@@ -349,6 +380,7 @@ mod tests {
             2.0,
             Edge::Left,
             0.0,
+            None,
         );
         assert_eq!(left.x, -1_920);
         assert_eq!(left.width, 840);
@@ -361,8 +393,8 @@ mod tests {
             PhysicalWindow {
                 x: -100,
                 y: 20,
-                width: 224,
-                height: 272
+                width: 176,
+                height: 216
             },
             &areas,
         ));
@@ -370,8 +402,8 @@ mod tests {
             PhysicalWindow {
                 x: 20,
                 y: 20,
-                width: 224,
-                height: 272
+                width: 176,
+                height: 216
             },
             &areas,
         ));
@@ -379,8 +411,8 @@ mod tests {
             PhysicalWindow {
                 x: i32::MAX,
                 y: i32::MAX,
-                width: 224,
-                height: 272
+                width: 176,
+                height: 216
             },
             &areas,
         ));
@@ -431,6 +463,7 @@ mod tests {
             1.25,
             Edge::Right,
             0.65,
+            None,
         );
         let anchor = vertical_anchor(first.y, first.height, area, 1.25);
         let restored = place_overlay(
@@ -440,7 +473,70 @@ mod tests {
             2.0,
             Edge::Right,
             anchor,
+            None,
         );
         assert!((vertical_anchor(restored.y, restored.height, area, 2.0) - 0.65).abs() < 0.002);
+    }
+
+    #[test]
+    fn saved_horizontal_anchor_is_dpi_and_size_independent() {
+        let area = PhysicalRect {
+            x: 0,
+            y: 0,
+            width: 2_560,
+            height: 1_400,
+        };
+        let collapsed = place_overlay(
+            OverlayMode::Collapsed,
+            OverlayPresentation::Floating,
+            area,
+            1.25,
+            Edge::Right,
+            0.5,
+            Some(0.36),
+        );
+        let anchor = horizontal_anchor(collapsed.x, collapsed.width, area, 1.25);
+        assert!((anchor - 0.36).abs() < 0.002);
+
+        let pinned = place_overlay(
+            OverlayMode::Pinned,
+            OverlayPresentation::Floating,
+            area,
+            2.0,
+            Edge::Right,
+            0.5,
+            Some(anchor),
+        );
+        assert!(pinned.x >= area.x);
+        assert!(pinned.x as i64 + pinned.width as i64 <= area.width as i64);
+        assert!((horizontal_anchor(pinned.x, pinned.width, area, 2.0) - 0.36).abs() < 0.002);
+    }
+
+    #[test]
+    fn missing_horizontal_anchor_uses_the_requested_edge() {
+        let left = place_overlay(
+            OverlayMode::Collapsed,
+            OverlayPresentation::Floating,
+            work_area(),
+            1.0,
+            Edge::Left,
+            0.2,
+            None,
+        );
+        let right = place_overlay(
+            OverlayMode::Collapsed,
+            OverlayPresentation::Floating,
+            work_area(),
+            1.0,
+            Edge::Right,
+            0.2,
+            None,
+        );
+        assert!(left.x < right.x);
+        assert_eq!(horizontal_anchor(left.x, left.width, work_area(), 1.0), 0.0);
+        assert_eq!(
+            horizontal_anchor(right.x, right.width, work_area(), 1.0),
+            1.0
+        );
     }
 }

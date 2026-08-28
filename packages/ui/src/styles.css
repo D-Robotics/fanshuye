@@ -407,6 +407,219 @@ textarea:focus-visible,
   }
 }
 
+/* Compact binary task tree overrides */
+.fy-task-plant {
+  width: 176px;
+  height: 216px;
+  filter: drop-shadow(0 8px 9px rgba(49, 36, 22, 0.2));
+}
+
+.fy-task-plant__branches {
+  filter: drop-shadow(0 2px 1px rgba(76, 32, 12, 0.22));
+}
+
+.fy-task-plant__binary-nodes circle {
+  fill: #923a16;
+  stroke: #d87735;
+  stroke-width: 1;
+}
+
+.fy-task-plant__compact-roots path:first-child {
+  fill: url(#fy-binary-root);
+  stroke: #6e284b;
+  stroke-width: 1.5;
+}
+
+.fy-task-plant__compact-roots path:last-child {
+  fill: none;
+  stroke: rgba(255, 182, 181, 0.7);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+
+.fy-task-plant__leaf {
+  --leaf-fill: #4f9851;
+  width: 58px;
+  height: 48px;
+  color: #fbfff2;
+  filter: drop-shadow(0 3px 4px rgba(20, 68, 31, 0.25));
+  transform-origin: 50% 94%;
+}
+
+.fy-task-plant__leaf--in-progress {
+  --leaf-fill: #3b8b50;
+}
+
+.fy-task-plant__leaf--in-review {
+  --leaf-fill: #347d60;
+}
+
+.fy-task-plant__leaf--importance-4,
+.fy-task-plant__leaf--importance-5 {
+  --leaf-fill: #67a93d;
+}
+
+.fy-task-plant__leaf-shape {
+  fill: var(--leaf-fill);
+  stroke: #245f35;
+  stroke-width: 2.4;
+}
+
+.fy-task-plant__leaf--importance-5 .fy-task-plant__leaf-shape {
+  stroke: #1b5a24;
+  stroke-width: 3.3;
+}
+
+.fy-task-plant__leaf--blocked .fy-task-plant__leaf-shape {
+  stroke: #a53232;
+  stroke-dasharray: 6 2;
+}
+
+.fy-task-plant__leaf--unassigned .fy-task-plant__leaf-shape {
+  stroke-dasharray: 3 2;
+}
+
+.fy-task-plant__leaf-vein {
+  fill: none;
+  stroke: rgba(243, 255, 224, 0.56);
+  stroke-width: 1.35;
+  stroke-linecap: round;
+}
+
+.fy-task-plant__leaf-title,
+.fy-task-plant__leaf-status,
+.fy-task-plant__leaf-rank {
+  fill: currentColor;
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: color-mix(in srgb, var(--leaf-fill) 78%, transparent);
+  stroke-width: 2.8px;
+  stroke-linejoin: round;
+}
+
+.fy-task-plant__leaf-title {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.fy-task-plant__leaf-status {
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.fy-task-plant__leaf-rank {
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.fy-task-plant__leaf:hover,
+.fy-task-plant__leaf:focus-visible {
+  filter: drop-shadow(0 5px 5px rgba(19, 68, 31, 0.36));
+  scale: 1.08;
+}
+
+.fy-task-plant__badge {
+  min-width: 14px;
+  height: 14px;
+  padding: 0 2px;
+  border-width: 1px;
+  font-size: 7px;
+}
+
+.fy-task-plant__badge--blocked {
+  top: 3px;
+  right: 3px;
+}
+
+.fy-task-plant__badge--overdue {
+  top: 17px;
+  right: 0;
+}
+
+.fy-task-plant__drag-handle {
+  position: absolute;
+  z-index: 6;
+  top: 134px;
+  left: 72px;
+  display: grid;
+  width: 32px;
+  height: 57px;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: rgba(255, 240, 208, 0.92);
+  cursor: grab;
+  place-items: end center;
+}
+
+.fy-task-plant__drag-handle:active {
+  cursor: grabbing;
+}
+
+.fy-task-plant__drag-handle > span {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255, 244, 218, 0.66);
+  border-radius: 999px;
+  background: rgba(106, 43, 18, 0.58);
+  box-shadow: 0 2px 5px rgba(73, 31, 15, 0.22);
+  place-items: center;
+  font-size: 11px;
+  line-height: 1;
+  backdrop-filter: blur(3px);
+}
+
+.fy-task-plant__drag-handle:focus-visible {
+  outline: 3px solid #126fd4;
+  outline-offset: 1px;
+}
+
+.fy-task-plant__overflow {
+  top: 158px;
+  right: 3px;
+  min-width: 31px;
+  height: 25px;
+  padding: 0 6px;
+  font-size: 10px;
+}
+
+.fy-task-plant__empty {
+  top: 78px;
+  width: 108px;
+  padding: 7px 6px;
+  border-radius: 12px;
+  font-size: 10px;
+}
+
+.fy-task-plant__hint {
+  right: 38px;
+  bottom: 0;
+  left: 38px;
+  padding: 2px 4px;
+  border-color: rgba(255, 255, 255, 0.52);
+  background: rgba(250, 251, 239, 0.86);
+  font-size: 8px;
+  letter-spacing: 0.02em;
+}
+
+@media (forced-colors: active) {
+  .fy-task-plant__branches,
+  .fy-task-plant__compact-roots path,
+  .fy-task-plant__binary-nodes circle {
+    stroke: CanvasText;
+  }
+
+  .fy-task-plant__drag-handle > span {
+    border-color: CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+}
+
 .fy-icon-button {
   display: inline-grid;
   width: 34px;

@@ -139,6 +139,11 @@ export async function setNativeOverlayMode(mode: OverlayMode): Promise<void> {
   await invokeNative('set_overlay_mode', { mode });
 }
 
+export async function startNativeOverlayDrag(): Promise<void> {
+  if (!isOverlayWebview()) return;
+  await invokeNative('start_overlay_drag');
+}
+
 export function parseNativeOverlayState(value: unknown): NativeOverlayState | null {
   if (typeof value !== 'object' || value === null) return null;
   const candidate = value as Record<string, unknown>;

@@ -203,6 +203,7 @@ describe('cross-window desktop preference validation', () => {
     const sidePanelSource = windowsRustSource.slice(sidePanelIndex, nextFunctionIndex);
     expect(sidePanelSource).toContain('set_decorations(false)');
     expect(nativeSource).toContain("invokeNative<unknown>('get_overlay_state')");
+    expect(nativeSource).toContain("invokeNative('start_overlay_drag')");
     expect(nativeSource).toContain("invokeNative<unknown>('get_current_window_visibility')");
     expect(nativeSource).toContain("invokeNative<unknown>('list_available_monitors')");
     expect(nativeSource).toContain('export async function watchNativeWindowVisibility');

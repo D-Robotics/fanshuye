@@ -9,8 +9,8 @@ use tauri_plugin_store::StoreExt;
 use crate::{
     preferences,
     window_geometry::{
-        choose_monitor_index, is_safely_visible, place_overlay, vertical_anchor, Edge,
-        MonitorCandidate, OverlayMode, OverlayPresentation, PhysicalRect, PhysicalWindow,
+        choose_monitor_index, horizontal_anchor, is_safely_visible, place_overlay, vertical_anchor,
+        Edge, MonitorCandidate, OverlayMode, OverlayPresentation, PhysicalRect, PhysicalWindow,
     },
 };
 
@@ -45,6 +45,7 @@ pub struct AvailableMonitor {
 #[serde(default, rename_all = "camelCase")]
 struct SavedOverlayState {
     monitor_name: Option<String>,
+    horizontal_anchor: Option<f64>,
     vertical_anchor: f64,
     mode: String,
     presentation: String,
@@ -54,6 +55,7 @@ impl Default for SavedOverlayState {
     fn default() -> Self {
         Self {
             monitor_name: None,
+            horizontal_anchor: None,
             vertical_anchor: 0.2,
             mode: OverlayMode::Collapsed.as_str().into(),
             presentation: OverlayPresentation::Floating.as_str().into(),
@@ -225,6 +227,7 @@ fn apply_overlay_runtime(
             monitor.scale_factor(),
             edge,
             state.vertical_anchor,
+            state.horizontal_anchor,
         );
         window
             .set_size(PhysicalSize::new(placement.width, placement.height))
@@ -400,6 +403,16 @@ pub fn get_current_window_visibility(
 }
 
 #[tauri::command]
+pub fn start_overlay_drag(window: WebviewWindow) -> Result<(), String> {
+    if window.label() != "overlay" {
+        return Err("该命令只允许悬浮窗口调用".into());
+    }
+    window
+        .start_dragging()
+        .map_err(|_| "无法拖动悬浮窗口".to_string())
+}
+
+#[tauri::command]
 pub fn list_available_monitors(app: AppHandle) -> Result<Vec<AvailableMonitor>, String> {
     let window = app
         .get_webview_window("overlay")
@@ -531,13 +544,20 @@ fn capture_overlay_placement(window: &WebviewWindow) -> Result<(), String> {
     };
     let mut state = load_overlay_state(window.app_handle());
     let presentation = OverlayPresentation::parse(&state.presentation);
+    let mode = OverlayMode::parse(&state.mode).unwrap_or(OverlayMode::Collapsed);
     let position = window
         .outer_position()
         .map_err(|_| "无法读取悬浮窗位置".to_string())?;
     let size = window
         .outer_size()
         .map_err(|_| "无法读取悬浮窗大小".to_string())?;
-    if presentation == OverlayPresentation::Floating {
+    if presentation == OverlayPresentation::Floating && mode == OverlayMode::Collapsed {
+        state.horizontal_anchor = Some(horizontal_anchor(
+            position.x,
+            size.width,
+            monitor_work_area(&monitor),
+            monitor.scale_factor(),
+        ));
         state.vertical_anchor = vertical_anchor(
             position.y,
             size.height,
@@ -632,6 +652,19 @@ mod tests {
             .expect("serializable visibility state"),
             serde_json::json!({ "label": "overlay", "visible": false })
         );
+    }
+
+    #[test]
+    fn old_saved_state_without_horizontal_anchor_remains_compatible() {
+        let state: SavedOverlayState = serde_json::from_value(serde_json::json!({
+            "monitorName": "primary",
+            "verticalAnchor": 0.4,
+            "mode": "collapsed",
+            "presentation": "floating"
+        }))
+        .expect("legacy state remains readable");
+        assert_eq!(state.horizontal_anchor, None);
+        assert_eq!(state.vertical_anchor, 0.4);
     }
 
     #[test]

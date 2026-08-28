@@ -41,6 +41,7 @@ import {
   setAutostartEnabled,
   setGlobalShortcut,
   showMainWindow,
+  startNativeOverlayDrag,
   watchNativeOverlayState,
   watchNativeWindowVisibility,
   type DesktopPreferences,
@@ -1078,6 +1079,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
           privacyMode={preferences.privacyMode}
           reducedMotion={preferences.reducedMotion}
           onOpen={overlay.open}
+          onDragStart={() => void startNativeOverlayDrag()}
           onSelectTask={(task) => {
             setSelectedId(task.id);
             overlay.open();

@@ -166,7 +166,7 @@ describe('desktop app preferences', () => {
     window.history.pushState({}, '', '/?window=overlay');
     try {
       render(<App />);
-      const plant = screen.getByRole('region', { name: '常驻任务番薯植株' });
+      const plant = screen.getByRole('region', { name: '常驻二叉任务树' });
       fireEvent.mouseEnter(plant);
       fireEvent.mouseLeave(plant);
 
@@ -182,11 +182,11 @@ describe('desktop app preferences', () => {
     window.history.pushState({}, '', '/?window=overlay');
     try {
       render(<App />);
-      fireEvent.click(screen.getByRole('button', { name: /修复刷新令牌竞争条件.*点击展开/ }));
+      fireEvent.click(screen.getByRole('button', { name: /确认 Windows 150% DPI 表现.*点击展开/ }));
 
       expect(screen.getByRole('button', { name: '收起 · Esc' })).toBeInTheDocument();
       expect(screen.getByRole('complementary', { name: '任务详情' })).toHaveTextContent(
-        '修复刷新令牌竞争条件',
+        '确认 Windows 150% DPI 表现',
       );
     } finally {
       window.history.pushState({}, '', '/');
