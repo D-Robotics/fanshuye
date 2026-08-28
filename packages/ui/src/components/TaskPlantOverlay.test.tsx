@@ -26,6 +26,9 @@ describe('TaskPlantOverlay', () => {
       expect(pairSlots[0]?.outwardRank).toBe(pair);
       expect(pairSlots[1]?.outwardRank).toBe(pair);
     }
+    expect(BINARY_TASK_LEAF_SLOTS.filter((slot) => slot.pair === 3).map((slot) => slot.x)).toEqual([
+      55, 83,
+    ]);
   });
 
   it('sorts by importance first and uses the stable action order for ties', () => {
@@ -68,6 +71,13 @@ describe('TaskPlantOverlay', () => {
     );
     expect(container.querySelector('img')).not.toBeInTheDocument();
     expect(container.querySelector('[class*="avatar"]')).not.toBeInTheDocument();
+    expect(container.querySelector('.fy-task-plant__crown-bud')).toBeInTheDocument();
+    expect(container.querySelector('.fy-task-plant__root-fibers')).toBeInTheDocument();
+    expect(container.querySelector('[data-root-shape="spindle-tuber"]')).toHaveAttribute(
+      'd',
+      'M65 209 C66 200 74 191 87 184 C99 178 114 180 120 187 C125 193 121 201 111 207 C100 212 84 215 73 213 C68 212 65 211 65 209Z',
+    );
+    expect(container.innerHTML).not.toContain('M79 185 C65 184 59 194 65 204 C71 214 83 207');
 
     fireEvent.click(screen.getByRole('button', { name: '另有 3 个活跃任务，打开任务树' }));
     expect(onOpen).toHaveBeenCalledOnce();

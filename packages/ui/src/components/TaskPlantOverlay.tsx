@@ -26,8 +26,8 @@ export const BINARY_TASK_LEAF_SLOTS: readonly BinaryTaskLeafSlot[] = [
   { pair: 1, side: 'right', outwardRank: 1, x: 105, y: 62, tilt: 45 },
   { pair: 2, side: 'left', outwardRank: 2, x: 49, y: 4, tilt: -10 },
   { pair: 2, side: 'right', outwardRank: 2, x: 89, y: 4, tilt: 12 },
-  { pair: 3, side: 'left', outwardRank: 3, x: 34, y: 37, tilt: -28 },
-  { pair: 3, side: 'right', outwardRank: 3, x: 104, y: 35, tilt: 30 },
+  { pair: 3, side: 'left', outwardRank: 3, x: 55, y: 54, tilt: -18 },
+  { pair: 3, side: 'right', outwardRank: 3, x: 83, y: 50, tilt: 18 },
 ] as const;
 
 export interface TaskPlantSelection {
@@ -172,27 +172,45 @@ export function TaskPlantOverlay({
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <path d="M88 194 C88 165 87 132 87 102 C88 76 87 52 89 29" strokeWidth="11" />
+            <path d="M88 194 C88 165 87 132 87 105 C87 91 88 80 88 70" strokeWidth="11" />
             <path d="M88 165 C70 157 55 154 41 160" strokeWidth="7" />
             <path d="M88 165 C106 155 121 151 135 156" strokeWidth="7" />
             <path d="M63 155 C53 143 51 124 52 112" strokeWidth="4.5" />
             <path d="M113 153 C123 139 125 120 124 108" strokeWidth="4.5" />
-            <path d="M87 126 C75 111 63 94 53 84" strokeWidth="5.5" />
-            <path d="M87 126 C100 109 113 94 123 82" strokeWidth="5.5" />
-            <path d="M76 108 C73 86 70 66 68 50" strokeWidth="3.8" />
-            <path d="M102 107 C105 87 107 67 108 50" strokeWidth="3.8" />
+            <path d="M87 126 C75 121 63 116 52 112" strokeWidth="5.5" />
+            <path d="M87 126 C100 119 113 113 124 108" strokeWidth="5.5" />
+            <path d="M87 105 C79 86 72 67 68 50" strokeWidth="4.2" />
+            <path d="M88 104 C98 84 104 66 108 50" strokeWidth="4.2" />
+            <path d="M87 119 C83 111 80 104 78 99" strokeWidth="3.5" />
+            <path d="M88 116 C93 108 97 102 99 96" strokeWidth="3.5" />
           </g>
           <g className="fy-task-plant__binary-nodes">
             <circle cx="88" cy="165" r="4" />
             <circle cx="63" cy="155" r="3" />
             <circle cx="113" cy="153" r="3" />
             <circle cx="87" cy="126" r="3.5" />
-            <circle cx="76" cy="108" r="2.6" />
-            <circle cx="102" cy="107" r="2.6" />
+            <circle cx="87" cy="105" r="2.8" />
+            <circle cx="87" cy="118" r="2.4" />
+          </g>
+          <g className="fy-task-plant__crown-bud">
+            <path d="M88 74 C79 66 80 53 89 43 C97 54 97 66 88 74Z" />
+            <path d="M88 70 C88 61 89 53 89 47" />
           </g>
           <g className="fy-task-plant__compact-roots">
-            <path d="M79 185 C65 184 59 194 65 204 C71 214 83 207 88 197 C92 207 105 214 112 204 C119 194 111 184 97 185Z" />
-            <path d="M74 192 C78 188 83 188 87 191 M98 191 C103 188 108 190 110 195" />
+            <path
+              className="fy-task-plant__root-fibers"
+              d="M88 180 C85 187 81 191 77 196 M91 180 C98 185 104 188 111 190 M88 181 C89 188 91 193 94 197"
+            />
+            <path
+              className="fy-task-plant__tuber"
+              data-root-shape="spindle-tuber"
+              d="M65 209 C66 200 74 191 87 184 C99 178 114 180 120 187 C125 193 121 201 111 207 C100 212 84 215 73 213 C68 212 65 211 65 209Z"
+            />
+            <path className="fy-task-plant__tuber-highlight" d="M76 204 C80 199 84 196 88 194" />
+            <path
+              className="fy-task-plant__tuber-texture"
+              d="M99 207 C102 204 105 203 108 203 M104 188 C108 188 111 190 113 193"
+            />
           </g>
         </svg>
         {visible.length === 0 && <span className="fy-task-plant__empty">暂无活跃任务</span>}

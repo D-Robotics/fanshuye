@@ -406,16 +406,43 @@ textarea:focus-visible,
   stroke-width: 1;
 }
 
-.fy-task-plant__compact-roots path:first-child {
+.fy-task-plant__tuber {
   fill: url(#fy-binary-root);
   stroke: #6e284b;
+  stroke-width: 1.8;
+}
+
+.fy-task-plant__root-fibers {
+  fill: none;
+  stroke: #8b451f;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+.fy-task-plant__tuber-highlight {
+  fill: none;
+  stroke: rgba(255, 182, 181, 0.7);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.fy-task-plant__tuber-texture {
+  fill: none;
+  stroke: rgba(91, 27, 68, 0.5);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+
+.fy-task-plant__crown-bud path:first-child {
+  fill: #4c9c39;
+  stroke: #246137;
   stroke-width: 1.5;
 }
 
-.fy-task-plant__compact-roots path:last-child {
+.fy-task-plant__crown-bud path:last-child {
   fill: none;
-  stroke: rgba(255, 182, 181, 0.7);
-  stroke-width: 1.4;
+  stroke: rgba(238, 255, 221, 0.62);
+  stroke-width: 1.1;
   stroke-linecap: round;
 }
 
@@ -634,6 +661,7 @@ textarea:focus-visible,
 @media (forced-colors: active) {
   .fy-task-plant__branches,
   .fy-task-plant__compact-roots path,
+  .fy-task-plant__crown-bud path,
   .fy-task-plant__binary-nodes circle {
     stroke: CanvasText;
   }
