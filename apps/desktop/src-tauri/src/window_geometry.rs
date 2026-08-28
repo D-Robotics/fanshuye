@@ -26,13 +26,13 @@ impl OverlayMode {
     pub fn logical_size(self) -> LogicalSize {
         match self {
             Self::Collapsed => LogicalSize::new(176.0, 216.0),
-            Self::Preview => LogicalSize::new(780.0, 680.0),
+            Self::Preview => LogicalSize::new(420.0, 236.0),
             Self::Pinned => LogicalSize::new(1_080.0, 760.0),
         }
     }
 
     pub fn accepts_keyboard_focus(self) -> bool {
-        matches!(self, Self::Pinned)
+        matches!(self, Self::Preview | Self::Pinned)
     }
 }
 
@@ -296,17 +296,17 @@ mod tests {
         assert_eq!(OverlayMode::parse("preview"), Ok(OverlayMode::Preview));
         assert_eq!(OverlayMode::parse("pinned"), Ok(OverlayMode::Pinned));
         assert!(OverlayMode::parse("expanded").is_err());
-        assert!(!OverlayMode::Preview.accepts_keyboard_focus());
+        assert!(OverlayMode::Preview.accepts_keyboard_focus());
         assert!(OverlayMode::Pinned.accepts_keyboard_focus());
     }
 
     #[test]
     fn dpi_matrix_preserves_logical_size_and_bounds() {
         for (scale, expected_width, expected_height) in [
-            (1.0, 780, 680),
-            (1.25, 975, 850),
-            (1.5, 1_170, 998),
-            (2.0, 1_560, 984),
+            (1.0, 420, 236),
+            (1.25, 525, 295),
+            (1.5, 630, 354),
+            (2.0, 840, 472),
         ] {
             let placement = place_overlay(
                 OverlayMode::Preview,

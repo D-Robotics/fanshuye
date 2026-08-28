@@ -162,7 +162,7 @@ describe('desktop app preferences', () => {
     expect(screen.getByRole('complementary', { name: '任务详情' })).toHaveTextContent('林工');
   });
 
-  it('keeps the overlay collapsed on hover and opens only after a plant click', () => {
+  it('keeps the overlay collapsed on hover or tree-background clicks and opens on a leaf', () => {
     window.history.pushState({}, '', '/?window=overlay');
     try {
       render(<App />);
@@ -170,24 +170,42 @@ describe('desktop app preferences', () => {
       fireEvent.mouseEnter(plant);
       fireEvent.mouseLeave(plant);
 
-      expect(screen.queryByRole('button', { name: '收起 · Esc' })).not.toBeInTheDocument();
-      fireEvent.click(screen.getByRole('button', { name: '打开番薯叶任务树总览' }));
-      expect(screen.getByRole('button', { name: '收起 · Esc' })).toBeInTheDocument();
+      expect(screen.queryByRole('complementary', { name: '任务速览' })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: '打开番薯叶任务树总览' }),
+      ).not.toBeInTheDocument();
+      fireEvent.click(plant);
+      expect(screen.queryByRole('complementary', { name: '任务速览' })).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: /确认 Windows 150% DPI 表现.*点击展开/ }));
+      expect(screen.getByRole('complementary', { name: '任务速览' })).toBeInTheDocument();
     } finally {
       window.history.pushState({}, '', '/');
     }
   });
 
-  it('opens a collapsed task leaf directly in the matching detail panel', () => {
+  it('opens and switches a compact task preview while keeping relationships on the tree', () => {
     window.history.pushState({}, '', '/?window=overlay');
     try {
       render(<App />);
       fireEvent.click(screen.getByRole('button', { name: /确认 Windows 150% DPI 表现.*点击展开/ }));
 
-      expect(screen.getByRole('button', { name: '收起 · Esc' })).toBeInTheDocument();
-      expect(screen.getByRole('complementary', { name: '任务详情' })).toHaveTextContent(
+      expect(screen.queryByRole('button', { name: '收起 · Esc' })).not.toBeInTheDocument();
+      expect(screen.getByRole('complementary', { name: '任务速览' })).toHaveTextContent(
         '确认 Windows 150% DPI 表现',
       );
+      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+      expect(screen.getByText('后')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: /检查任务缓存隐私边界.*点击展开/ }));
+      expect(screen.getByRole('complementary', { name: '任务速览' })).toHaveTextContent(
+        '检查任务缓存隐私边界',
+      );
+      expect(screen.getByText('前')).toBeInTheDocument();
+
+      fireEvent.keyDown(window, { key: 'Escape' });
+      expect(screen.queryByRole('complementary', { name: '任务速览' })).not.toBeInTheDocument();
+      expect(screen.getByRole('region', { name: '常驻二叉任务树' })).toBeInTheDocument();
     } finally {
       window.history.pushState({}, '', '/');
     }

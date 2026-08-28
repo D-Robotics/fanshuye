@@ -18,6 +18,7 @@ export function overlayReducer(mode: OverlayMode, event: OverlayEvent): OverlayM
 export interface OverlayMachine {
   mode: OverlayMode;
   open: () => void;
+  showPreview: () => void;
   close: () => void;
   synchronizeNativeMode: (mode: OverlayMode) => void;
 }
@@ -28,6 +29,10 @@ export function useOverlayMachine(initialMode: OverlayMode = 'collapsed'): Overl
 
   const open = useCallback(() => {
     setMode((current) => overlayReducer(current, { type: 'OPEN' }));
+  }, []);
+
+  const showPreview = useCallback(() => {
+    setMode((current) => overlayReducer(current, { type: 'SHOW_PREVIEW' }));
   }, []);
 
   const close = useCallback(() => {
@@ -50,11 +55,11 @@ export function useOverlayMachine(initialMode: OverlayMode = 'collapsed'): Overl
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && mode === 'pinned') close();
+      if (event.key === 'Escape' && mode !== 'collapsed') close();
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [close, mode]);
 
-  return { mode, open, close, synchronizeNativeMode };
+  return { mode, open, showPreview, close, synchronizeNativeMode };
 }

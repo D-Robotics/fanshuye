@@ -32,6 +32,16 @@ describe('overlay interaction state', () => {
     expect(result.current.mode).toBe('collapsed');
   });
 
+  it('shows a lightweight preview and lets Escape return to the collapsed tree', () => {
+    const { result } = renderHook(() => useOverlayMachine('collapsed'));
+
+    act(() => result.current.showPreview());
+    expect(result.current.mode).toBe('preview');
+
+    act(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })));
+    expect(result.current.mode).toBe('collapsed');
+  });
+
   it('accepts an authoritative native mode without echoing it back', () => {
     const setNativeMode = vi.mocked(setNativeOverlayMode);
     setNativeMode.mockClear();

@@ -105,10 +105,58 @@ describe('TaskPlantOverlay', () => {
 
     const dragHandle = screen.getByRole('button', { name: '拖动悬浮窗' });
     expect(dragHandle).toHaveAttribute('data-tauri-drag-region');
+    expect(dragHandle).toBeEmptyDOMElement();
+    expect(screen.queryByText('按住主干移动')).not.toBeInTheDocument();
     fireEvent.pointerDown(dragHandle, { button: 0 });
     expect(onDragStart).toHaveBeenCalledOnce();
     expect(onOpen).not.toHaveBeenCalled();
     expect(onSelectTask).not.toHaveBeenCalled();
+  });
+
+  it('marks the selected task and draws its visible prerequisite and dependent on the tree', () => {
+    const prerequisite = makeTask({
+      id: 'before',
+      title: '前置任务',
+      importance: 5,
+      dependents: [{ taskId: 'selected', title: '当前任务', status: 'IN_PROGRESS' }],
+    });
+    const selected = makeTask({
+      id: 'selected',
+      title: '当前任务',
+      importance: 4,
+      prerequisites: [{ taskId: 'before', title: '前置任务', status: 'IN_PROGRESS' }],
+      dependents: [{ taskId: 'after', title: '后续任务', status: 'TODO' }],
+    });
+    const dependent = makeTask({
+      id: 'after',
+      title: '后续任务',
+      importance: 3,
+      prerequisites: [{ taskId: 'selected', title: '当前任务', status: 'IN_PROGRESS' }],
+    });
+    const { container } = render(
+      <TaskPlantOverlay
+        tasks={[dependent, selected, prerequisite]}
+        selectedTaskId="selected"
+        onOpen={vi.fn()}
+        onSelectTask={vi.fn()}
+      />,
+    );
+
+    expect(container.querySelector('[data-task-id="selected"]')).toHaveAttribute(
+      'data-relation',
+      'selected',
+    );
+    expect(container.querySelector('[data-task-id="before"]')).toHaveAttribute(
+      'data-relation',
+      'prerequisite',
+    );
+    expect(container.querySelector('[data-task-id="after"]')).toHaveAttribute(
+      'data-relation',
+      'dependent',
+    );
+    expect(container.querySelectorAll('.fy-task-plant__relation-line')).toHaveLength(2);
+    expect(screen.getByText('前')).toBeInTheDocument();
+    expect(screen.getByText('后')).toBeInTheDocument();
   });
 
   it('removes real titles and people from the collapsed DOM in privacy mode', () => {

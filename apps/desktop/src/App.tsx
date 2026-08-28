@@ -4,6 +4,7 @@ import {
   TaskForm,
   TaskList,
   TaskPlantOverlay,
+  TaskQuickPreview,
   TaskTree,
   isTaskActive,
   type ManualBlock,
@@ -1078,13 +1079,44 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
           tasks={activeTasks}
           privacyMode={preferences.privacyMode}
           reducedMotion={preferences.reducedMotion}
-          onOpen={overlay.open}
+          onOpen={() => void showMainWindow()}
           onDragStart={() => void startNativeOverlayDrag()}
           onSelectTask={(task) => {
             setSelectedId(task.id);
-            overlay.open();
+            overlay.showPreview();
           }}
         />
+      </main>
+    );
+  }
+
+  if (windowKind === 'overlay' && overlay.mode === 'preview') {
+    return (
+      <main className="fy-overlay-task-preview">
+        <TaskPlantOverlay
+          tasks={activeTasks}
+          selectedTaskId={selectedId}
+          privacyMode={preferences.privacyMode}
+          reducedMotion={preferences.reducedMotion}
+          onOpen={() => void showMainWindow()}
+          onDragStart={() => void startNativeOverlayDrag()}
+          onSelectTask={(task) => setSelectedId(task.id)}
+        />
+        {selected === null ? (
+          <aside className="fy-overlay-task-preview__empty" aria-label="任务速览">
+            <button type="button" onClick={overlay.close} aria-label="关闭任务速览">
+              ×
+            </button>
+            <strong>点一片叶子</strong>
+            <span>这里会显示轻量任务信息</span>
+          </aside>
+        ) : (
+          <TaskQuickPreview
+            task={selected}
+            privacyMode={preferences.privacyMode}
+            onClose={overlay.close}
+          />
+        )}
       </main>
     );
   }
@@ -1114,12 +1146,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
     );
     if (windowKind === 'overlay') {
       return (
-        <main
-          className={`fy-overlay-window fy-overlay-window--${overlay.mode}`}
-          onClickCapture={() => {
-            if (overlay.mode === 'preview') overlay.open();
-          }}
-        >
+        <main className={`fy-overlay-window fy-overlay-window--${overlay.mode}`}>
           <div className="fy-overlay-shell">
             {loginPanel}
             {overlay.mode === 'pinned' && (
@@ -1534,12 +1561,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
 
   if (windowKind === 'overlay') {
     return (
-      <main
-        className={`fy-overlay-window fy-overlay-window--${overlay.mode}`}
-        onClickCapture={() => {
-          if (overlay.mode === 'preview') overlay.open();
-        }}
-      >
+      <main className={`fy-overlay-window fy-overlay-window--${overlay.mode}`}>
         <div className="fy-overlay-shell">
           {content}
           {overlay.mode === 'pinned' && (

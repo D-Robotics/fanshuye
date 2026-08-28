@@ -64,14 +64,15 @@ export function createDemoTasks(now = new Date()): TaskItem[] {
     const workstream = workstreams[index % workstreams.length]!;
     const importance = ((index % 5) + 1) as TaskItem['importance'];
     const dueAt = new Date(now.getTime() + (index - 2) * 24 * 60 * 60 * 1000).toISOString();
+    const prerequisiteIndex = index === 9 ? 4 : index === 6 || index === 15 ? index - 2 : null;
     const prerequisite =
-      index === 6 || index === 15
-        ? {
-            taskId: `task-${(index - 2).toString().padStart(2, '0')}`,
-            title: titles[index - 2]!,
+      prerequisiteIndex === null
+        ? null
+        : {
+            taskId: `task-${prerequisiteIndex.toString().padStart(2, '0')}`,
+            title: titles[prerequisiteIndex]!,
             status: 'IN_PROGRESS' as const,
-          }
-        : null;
+          };
 
     return {
       id: `task-${index.toString().padStart(2, '0')}`,
@@ -101,7 +102,12 @@ export function createDemoTasks(now = new Date()): TaskItem[] {
       prerequisites: prerequisite === null ? [] : [prerequisite],
       incompletePrerequisites: prerequisite === null ? [] : [prerequisite],
       dependents:
-        index === 4 ? [{ taskId: 'task-06', title: titles[6]!, status: 'IN_PROGRESS' }] : [],
+        index === 4
+          ? [
+              { taskId: 'task-06', title: titles[6]!, status: 'IN_PROGRESS' },
+              { taskId: 'task-09', title: titles[9]!, status: 'TODO' },
+            ]
+          : [],
       externalReferences:
         index === 3
           ? [

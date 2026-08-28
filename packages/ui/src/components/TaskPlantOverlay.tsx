@@ -50,6 +50,7 @@ export function selectTaskPlantTasks(tasks: readonly TaskItem[]): TaskPlantSelec
 
 export interface TaskPlantOverlayProps {
   tasks: readonly TaskItem[];
+  selectedTaskId?: string | null;
   privacyMode?: boolean;
   reducedMotion?: boolean;
   onOpen: () => void;
@@ -70,7 +71,31 @@ function displayLines(title: string): [string, string] {
   return [compact.slice(0, 3), `${compact.slice(3, 6)}${compact.length > 6 ? '…' : ''}`];
 }
 
-function taskLabel(task: TaskItem, privacyMode: boolean, slot: BinaryTaskLeafSlot): string {
+type VisibleRelation = 'prerequisite' | 'dependent' | null;
+
+function visibleRelation(task: TaskItem, selected: TaskItem | undefined): VisibleRelation {
+  if (selected === undefined || task.id === selected.id) return null;
+  if (
+    selected.prerequisites.some((relation) => relation.taskId === task.id) ||
+    task.dependents.some((relation) => relation.taskId === selected.id)
+  ) {
+    return 'prerequisite';
+  }
+  if (
+    selected.dependents.some((relation) => relation.taskId === task.id) ||
+    task.prerequisites.some((relation) => relation.taskId === selected.id)
+  ) {
+    return 'dependent';
+  }
+  return null;
+}
+
+function taskLabel(
+  task: TaskItem,
+  privacyMode: boolean,
+  slot: BinaryTaskLeafSlot,
+  relation: VisibleRelation,
+): string {
   const parts = [
     privacyMode ? '隐私任务' : task.title,
     `重要度 ${task.importance}`,
@@ -81,11 +106,14 @@ function taskLabel(task: TaskItem, privacyMode: boolean, slot: BinaryTaskLeafSlo
   if (task.ownerId === null) parts.push('无人认领');
   if (task.manualBlock !== null || isDependencyBlocked(task)) parts.push('阻塞');
   if (isTaskOverdue(task)) parts.push('已经逾期');
+  if (relation === 'prerequisite') parts.push('当前任务的前置任务');
+  if (relation === 'dependent') parts.push('当前任务的后续任务');
   return `${parts.join('，')}，点击展开`;
 }
 
 export function TaskPlantOverlay({
   tasks,
+  selectedTaskId = null,
   privacyMode = false,
   reducedMotion = false,
   onOpen,
@@ -93,18 +121,36 @@ export function TaskPlantOverlay({
   onDragStart,
 }: TaskPlantOverlayProps) {
   const { visible, overflow } = selectTaskPlantTasks(tasks);
+  const selectedTask = visible.find((task) => task.id === selectedTaskId);
+  const selectedIndex = visible.findIndex((task) => task.id === selectedTaskId);
+  const relationPaths =
+    selectedIndex < 0
+      ? []
+      : visible.flatMap((task, index) => {
+          const relation = visibleRelation(task, selectedTask);
+          if (relation === null) return [];
+          const start = BINARY_TASK_LEAF_SLOTS[selectedIndex]!;
+          const end = BINARY_TASK_LEAF_SLOTS[index]!;
+          const startX = start.x + 19;
+          const startY = start.y + 48;
+          const endX = end.x + 19;
+          const endY = end.y + 48;
+          const middleY = (startY + endY) / 2;
+          return [
+            {
+              taskId: task.id,
+              relation,
+              path: `M${startX} ${startY} C${startX} ${middleY} ${endX} ${middleY} ${endX} ${endY}`,
+            },
+          ];
+        });
 
   return (
     <section
       className={`fy-task-plant${reducedMotion ? ' fy-task-plant--reduced-motion' : ''}`}
       aria-label="常驻二叉任务树"
     >
-      <button
-        className="fy-task-plant__base"
-        type="button"
-        onClick={onOpen}
-        aria-label="打开番薯叶任务树总览"
-      >
+      <div className="fy-task-plant__base" aria-hidden="true">
         <svg viewBox="0 0 176 216" aria-hidden="true">
           <defs>
             <linearGradient id="fy-binary-trunk" x1="0" y1="0" x2="1" y2="0">
@@ -149,8 +195,22 @@ export function TaskPlantOverlay({
             <path d="M74 192 C78 188 83 188 87 191 M98 191 C103 188 108 190 110 195" />
           </g>
         </svg>
-        {visible.length === 0 && <span className="fy-task-plant__empty">点击创建第一片任务叶</span>}
-      </button>
+        {visible.length === 0 && <span className="fy-task-plant__empty">暂无活跃任务</span>}
+      </div>
+
+      {relationPaths.length > 0 && (
+        <svg className="fy-task-plant__relations" viewBox="0 0 176 216" aria-hidden="true">
+          {relationPaths.map((relation) => (
+            <path
+              key={relation.taskId}
+              className={`fy-task-plant__relation-line fy-task-plant__relation-line--${relation.relation}`}
+              d={relation.path}
+              data-related-task-id={relation.taskId}
+              data-relation={relation.relation}
+            />
+          ))}
+        </svg>
+      )}
 
       {visible.map((task, index) => {
         const slot = BINARY_TASK_LEAF_SLOTS[index]!;
@@ -158,18 +218,22 @@ export function TaskPlantOverlay({
         const overdue = isTaskOverdue(task);
         const privateTitle = `任务${index + 1}`;
         const [firstLine, secondLine] = displayLines(privacyMode ? privateTitle : task.title);
+        const selected = task.id === selectedTaskId;
+        const relation = visibleRelation(task, selectedTask);
         return (
           <button
             key={task.id}
-            className={`fy-task-plant__leaf fy-task-plant__leaf--${task.status.toLowerCase().replaceAll('_', '-')} fy-task-plant__leaf--importance-${task.importance}${blocked ? ' fy-task-plant__leaf--blocked' : ''}${overdue ? ' fy-task-plant__leaf--overdue' : ''}${task.ownerId === null ? ' fy-task-plant__leaf--unassigned' : ''}`}
+            className={`fy-task-plant__leaf fy-task-plant__leaf--${task.status.toLowerCase().replaceAll('_', '-')} fy-task-plant__leaf--importance-${task.importance}${blocked ? ' fy-task-plant__leaf--blocked' : ''}${overdue ? ' fy-task-plant__leaf--overdue' : ''}${task.ownerId === null ? ' fy-task-plant__leaf--unassigned' : ''}${selected ? ' fy-task-plant__leaf--selected' : ''}${relation === null ? '' : ` fy-task-plant__leaf--related fy-task-plant__leaf--related-${relation}`}`}
             style={{ left: slot.x, top: slot.y, transform: `rotate(${slot.tilt}deg)` }}
             type="button"
-            aria-label={taskLabel(task, privacyMode, slot)}
+            aria-label={taskLabel(task, privacyMode, slot, relation)}
+            aria-pressed={selected}
             data-task-id={task.id}
             data-task-status={task.status}
             data-pair={slot.pair}
             data-side={slot.side}
             data-outward-rank={slot.outwardRank}
+            data-relation={selected ? 'selected' : (relation ?? 'none')}
             onClick={(event) => {
               event.stopPropagation();
               onSelectTask(task);
@@ -215,6 +279,14 @@ export function TaskPlantOverlay({
                 时
               </span>
             )}
+            {relation !== null && (
+              <span
+                className={`fy-task-plant__relation-badge fy-task-plant__relation-badge--${relation}`}
+                aria-hidden="true"
+              >
+                {relation === 'prerequisite' ? '前' : '后'}
+              </span>
+            )}
           </button>
         );
       })}
@@ -230,9 +302,7 @@ export function TaskPlantOverlay({
           event.stopPropagation();
           onDragStart?.();
         }}
-      >
-        <span aria-hidden="true">⠿</span>
-      </button>
+      ></button>
 
       {overflow.length > 0 && (
         <button
@@ -244,9 +314,6 @@ export function TaskPlantOverlay({
           +{overflow.length}
         </button>
       )}
-      <span className="fy-task-plant__hint" aria-hidden="true">
-        按住主干移动
-      </span>
     </section>
   );
 }
