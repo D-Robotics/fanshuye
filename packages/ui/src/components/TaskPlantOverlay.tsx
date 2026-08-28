@@ -20,17 +20,58 @@ export interface BinaryTaskLeafSlot {
 }
 
 export const BINARY_TASK_LEAF_SLOTS: readonly BinaryTaskLeafSlot[] = [
-  { pair: 0, side: 'left', outwardRank: 0, x: 22, y: 116, tilt: -30 },
-  { pair: 0, side: 'right', outwardRank: 0, x: 116, y: 112, tilt: 30 },
-  { pair: 1, side: 'left', outwardRank: 1, x: 33, y: 66, tilt: -45 },
-  { pair: 1, side: 'right', outwardRank: 1, x: 105, y: 62, tilt: 45 },
-  { pair: 2, side: 'left', outwardRank: 2, x: 49, y: 4, tilt: -10 },
-  { pair: 2, side: 'right', outwardRank: 2, x: 89, y: 4, tilt: 12 },
-  { pair: 3, side: 'left', outwardRank: 3, x: 55, y: 54, tilt: -18 },
-  { pair: 3, side: 'right', outwardRank: 3, x: 83, y: 50, tilt: 18 },
+  { pair: 0, side: 'left', outwardRank: 0, x: 69, y: 0, tilt: -18 },
+  { pair: 0, side: 'right', outwardRank: 0, x: 96, y: 2, tilt: 18 },
+  { pair: 1, side: 'left', outwardRank: 1, x: 30, y: 48, tilt: -48 },
+  { pair: 1, side: 'right', outwardRank: 1, x: 52, y: 59, tilt: -16 },
+  { pair: 2, side: 'left', outwardRank: 2, x: 105, y: 56, tilt: 18 },
+  { pair: 2, side: 'right', outwardRank: 2, x: 108, y: 77, tilt: 48 },
+  { pair: 3, side: 'left', outwardRank: 3, x: 33, y: 101, tilt: -58 },
+  { pair: 3, side: 'right', outwardRank: 3, x: 55, y: 88, tilt: -24 },
 ] as const;
 
+const NATURAL_TASK_BRANCHES = [
+  {
+    pair: 0,
+    stem: 'M96 52 C95 52 94 51 93 50',
+    left: 'M96 52 C93 50 90 49 88 48',
+    right: 'M96 52 C102 50 109 49 115 50',
+    node: { x: 96, y: 52 },
+  },
+  {
+    pair: 1,
+    stem: 'M89 100 C81 101 74 102 68 102',
+    left: 'M68 102 C61 98 54 96 49 96',
+    right: 'M68 102 C69 104 70 106 71 107',
+    node: { x: 68, y: 102 },
+  },
+  {
+    pair: 2,
+    stem: 'M88 126 C101 119 112 111 121 108',
+    left: 'M121 108 C122 107 123 105 124 104',
+    right: 'M121 108 C123 113 126 120 127 125',
+    node: { x: 121, y: 108 },
+  },
+  {
+    pair: 3,
+    stem: 'M86 148 C78 144 71 141 65 141',
+    left: 'M65 141 C60 143 56 147 52 149',
+    right: 'M65 141 C68 139 71 137 74 136',
+    node: { x: 65, y: 141 },
+  },
+] as const;
+
+export type TaskPlantRelationshipScorer = (left: TaskItem, candidate: TaskItem) => number;
+
+export interface TaskPlantBranch {
+  pair: 0 | 1 | 2 | 3;
+  left: TaskItem;
+  right: TaskItem | null;
+  relationshipScore: number;
+}
+
 export interface TaskPlantSelection {
+  branches: TaskPlantBranch[];
   visible: TaskItem[];
   overflow: TaskItem[];
 }
@@ -40,11 +81,56 @@ export function taskPlantCompare(left: TaskItem, right: TaskItem): number {
   return importanceDifference === 0 ? stableTaskCompare(left, right) : importanceDifference;
 }
 
-export function selectTaskPlantTasks(tasks: readonly TaskItem[]): TaskPlantSelection {
-  const sorted = tasks.filter(isTaskActive).sort(taskPlantCompare);
+function hasDirectTaskRelation(left: TaskItem, right: TaskItem): boolean {
+  return (
+    left.prerequisites.some((relation) => relation.taskId === right.id) ||
+    left.dependents.some((relation) => relation.taskId === right.id) ||
+    right.prerequisites.some((relation) => relation.taskId === left.id) ||
+    right.dependents.some((relation) => relation.taskId === left.id)
+  );
+}
+
+export function defaultTaskPlantRelationshipScore(left: TaskItem, candidate: TaskItem): number {
+  if (hasDirectTaskRelation(left, candidate)) return 100;
+  if (left.workstreamId === candidate.workstreamId) return 10;
+  return 0;
+}
+
+export function selectTaskPlantTasks(
+  tasks: readonly TaskItem[],
+  relationshipScorer: TaskPlantRelationshipScorer = defaultTaskPlantRelationshipScore,
+): TaskPlantSelection {
+  const remaining = tasks.filter(isTaskActive).sort(taskPlantCompare);
+  const branches: TaskPlantBranch[] = [];
+
+  while (branches.length < 4 && remaining.length > 0) {
+    const left = remaining.shift()!;
+    let rightIndex = -1;
+    let relationshipScore = 0;
+
+    remaining.forEach((candidate, index) => {
+      const score = relationshipScorer(left, candidate);
+      if (score > relationshipScore) {
+        rightIndex = index;
+        relationshipScore = score;
+      }
+    });
+
+    const right = rightIndex < 0 ? null : remaining.splice(rightIndex, 1)[0]!;
+    branches.push({
+      pair: branches.length as TaskPlantBranch['pair'],
+      left,
+      right,
+      relationshipScore,
+    });
+  }
+
   return {
-    visible: sorted.slice(0, TASK_PLANT_CAPACITY),
-    overflow: sorted.slice(TASK_PLANT_CAPACITY),
+    branches,
+    visible: branches.flatMap((branch) =>
+      branch.right === null ? [branch.left] : [branch.left, branch.right],
+    ),
+    overflow: remaining,
   };
 }
 
@@ -56,6 +142,7 @@ export interface TaskPlantOverlayProps {
   onOpen: () => void;
   onSelectTask: (task: TaskItem) => void;
   onDragStart?: () => void;
+  relationshipScorer?: TaskPlantRelationshipScorer;
 }
 
 function statusSymbol(task: TaskItem): string {
@@ -119,18 +206,33 @@ export function TaskPlantOverlay({
   onOpen,
   onSelectTask,
   onDragStart,
+  relationshipScorer,
 }: TaskPlantOverlayProps) {
-  const { visible, overflow } = selectTaskPlantTasks(tasks);
+  const { branches, visible, overflow } = selectTaskPlantTasks(tasks, relationshipScorer);
+  const placedTasks = branches.flatMap((branch) => {
+    const leftSlot = BINARY_TASK_LEAF_SLOTS.find(
+      (slot) => slot.pair === branch.pair && slot.side === 'left',
+    )!;
+    const rightSlot = BINARY_TASK_LEAF_SLOTS.find(
+      (slot) => slot.pair === branch.pair && slot.side === 'right',
+    )!;
+    return branch.right === null
+      ? [{ task: branch.left, slot: leftSlot }]
+      : [
+          { task: branch.left, slot: leftSlot },
+          { task: branch.right, slot: rightSlot },
+        ];
+  });
   const selectedTask = visible.find((task) => task.id === selectedTaskId);
-  const selectedIndex = visible.findIndex((task) => task.id === selectedTaskId);
+  const selectedPlacement = placedTasks.find(({ task }) => task.id === selectedTaskId);
   const relationPaths =
-    selectedIndex < 0
+    selectedPlacement === undefined
       ? []
-      : visible.flatMap((task, index) => {
+      : placedTasks.flatMap(({ task, slot }) => {
           const relation = visibleRelation(task, selectedTask);
           if (relation === null) return [];
-          const start = BINARY_TASK_LEAF_SLOTS[selectedIndex]!;
-          const end = BINARY_TASK_LEAF_SLOTS[index]!;
+          const start = selectedPlacement.slot;
+          const end = slot;
           const startX = start.x + 19;
           const startY = start.y + 48;
           const endX = end.x + 19;
@@ -164,7 +266,7 @@ export function TaskPlantOverlay({
               <stop offset="1" stopColor="#7c2953" />
             </linearGradient>
           </defs>
-          <ellipse cx="88" cy="202" rx="38" ry="7" fill="#173e2d" opacity="0.14" />
+          <ellipse cx="62" cy="208" rx="38" ry="7" fill="#173e2d" opacity="0.14" />
           <g
             className="fy-task-plant__branches"
             fill="none"
@@ -172,44 +274,44 @@ export function TaskPlantOverlay({
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <path d="M88 194 C88 165 87 132 87 105 C87 91 88 80 88 70" strokeWidth="11" />
-            <path d="M88 165 C70 157 55 154 41 160" strokeWidth="7" />
-            <path d="M88 165 C106 155 121 151 135 156" strokeWidth="7" />
-            <path d="M63 155 C53 143 51 124 52 112" strokeWidth="4.5" />
-            <path d="M113 153 C123 139 125 120 124 108" strokeWidth="4.5" />
-            <path d="M87 126 C75 121 63 116 52 112" strokeWidth="5.5" />
-            <path d="M87 126 C100 119 113 113 124 108" strokeWidth="5.5" />
-            <path d="M87 105 C79 86 72 67 68 50" strokeWidth="4.2" />
-            <path d="M88 104 C98 84 104 66 108 50" strokeWidth="4.2" />
-            <path d="M87 119 C83 111 80 104 78 99" strokeWidth="3.5" />
-            <path d="M88 116 C93 108 97 102 99 96" strokeWidth="3.5" />
+            <path
+              data-natural-stem="curved"
+              d="M94 190 C86 176 82 161 86 145 C91 126 87 111 89 94 C91 77 97 65 96 52"
+              strokeWidth="8.5"
+            />
+            {branches.map((branch) => {
+              const geometry = NATURAL_TASK_BRANCHES[branch.pair];
+              return (
+                <g key={branch.pair} data-natural-branch={branch.pair}>
+                  <path d={geometry.stem} strokeWidth="5.5" />
+                  <path d={geometry.left} strokeWidth="3.8" data-child-side="left" />
+                  {branch.right !== null && (
+                    <path d={geometry.right} strokeWidth="3.8" data-child-side="right" />
+                  )}
+                </g>
+              );
+            })}
           </g>
           <g className="fy-task-plant__binary-nodes">
-            <circle cx="88" cy="165" r="4" />
-            <circle cx="63" cy="155" r="3" />
-            <circle cx="113" cy="153" r="3" />
-            <circle cx="87" cy="126" r="3.5" />
-            <circle cx="87" cy="105" r="2.8" />
-            <circle cx="87" cy="118" r="2.4" />
-          </g>
-          <g className="fy-task-plant__crown-bud">
-            <path d="M88 74 C79 66 80 53 89 43 C97 54 97 66 88 74Z" />
-            <path d="M88 70 C88 61 89 53 89 47" />
+            {branches.map((branch) => {
+              const node = NATURAL_TASK_BRANCHES[branch.pair].node;
+              return <circle key={branch.pair} cx={node.x} cy={node.y} r="3" />;
+            })}
           </g>
           <g className="fy-task-plant__compact-roots">
             <path
               className="fy-task-plant__root-fibers"
-              d="M88 180 C85 187 81 191 77 196 M91 180 C98 185 104 188 111 190 M88 181 C89 188 91 193 94 197"
+              d="M91 183 C88 188 86 191 83 194 M95 184 C98 187 100 189 102 192"
             />
             <path
               className="fy-task-plant__tuber"
-              data-root-shape="spindle-tuber"
-              d="M65 209 C66 200 74 191 87 184 C99 178 114 180 120 187 C125 193 121 201 111 207 C100 212 84 215 73 213 C68 212 65 211 65 209Z"
+              data-root-shape="natural-tuber"
+              d="M32 209 C29 198 36 185 49 178 C62 171 78 174 87 183 C95 191 92 202 82 209 C70 216 52 216 40 213 C35 212 32 211 32 209Z"
             />
-            <path className="fy-task-plant__tuber-highlight" d="M76 204 C80 199 84 196 88 194" />
+            <path className="fy-task-plant__tuber-highlight" d="M40 201 C45 190 54 183 63 181" />
             <path
               className="fy-task-plant__tuber-texture"
-              d="M99 207 C102 204 105 203 108 203 M104 188 C108 188 111 190 113 193"
+              d="M65 210 C72 207 77 203 80 198 M47 181 C51 186 52 191 52 196"
             />
           </g>
         </svg>
@@ -230,8 +332,7 @@ export function TaskPlantOverlay({
         </svg>
       )}
 
-      {visible.map((task, index) => {
-        const slot = BINARY_TASK_LEAF_SLOTS[index]!;
+      {placedTasks.map(({ task, slot }, index) => {
         const blocked = task.manualBlock !== null || isDependencyBlocked(task);
         const overdue = isTaskOverdue(task);
         const privateTitle = `任务${index + 1}`;

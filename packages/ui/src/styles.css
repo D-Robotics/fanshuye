@@ -397,7 +397,7 @@ textarea:focus-visible,
 }
 
 .fy-task-plant__branches {
-  filter: drop-shadow(0 2px 1px rgba(76, 32, 12, 0.22));
+  filter: drop-shadow(0 2px 1px rgba(76, 32, 12, 0.26));
 }
 
 .fy-task-plant__binary-nodes circle {
@@ -429,19 +429,6 @@ textarea:focus-visible,
 .fy-task-plant__tuber-texture {
   fill: none;
   stroke: rgba(91, 27, 68, 0.5);
-  stroke-width: 1.1;
-  stroke-linecap: round;
-}
-
-.fy-task-plant__crown-bud path:first-child {
-  fill: #4c9c39;
-  stroke: #246137;
-  stroke-width: 1.5;
-}
-
-.fy-task-plant__crown-bud path:last-child {
-  fill: none;
-  stroke: rgba(238, 255, 221, 0.62);
   stroke-width: 1.1;
   stroke-linecap: round;
 }
@@ -620,11 +607,11 @@ textarea:focus-visible,
 .fy-task-plant__drag-handle {
   position: absolute;
   z-index: 6;
-  top: 134px;
-  left: 72px;
+  top: 126px;
+  left: 73px;
   display: block;
-  width: 32px;
-  height: 57px;
+  width: 34px;
+  height: 65px;
   padding: 0;
   border: 0;
   border-radius: 14px;
@@ -661,7 +648,6 @@ textarea:focus-visible,
 @media (forced-colors: active) {
   .fy-task-plant__branches,
   .fy-task-plant__compact-roots path,
-  .fy-task-plant__crown-bud path,
   .fy-task-plant__binary-nodes circle {
     stroke: CanvasText;
   }

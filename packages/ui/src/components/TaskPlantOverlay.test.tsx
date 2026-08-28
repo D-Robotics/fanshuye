@@ -5,6 +5,7 @@ import {
   BINARY_TASK_LEAF_SLOTS,
   TASK_PLANT_CAPACITY,
   TaskPlantOverlay,
+  defaultTaskPlantRelationshipScore,
   selectTaskPlantTasks,
 } from './TaskPlantOverlay';
 
@@ -27,7 +28,7 @@ describe('TaskPlantOverlay', () => {
       expect(pairSlots[1]?.outwardRank).toBe(pair);
     }
     expect(BINARY_TASK_LEAF_SLOTS.filter((slot) => slot.pair === 3).map((slot) => slot.x)).toEqual([
-      55, 83,
+      33, 55,
     ]);
   });
 
@@ -39,6 +40,49 @@ describe('TaskPlantOverlay', () => {
     ]);
 
     expect(selection.visible.map((task) => task.id)).toEqual(['high-left', 'high-right', 'low']);
+  });
+
+  it('groups direct dependencies before same-workstream tasks and keeps the left leaf higher ranked', () => {
+    const direct = makeTask({ id: 'direct', importance: 1, workstreamId: 'other' });
+    const related = makeTask({ id: 'related', importance: 4, workstreamId: 'platform' });
+    const left = makeTask({
+      id: 'left',
+      importance: 5,
+      workstreamId: 'platform',
+      dependents: [{ taskId: 'direct', title: '直接依赖', status: 'TODO' }],
+    });
+    const selection = selectTaskPlantTasks([direct, related, left]);
+
+    expect(defaultTaskPlantRelationshipScore(left, direct)).toBeGreaterThan(
+      defaultTaskPlantRelationshipScore(left, related),
+    );
+    expect(selection.branches[0]?.left.id).toBe('left');
+    expect(selection.branches[0]?.right?.id).toBe('direct');
+    expect(selection.visible.map((task) => task.id)).toEqual(['left', 'direct', 'related']);
+    expect(selection.branches[0]!.left.importance).toBeGreaterThan(
+      selection.branches[0]!.right!.importance,
+    );
+  });
+
+  it('keeps unrelated tasks as single leaves and accepts a replaceable relationship scorer', () => {
+    const unrelated = Array.from({ length: 5 }, (_, index) =>
+      makeTask({
+        id: `solo-${index}`,
+        importance: (5 - index) as 1 | 2 | 3 | 4 | 5,
+        workstreamId: `stream-${index}`,
+      }),
+    );
+    const singletonSelection = selectTaskPlantTasks(unrelated);
+
+    expect(singletonSelection.branches).toHaveLength(4);
+    expect(singletonSelection.branches.every((branch) => branch.right === null)).toBe(true);
+    expect(singletonSelection.visible).toHaveLength(4);
+    expect(singletonSelection.overflow.map((task) => task.id)).toEqual(['solo-4']);
+
+    const agentReadySelection = selectTaskPlantTasks(unrelated, (left, candidate) =>
+      left.id === 'solo-0' && candidate.id === 'solo-4' ? 42 : 0,
+    );
+    expect(agentReadySelection.branches[0]?.right?.id).toBe('solo-4');
   });
 
   it('fills the left node before the right node and limits the tree to eight leaves', () => {
@@ -56,7 +100,7 @@ describe('TaskPlantOverlay', () => {
     expect(onlyLeaf).toHaveAttribute('data-outward-rank', '0');
   });
 
-  it('renders the reference-inspired lanceolate leaf silhouette without avatars and opens overflow', () => {
+  it('renders the hand-drawn natural tree silhouette without avatars and opens overflow', () => {
     const onOpen = vi.fn();
     const { container } = render(
       <TaskPlantOverlay tasks={tasks} onOpen={onOpen} onSelectTask={vi.fn()} />,
@@ -71,16 +115,45 @@ describe('TaskPlantOverlay', () => {
     );
     expect(container.querySelector('img')).not.toBeInTheDocument();
     expect(container.querySelector('[class*="avatar"]')).not.toBeInTheDocument();
-    expect(container.querySelector('.fy-task-plant__crown-bud')).toBeInTheDocument();
-    expect(container.querySelector('.fy-task-plant__root-fibers')).toBeInTheDocument();
-    expect(container.querySelector('[data-root-shape="spindle-tuber"]')).toHaveAttribute(
+    expect(container.querySelector('[data-natural-stem="curved"]')).toHaveAttribute(
       'd',
-      'M65 209 C66 200 74 191 87 184 C99 178 114 180 120 187 C125 193 121 201 111 207 C100 212 84 215 73 213 C68 212 65 211 65 209Z',
+      'M94 190 C86 176 82 161 86 145 C91 126 87 111 89 94 C91 77 97 65 96 52',
+    );
+    expect(container.querySelectorAll('[data-natural-branch]')).toHaveLength(4);
+    expect(container.querySelector('.fy-task-plant__crown-bud')).not.toBeInTheDocument();
+    expect(container.querySelector('.fy-task-plant__root-fibers')).toBeInTheDocument();
+    expect(container.querySelector('[data-root-shape="natural-tuber"]')).toHaveAttribute(
+      'd',
+      'M32 209 C29 198 36 185 49 178 C62 171 78 174 87 183 C95 191 92 202 82 209 C70 216 52 216 40 213 C35 212 32 211 32 209Z',
     );
     expect(container.innerHTML).not.toContain('M79 185 C65 184 59 194 65 204 C71 214 83 207');
 
     fireEvent.click(screen.getByRole('button', { name: '另有 3 个活跃任务，打开任务树' }));
     expect(onOpen).toHaveBeenCalledOnce();
+  });
+
+  it('draws a right twig only when a related right leaf exists', () => {
+    const solo = makeTask({ id: 'solo', workstreamId: 'one' });
+    const related = makeTask({ id: 'related', importance: 4, workstreamId: 'one' });
+    const unrelated = makeTask({ id: 'unrelated', importance: 3, workstreamId: 'two' });
+    const { container } = render(
+      <TaskPlantOverlay
+        tasks={[unrelated, related, solo]}
+        onOpen={vi.fn()}
+        onSelectTask={vi.fn()}
+      />,
+    );
+
+    expect(
+      container.querySelector('[data-natural-branch="0"] [data-child-side="right"]'),
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-natural-branch="1"] [data-child-side="right"]'),
+    ).not.toBeInTheDocument();
+    expect(container.querySelector('[data-task-id="unrelated"]')).toHaveAttribute(
+      'data-side',
+      'left',
+    );
   });
 
   it('selects tasks only on click or keyboard activation and never on hover', async () => {
