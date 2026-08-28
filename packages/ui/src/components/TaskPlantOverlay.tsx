@@ -30,34 +30,33 @@ export const BINARY_TASK_LEAF_SLOTS: readonly BinaryTaskLeafSlot[] = [
   { pair: 3, side: 'right', outwardRank: 3, x: 55, y: 88, tilt: -24 },
 ] as const;
 
+const NATURAL_MAIN_STEM =
+  'M91 190 C99 176 98 165 93 154 C88 143 86 132 89 118 C91 108 95 99 93 90 C90 78 86 70 91 61 C92 57 94 54 96 52';
+
 const NATURAL_TASK_BRANCHES = [
   {
     pair: 0,
-    stem: 'M96 52 C95 52 94 51 93 50',
-    left: 'M96 52 C93 50 90 49 88 48',
-    right: 'M96 52 C102 50 109 49 115 50',
-    node: { x: 96, y: 52 },
+    stem: 'M96 52 C95 52 94 52 93 51',
+    left: 'M96 52 C93 48 90 47 88 48',
+    right: 'M96 52 C102 47 109 47 115 50',
   },
   {
     pair: 1,
-    stem: 'M89 100 C81 101 74 102 68 102',
-    left: 'M68 102 C61 98 54 96 49 96',
+    stem: 'M90 111 C83 107 76 103 68 102',
+    left: 'M68 102 C61 99 54 97 49 96',
     right: 'M68 102 C69 104 70 106 71 107',
-    node: { x: 68, y: 102 },
   },
   {
     pair: 2,
-    stem: 'M88 126 C101 119 112 111 121 108',
-    left: 'M121 108 C122 107 123 105 124 104',
-    right: 'M121 108 C123 113 126 120 127 125',
-    node: { x: 121, y: 108 },
+    stem: 'M89 132 C98 125 107 118 116 116',
+    left: 'M116 116 C119 111 122 106 124 104',
+    right: 'M116 116 C121 119 125 123 127 125',
   },
   {
     pair: 3,
-    stem: 'M86 148 C78 144 71 141 65 141',
-    left: 'M65 141 C60 143 56 147 52 149',
-    right: 'M65 141 C68 139 71 137 74 136',
-    node: { x: 65, y: 141 },
+    stem: 'M93 154 C82 149 73 145 64 143',
+    left: 'M64 143 C59 144 55 147 52 149',
+    right: 'M64 143 C68 140 71 138 74 136',
   },
 ] as const;
 
@@ -270,33 +269,42 @@ export function TaskPlantOverlay({
           <g
             className="fy-task-plant__branches"
             fill="none"
-            stroke="url(#fy-binary-trunk)"
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <path
-              data-natural-stem="curved"
-              d="M94 190 C86 176 82 161 86 145 C91 126 87 111 89 94 C91 77 97 65 96 52"
-              strokeWidth="8.5"
-            />
-            {branches.map((branch) => {
-              const geometry = NATURAL_TASK_BRANCHES[branch.pair];
-              return (
-                <g key={branch.pair} data-natural-branch={branch.pair}>
-                  <path d={geometry.stem} strokeWidth="5.5" />
-                  <path d={geometry.left} strokeWidth="3.8" data-child-side="left" />
-                  {branch.right !== null && (
-                    <path d={geometry.right} strokeWidth="3.8" data-child-side="right" />
-                  )}
-                </g>
-              );
-            })}
-          </g>
-          <g className="fy-task-plant__binary-nodes">
-            {branches.map((branch) => {
-              const node = NATURAL_TASK_BRANCHES[branch.pair].node;
-              return <circle key={branch.pair} cx={node.x} cy={node.y} r="3" />;
-            })}
+            <g className="fy-task-plant__branch-outline" stroke="#612812">
+              <path d={NATURAL_MAIN_STEM} strokeWidth="8.2" />
+              {branches.map((branch) => {
+                const geometry = NATURAL_TASK_BRANCHES[branch.pair];
+                return (
+                  <g key={branch.pair}>
+                    <path d={geometry.stem} strokeWidth="5.2" strokeLinecap="butt" />
+                    <path d={geometry.left} strokeWidth="3.6" />
+                    {branch.right !== null && <path d={geometry.right} strokeWidth="3.6" />}
+                  </g>
+                );
+              })}
+            </g>
+            <g className="fy-task-plant__branch-fill" stroke="url(#fy-binary-trunk)">
+              <path data-natural-stem="fluid-s-curve" d={NATURAL_MAIN_STEM} strokeWidth="6.8" />
+              {branches.map((branch) => {
+                const geometry = NATURAL_TASK_BRANCHES[branch.pair];
+                return (
+                  <g key={branch.pair} data-natural-branch={branch.pair}>
+                    <path
+                      d={geometry.stem}
+                      strokeWidth="4.2"
+                      strokeLinecap="butt"
+                      data-branch-segment="stem"
+                    />
+                    <path d={geometry.left} strokeWidth="2.6" data-child-side="left" />
+                    {branch.right !== null && (
+                      <path d={geometry.right} strokeWidth="2.6" data-child-side="right" />
+                    )}
+                  </g>
+                );
+              })}
+            </g>
           </g>
           <g className="fy-task-plant__compact-roots">
             <path

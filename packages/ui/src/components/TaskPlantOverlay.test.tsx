@@ -115,11 +115,19 @@ describe('TaskPlantOverlay', () => {
     );
     expect(container.querySelector('img')).not.toBeInTheDocument();
     expect(container.querySelector('[class*="avatar"]')).not.toBeInTheDocument();
-    expect(container.querySelector('[data-natural-stem="curved"]')).toHaveAttribute(
+    expect(container.querySelector('[data-natural-stem="fluid-s-curve"]')).toHaveAttribute(
       'd',
-      'M94 190 C86 176 82 161 86 145 C91 126 87 111 89 94 C91 77 97 65 96 52',
+      'M91 190 C99 176 98 165 93 154 C88 143 86 132 89 118 C91 108 95 99 93 90 C90 78 86 70 91 61 C92 57 94 54 96 52',
     );
+    expect(container.querySelectorAll('.fy-task-plant__branch-outline')).toHaveLength(1);
+    expect(container.querySelectorAll('.fy-task-plant__branch-fill')).toHaveLength(1);
     expect(container.querySelectorAll('[data-natural-branch]')).toHaveLength(4);
+    expect(container.querySelector('.fy-task-plant__binary-nodes')).not.toBeInTheDocument();
+    expect(
+      [...container.querySelectorAll('[data-branch-segment], [data-child-side]')].every(
+        (path) => path.getAttribute('d')?.includes('C') && !path.getAttribute('d')?.includes('L'),
+      ),
+    ).toBe(true);
     expect(container.querySelector('.fy-task-plant__crown-bud')).not.toBeInTheDocument();
     expect(container.querySelector('.fy-task-plant__root-fibers')).toBeInTheDocument();
     expect(container.querySelector('[data-root-shape="natural-tuber"]')).toHaveAttribute(

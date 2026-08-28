@@ -400,10 +400,12 @@ textarea:focus-visible,
   filter: drop-shadow(0 2px 1px rgba(76, 32, 12, 0.26));
 }
 
-.fy-task-plant__binary-nodes circle {
-  fill: #923a16;
-  stroke: #d87735;
-  stroke-width: 1;
+.fy-task-plant__branch-outline {
+  opacity: 0.94;
+}
+
+.fy-task-plant__branch-fill {
+  filter: drop-shadow(-0.6px -0.4px 0 rgba(242, 141, 68, 0.18));
 }
 
 .fy-task-plant__tuber {
@@ -647,8 +649,8 @@ textarea:focus-visible,
 
 @media (forced-colors: active) {
   .fy-task-plant__branches,
-  .fy-task-plant__compact-roots path,
-  .fy-task-plant__binary-nodes circle {
+  .fy-task-plant__branches *,
+  .fy-task-plant__compact-roots path {
     stroke: CanvasText;
   }
 
