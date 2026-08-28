@@ -1,28 +1,90 @@
 # 番薯叶
 
-番薯叶是面向开发团队的桌面任务态势工具。一棵番薯树代表团队的活跃任务；叶片的位置表达行动等级，大小表达重要度，轮廓与图标表达认领、工作流和阻塞状态。负责人不会以头像常驻在叶片上，而是在悬停卡片和详情中以文字显示。
+番薯叶是面向开发团队的 Windows 桌面任务态势工具。一棵番薯树代表团队的一组活跃任务，每片叶子代表一个任务；用户可以在不打开完整任务系统的情况下，直接从桌面观察优先级、状态和阻塞情况。
 
-## MVP 范围
+当前版本重点解决三类问题：任务过多容易遗忘、团队成员看不到进展、多人重复执行同一工作。
+
+## 当前界面
+
+收起态是一棵 `176 × 216` 逻辑像素的透明悬浮任务树：
+
+- 最多直接显示 8 个活跃任务，超出的任务通过 `+N` 入口汇总。
+- 任务首先按重要度从高到低排序，相同重要度继续使用稳定的行动等级排序。
+- 高重要度任务优先占据更靠外的叶位。
+- 每一对兄弟节点固定先分配左叶、再分配右叶，因此左叶优先于右叶。
+- 叶子保留宽番薯叶轮廓、底部叶尖和放射状叶脉，不显示负责人头像。
+- 点击叶子直接打开对应任务详情；悬停不会弹出遮挡内容的卡片。
+- 按住主干上的拖动区域可以移动窗口，重启后保留横纵位置。
+- 点击总览入口可以展开完整任务树，按 `Esc` 返回紧凑悬浮状态。
+
+在 200% DPI 下，收起态实际物理尺寸为 `352 × 432` 像素。
+
+## MVP 功能
 
 - Windows 11 优先的 Tauri 2 桌面客户端。
-- TypeScript 模块化单体服务端和 PostgreSQL 权威数据源。
-- 人工任务状态、唯一负责人、多个协作人和原子认领。
-- `BLOCKS` 任务依赖 DAG；Neo4j 不属于 MVP。
-- REST 命令、WebSocket 增量通知和 SQLite 只读缓存。
+- 任务标题、说明、完成定义、重要度、行动等级和截止时间。
+- 唯一负责人、多个协作人、原子任务认领和任务状态流转。
+- 人工阻塞、依赖阻塞、逾期和无人认领提示。
+- `BLOCKS` 任务依赖 DAG，当前由 PostgreSQL 保存；Neo4j 留作依赖关系规模扩大后的可选演进。
+- REST 命令、WebSocket 增量通知和 SQLite 本地只读缓存。
 - 版本冲突、幂等命令、审计事件和工作区隔离。
-- 不包含 Agent、自动进度、Git 集成或离线写入。
+- 隐私模式、全局快捷键、系统托盘和桌面通知。
 
-当前阶段是功能 MVP：优先打磨任务创建、认领、协作、状态流转、阻塞、依赖和任务树反馈。完整多显示器/DPI 实机矩阵、可信安装包签名和正式真人计时研究保留为扩大试点或公开发布前的门槛，不阻塞当前功能开发。
+当前版本暂不包含 Agent 自动调度、自动识别任务进度、Git 平台集成或离线写入。这些能力将在基础任务闭环稳定后接入，现有任务与依赖模型会为 Agent 保留扩展边界。
 
-## 本地开发
+## 快速预览（免登录）
 
-要求：Node.js 22、pnpm 11，以及 Docker Desktop 或可访问的 PostgreSQL 17。只有原生桌面开发和打包需要 Rust stable、MSVC 与 Windows SDK；纯 Web UI 不需要 Rust。
+要求：Node.js 22 和 pnpm 11。
 
-根 `.env` 是配置模板的工作副本，Node 服务不会自动读取它。首次启动在仓库根目录执行：
+```powershell
+pnpm install
+$env:VITE_DEMO_MODE='true'
+pnpm --filter @fanshuye/desktop dev:web
+```
+
+打开 `http://localhost:1420/?window=overlay` 可以预览紧凑任务树；打开 `http://localhost:1420/` 可以查看完整界面。该模式使用本地演示任务，不需要登录、数据库或服务端。
+
+## Windows 原生运行
+
+除 Node.js 和 pnpm 外，还需要：
+
+- Rust stable（MSVC target）
+- Visual Studio Build Tools
+- MSVC C++ 工具链
+- Windows 10/11 SDK
+- Microsoft Edge WebView2 Runtime
+
+启动免登录原生开发版本：
+
+```powershell
+$env:VITE_DEMO_MODE='true'
+pnpm --filter @fanshuye/desktop dev
+```
+
+构建 Release 应用和 NSIS 安装包：
+
+```powershell
+$env:VITE_DEMO_MODE='true'
+pnpm --filter @fanshuye/desktop build:native
+```
+
+构建产物位于：
+
+```text
+apps/desktop/src-tauri/target/release/fanshuye-desktop.exe
+apps/desktop/src-tauri/target/release/bundle/nsis/番薯叶_<version>_x64-setup.exe
+```
+
+Windows 工具链检查、安装升级、DPI 和签名流程见 [`docs/windows-validation.md`](docs/windows-validation.md)。
+
+## 连接本地服务端
+
+真实协作模式需要 Docker Desktop 或可访问的 PostgreSQL 17。根 `.env` 是配置模板的工作副本，Node 服务不会自动读取它。
 
 ```powershell
 Copy-Item .env.example .env
-# 按本机情况修改 .env，至少替换 DATABASE_URL 与 SESSION_SECRET。
+# 修改 DATABASE_URL、SESSION_SECRET 等本地配置。
+
 Get-Content -LiteralPath .env |
   Where-Object { $_ -match '^[A-Za-z_][A-Za-z0-9_]*=' } |
   ForEach-Object {
@@ -31,50 +93,68 @@ Get-Content -LiteralPath .env |
   }
 
 docker compose up -d --wait postgres
-pnpm install
 pnpm db:migrate
 pnpm db:seed
-```
-
-每个新的 PowerShell 窗口都要重新导入 `.env`。在第一个已导入配置的窗口启动服务端：
-
-```powershell
 pnpm --filter @fanshuye/server dev
 ```
 
-在第二个窗口重新执行上面的 `Get-Content ... ForEach-Object` 配置导入片段，再启动纯 Web UI：
-
-```powershell
-pnpm --filter @fanshuye/desktop dev:web
-```
-
-打开 `http://localhost:1420/`；`Invoke-RestMethod http://127.0.0.1:4310/health` 应返回 `status: "ok"` 和 `database: "ready"`。根命令 `pnpm dev` 会启动原生 Tauri，而不是纯 Web UI，因此需要 Rust、MSVC、Windows SDK 和 WebView2 环境。原生开发使用：
-
-```powershell
-pnpm --filter @fanshuye/desktop dev
-```
-
-原生开发默认展示无需登录的本地演示数据。要连接上面已经启动的真实本地服务端并验证登录、工作区和同步，请显式关闭演示模式：
+在另一个已导入同一 `.env` 的 PowerShell 窗口启动客户端：
 
 ```powershell
 $env:VITE_DEMO_MODE='false'
 pnpm --filter @fanshuye/desktop dev
 ```
 
-不要让开发迁移或种子连接生产数据库。`NODE_ENV=production` 会启用 PostgreSQL TLS 证书校验；默认本地 Compose PostgreSQL 不提供 TLS，不能用来模拟生产数据库。服务端完整配置项见 [`apps/server/.env.example`](apps/server/.env.example)，运维与部署流程见 [`docs/operations.md`](docs/operations.md)。
+服务端健康检查：
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:4310/health
+```
+
+正常结果应包含 `status: "ok"` 和 `database: "ready"`。不要让开发迁移或种子连接生产数据库；服务端配置见 [`apps/server/.env.example`](apps/server/.env.example)，部署流程见 [`docs/operations.md`](docs/operations.md)。
+
+## 项目结构
+
+```text
+apps/
+  desktop/                 React + Tauri Windows 桌面客户端
+    src-tauri/             Rust 原生窗口、托盘、快捷键和持久化
+  server/                  TypeScript 模块化单体服务端
+packages/
+  contracts/               API 和事件契约
+  domain/                  任务状态、优先级和依赖规则
+  ui/                      任务树、番薯叶悬浮树和表单组件
+openspec/changes/           产品变更规格、设计和执行清单
+docs/                      架构、运维和 Windows 验证文档
+```
+
+紧凑二叉任务树的实现位于 [`packages/ui/src/components/TaskPlantOverlay.tsx`](packages/ui/src/components/TaskPlantOverlay.tsx)，对应规格位于 [`openspec/changes/compact-draggable-binary-task-tree/`](openspec/changes/compact-draggable-binary-task-tree/)。
 
 ## 验证
 
+完整 JavaScript/TypeScript 质量门禁：
+
 ```powershell
-pnpm lint
-pnpm typecheck
-pnpm test:run
-pnpm build
-pnpm verify:server-bundle
-pnpm scope:check
-openspec validate build-fanshuye-desktop-mvp --type change --strict
+pnpm check
 ```
 
-`pnpm build` 构建 Web UI 与服务端 JavaScript；它不构建 Windows 安装包。真实 PostgreSQL 集成测试的隔离库准备方式见 [`apps/server/README.md`](apps/server/README.md)，Windows 原生开发、打包、签名与验收见 [`docs/windows-validation.md`](docs/windows-validation.md)。上述自动化命令失败会阻断功能分支合并；完整实机矩阵与可信签名则在扩大试点或公开发布前执行。
+它会执行格式检查、Lint、类型检查、单元测试、前端和服务端构建、服务端产物检查及 MVP 范围检查。
 
-架构与运维细节见 [docs/architecture.md](docs/architecture.md) 和 [docs/operations.md](docs/operations.md)。规范源位于 `openspec/changes/build-fanshuye-desktop-mvp/`。
+在已加载 MSVC 环境的终端中执行 Rust 验证：
+
+```powershell
+pnpm rust:check
+cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml
+```
+
+验证当前任务树规格：
+
+```powershell
+openspec validate compact-draggable-binary-task-tree --strict
+```
+
+架构细节见 [`docs/architecture.md`](docs/architecture.md)，服务端测试说明见 [`apps/server/README.md`](apps/server/README.md)。
+
+## 开发阶段说明
+
+项目当前处于功能 MVP 阶段，优先打磨任务创建、认领、协作、状态流转、阻塞、依赖和任务树反馈。完整多显示器/DPI 实机矩阵、可信代码签名和正式真人计时研究属于扩大试点或公开发布前的发布门槛，不阻塞当前功能迭代。
