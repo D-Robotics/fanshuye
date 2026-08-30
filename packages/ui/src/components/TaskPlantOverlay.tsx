@@ -33,6 +33,8 @@ export const BINARY_TASK_LEAF_SLOTS: readonly BinaryTaskLeafSlot[] = [
 const NATURAL_MAIN_STEM =
   'M91 190 C99 176 98 165 93 154 C88 143 86 132 89 118 C91 108 95 99 93 90 C90 78 86 70 91 61 C92 57 94 54 96 52';
 
+const NATURAL_NEW_TASK_TWIG = 'M96 166 C105 164 114 168 123 174';
+
 const NATURAL_TASK_BRANCHES = [
   {
     pair: 0,
@@ -139,6 +141,10 @@ export interface TaskPlantOverlayProps {
   privacyMode?: boolean;
   reducedMotion?: boolean;
   onSelectTask: (task: TaskItem) => void;
+  onCreateTask: () => void;
+  createTaskDisabled?: boolean;
+  draggable?: boolean;
+  showTaskLabels?: boolean;
   onDragStart?: () => void;
   relationshipScorer?: TaskPlantRelationshipScorer;
 }
@@ -202,6 +208,10 @@ export function TaskPlantOverlay({
   privacyMode = false,
   reducedMotion = false,
   onSelectTask,
+  onCreateTask,
+  createTaskDisabled = false,
+  draggable = true,
+  showTaskLabels = false,
   onDragStart,
   relationshipScorer,
 }: TaskPlantOverlayProps) {
@@ -246,21 +256,21 @@ export function TaskPlantOverlay({
 
   return (
     <section
-      className={`fy-task-plant${reducedMotion ? ' fy-task-plant--reduced-motion' : ''}`}
+      className={`fy-task-plant${showTaskLabels ? ' fy-task-plant--labeled' : ''}${reducedMotion ? ' fy-task-plant--reduced-motion' : ''}`}
       aria-label="常驻二叉任务树"
     >
       <div className="fy-task-plant__base" aria-hidden="true">
         <svg viewBox="0 0 176 216" aria-hidden="true">
           <defs>
             <linearGradient id="fy-binary-trunk" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stopColor="#753016" />
-              <stop offset="0.45" stopColor="#ad4818" />
-              <stop offset="0.7" stopColor="#c55d22" />
-              <stop offset="1" stopColor="#713015" />
+              <stop offset="0" stopColor="#684536" />
+              <stop offset="0.48" stopColor="#8b5a3e" />
+              <stop offset="0.76" stopColor="#996647" />
+              <stop offset="1" stopColor="#624133" />
             </linearGradient>
             <linearGradient id="fy-binary-root" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stopColor="#d54b69" />
-              <stop offset="1" stopColor="#7c2953" />
+              <stop offset="0" stopColor="#bd6178" />
+              <stop offset="1" stopColor="#84425f" />
             </linearGradient>
           </defs>
           <ellipse cx="62" cy="208" rx="38" ry="7" fill="#173e2d" opacity="0.14" />
@@ -271,37 +281,39 @@ export function TaskPlantOverlay({
             strokeLinejoin="round"
           >
             <g className="fy-task-plant__branch-outline" stroke="#612812">
-              <path d={NATURAL_MAIN_STEM} strokeWidth="8.2" />
+              <path d={NATURAL_MAIN_STEM} strokeWidth="7.2" />
               {branches.map((branch) => {
                 const geometry = NATURAL_TASK_BRANCHES[branch.pair];
                 return (
                   <g key={branch.pair}>
-                    <path d={geometry.stem} strokeWidth="5.2" strokeLinecap="butt" />
-                    <path d={geometry.left} strokeWidth="3.6" />
-                    {branch.right !== null && <path d={geometry.right} strokeWidth="3.6" />}
+                    <path d={geometry.stem} strokeWidth="4.4" strokeLinecap="butt" />
+                    <path d={geometry.left} strokeWidth="3" />
+                    {branch.right !== null && <path d={geometry.right} strokeWidth="3" />}
                   </g>
                 );
               })}
+              <path d={NATURAL_NEW_TASK_TWIG} strokeWidth="3" data-new-task-twig="outline" />
             </g>
             <g className="fy-task-plant__branch-fill" stroke="url(#fy-binary-trunk)">
-              <path data-natural-stem="fluid-s-curve" d={NATURAL_MAIN_STEM} strokeWidth="6.8" />
+              <path data-natural-stem="fluid-s-curve" d={NATURAL_MAIN_STEM} strokeWidth="5.8" />
               {branches.map((branch) => {
                 const geometry = NATURAL_TASK_BRANCHES[branch.pair];
                 return (
                   <g key={branch.pair} data-natural-branch={branch.pair}>
                     <path
                       d={geometry.stem}
-                      strokeWidth="4.2"
+                      strokeWidth="3.6"
                       strokeLinecap="butt"
                       data-branch-segment="stem"
                     />
-                    <path d={geometry.left} strokeWidth="2.6" data-child-side="left" />
+                    <path d={geometry.left} strokeWidth="2.2" data-child-side="left" />
                     {branch.right !== null && (
-                      <path d={geometry.right} strokeWidth="2.6" data-child-side="right" />
+                      <path d={geometry.right} strokeWidth="2.2" data-child-side="right" />
                     )}
                   </g>
                 );
               })}
+              <path d={NATURAL_NEW_TASK_TWIG} strokeWidth="2.2" data-new-task-twig="fill" />
             </g>
           </g>
           <g className="fy-task-plant__compact-roots">
@@ -337,6 +349,32 @@ export function TaskPlantOverlay({
           ))}
         </svg>
       )}
+
+      <button
+        className="fy-task-plant__new-bud"
+        type="button"
+        aria-label="新增任务，让任务树长出新叶"
+        data-new-task-bud
+        disabled={createTaskDisabled}
+        onClick={(event) => {
+          event.stopPropagation();
+          onCreateTask();
+        }}
+      >
+        <svg viewBox="0 0 60 84" aria-hidden="true">
+          <path
+            className="fy-task-plant__new-bud-shape"
+            d="M29 79 C19 66 12 51 16 37 C20 23 29 13 39 6 C40 21 47 34 44 47 C41 61 35 72 29 79Z"
+          />
+          <path
+            className="fy-task-plant__new-bud-vein"
+            d="M29 75 C29 59 31 38 38 12 M30 52 L21 43 M32 42 L41 31 M29 62 L23 56"
+          />
+          <text className="fy-task-plant__new-bud-plus" x="31" y="51" transform="rotate(-32 31 51)">
+            +
+          </text>
+        </svg>
+      </button>
 
       {placedTasks.map(({ task, slot }, index) => {
         const blocked = task.manualBlock !== null || isDependencyBlocked(task);
@@ -416,18 +454,20 @@ export function TaskPlantOverlay({
         );
       })}
 
-      <button
-        className="fy-task-plant__drag-handle"
-        data-tauri-drag-region
-        type="button"
-        aria-label="拖动悬浮窗"
-        onPointerDown={(event) => {
-          if (event.button > 0) return;
-          event.preventDefault();
-          event.stopPropagation();
-          onDragStart?.();
-        }}
-      ></button>
+      {draggable && (
+        <button
+          className="fy-task-plant__drag-handle"
+          data-tauri-drag-region
+          type="button"
+          aria-label="拖动悬浮窗"
+          onPointerDown={(event) => {
+            if (event.button > 0) return;
+            event.preventDefault();
+            event.stopPropagation();
+            onDragStart?.();
+          }}
+        ></button>
+      )}
     </section>
   );
 }

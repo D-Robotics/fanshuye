@@ -4,6 +4,18 @@ import { makeTask } from '../test/fixtures';
 import { TaskForm } from './TaskForm';
 
 describe('TaskForm', () => {
+  it('keeps optional fields collapsed for a new task and reveals them on demand', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <TaskForm tasks={[]} members={[]} online onSubmit={vi.fn()} onCancel={vi.fn()} />,
+    );
+
+    const advanced = container.querySelector('details.fy-task-form__advanced');
+    expect(advanced).not.toHaveAttribute('open');
+    await user.click(screen.getByText('更多信息'));
+    expect(advanced).toHaveAttribute('open');
+  });
+
   it('shows deterministic title matches but still allows submission', async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();

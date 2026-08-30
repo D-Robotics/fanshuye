@@ -5,8 +5,8 @@ import {
   TaskList,
   TaskPlantOverlay,
   TaskQuickPreview,
-  TaskTree,
   isTaskActive,
+  selectTaskPlantTasks,
   type ManualBlock,
   type MemberSummary,
   type SyncViewState,
@@ -15,6 +15,7 @@ import {
   type TaskItem,
 } from '@fanshuye/ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { z } from 'zod';
 import { DesktopAuthenticationClient } from './auth/client';
 import { LoginPanel } from './auth/LoginPanel';
 import { ACTIVE_NATIVE_SESSION_ACCOUNT, createRuntimeSecureSession } from './auth/secure-session';
@@ -34,16 +35,20 @@ import {
   getGlobalShortcutStatus,
   hasNativeDesktopRuntime,
   listenNativeAuthState,
+  listenNativeDemoTaskCreated,
   listNativeMonitors,
   loadDesktopPreferences,
   parseDesktopPreferences,
   patchDesktopPreference,
   publishNativeAuthState,
+  publishNativeDemoTaskCreated,
+  requestNewTaskInMainWindow,
   setAutostartEnabled,
   setGlobalShortcut,
   showMainWindow,
   startNativeOverlayDrag,
   watchNativeOverlayState,
+  watchNativeNewTaskRequest,
   watchNativeWindowVisibility,
   type DesktopPreferences,
   type DesktopPreferencePatchValues,
@@ -89,6 +94,13 @@ function getWindowKind(): WindowKind {
     : 'main';
 }
 
+export function resolveEffectivePrivacyMode(
+  preferencesReady: boolean,
+  savedPrivacyMode: boolean,
+): boolean {
+  return !preferencesReady || savedPrivacyMode;
+}
+
 export function wouldCreateDependencyCycle(
   tasks: readonly TaskItem[],
   dependentTaskId: string,
@@ -130,6 +142,86 @@ export function buildDependencyMutations(
         prerequisiteTaskId,
       })),
   ];
+}
+
+const DemoTaskCreatedPayloadSchema = z
+  .object({
+    taskId: z.string().trim().min(1).max(128),
+    timelineId: z.string().trim().min(1).max(128),
+    occurredAt: z.string().datetime(),
+    actorName: z.string().trim().min(1).max(100),
+    draft: z
+      .object({
+        title: z.string().trim().min(1).max(160),
+        description: z.string().max(4000),
+        definitionOfDone: z.string().max(2000),
+        importance: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
+        dueAt: z.string().max(64).nullable(),
+        ownerId: z.string().trim().min(1).max(128).nullable(),
+        collaboratorIds: z.array(z.string().trim().min(1).max(128)).max(100),
+        prerequisiteTaskIds: z.array(z.string().trim().min(1).max(128)).max(100),
+        workstreamId: z.string().trim().min(1).max(128),
+      })
+      .strict(),
+  })
+  .strict();
+
+export type DemoTaskCreatedPayload = z.infer<typeof DemoTaskCreatedPayloadSchema>;
+
+export function parseDemoTaskCreatedPayload(value: unknown): DemoTaskCreatedPayload | null {
+  const parsed = DemoTaskCreatedPayloadSchema.safeParse(value);
+  return parsed.success ? parsed.data : null;
+}
+
+export function buildDemoTaskFromCreatedPayload(
+  payload: DemoTaskCreatedPayload,
+  currentTasks: readonly TaskItem[],
+  members: readonly MemberSummary[],
+): TaskItem {
+  const owner = members.find((member) => member.id === payload.draft.ownerId) ?? null;
+  const collaboratorNames = payload.draft.collaboratorIds
+    .map((id) => members.find((member) => member.id === id)?.displayName)
+    .filter((name): name is string => name !== undefined);
+  const prerequisites = payload.draft.prerequisiteTaskIds
+    .map((prerequisiteId) => currentTasks.find((task) => task.id === prerequisiteId))
+    .filter((task): task is TaskItem => task !== undefined)
+    .map((task) => ({ taskId: task.id, title: task.title, status: task.status }));
+  return {
+    id: payload.taskId,
+    title: payload.draft.title,
+    description: payload.draft.description,
+    definitionOfDone: payload.draft.definitionOfDone,
+    status: 'TODO',
+    actionLevel: 'NEXT',
+    actionReason: '新建任务，等待服务端行动等级计算',
+    importance: payload.draft.importance,
+    workstreamId: payload.draft.workstreamId,
+    workstreamName:
+      currentTasks.find((task) => task.workstreamId === payload.draft.workstreamId)
+        ?.workstreamName ?? '默认工作流',
+    ownerId: payload.draft.ownerId,
+    ownerName: owner?.displayName ?? null,
+    collaboratorIds: payload.draft.collaboratorIds,
+    collaboratorNames,
+    dueAt: payload.draft.dueAt,
+    manualBlock: null,
+    prerequisites,
+    incompletePrerequisites: prerequisites.filter((task) => task.status !== 'DONE'),
+    dependents: [],
+    externalReferences: [],
+    timeline: [
+      {
+        id: payload.timelineId,
+        text: '创建任务',
+        actorName: payload.actorName,
+        occurredAt: payload.occurredAt,
+      },
+    ],
+    version: 1,
+    stableOrder: currentTasks.length,
+    updatedAt: payload.occurredAt,
+    archivedAt: null,
+  };
 }
 
 function updateDemoTask(
@@ -271,6 +363,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
   );
   const [syncMessage, setSyncMessage] = useState<string | null>(demoMode ? '本地交互预览' : null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [detailExpanded, setDetailExpanded] = useState(false);
   const [view, setView] = useState<ViewKind>('tree');
   const [listScope, setListScope] = useState<ReadonlySet<string> | null>(null);
   const [editingTask, setEditingTask] = useState<TaskItem | 'new' | null>(null);
@@ -294,6 +387,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
   const [preferencesReady, setPreferencesReady] = useState(
     () => window.__TAURI_INTERNALS__ === undefined,
   );
+  const privacyMode = resolveEffectivePrivacyMode(preferencesReady, preferences.privacyMode);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [nativeMonitors, setNativeMonitors] = useState<NativeMonitorInfo[]>([]);
   const [shortcutStatus, setShortcutStatus] = useState<GlobalShortcutStatus | null>(null);
@@ -305,12 +399,63 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
   const windowVisibleRef = useRef(windowVisible);
   const notificationBaselineRef = useRef<Map<string, number> | null>(null);
   const authenticationInvalidationRef = useRef<Promise<void> | null>(null);
+  const taskFormReturnFocusRef = useRef<HTMLElement | null>(null);
+  const taskFormWasOpenRef = useRef(false);
   const authenticationClient = useMemo(
     () => new DesktopAuthenticationClient(API_URL, RUNTIME_SECURE_SESSION),
     [],
   );
   const overlay = useOverlayMachine(windowKind === 'overlay' ? 'collapsed' : 'pinned');
+  const openOverlay = overlay.open;
   const synchronizeNativeOverlayMode = overlay.synchronizeNativeMode;
+  const rememberTaskFormTrigger = useCallback(() => {
+    taskFormReturnFocusRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  }, []);
+  const beginNewTask = useCallback(() => {
+    rememberTaskFormTrigger();
+    setSettingsOpen(false);
+    setTaskFormError(null);
+    setEditingTask('new');
+  }, [rememberTaskFormTrigger]);
+  const handleNativeNewTaskRequest = useCallback(() => {
+    if (privacyMode) {
+      setEditingTask(null);
+      setSyncMessage('隐私模式下不会打开包含任务与人员字段的创建表单。');
+      return;
+    }
+    if (syncStatus !== 'online') {
+      setEditingTask(null);
+      setSyncMessage('当前离线只读，恢复同步后再新增任务。');
+      return;
+    }
+    beginNewTask();
+  }, [beginNewTask, privacyMode, syncStatus]);
+  const requestTaskCreation = useCallback(() => {
+    if (syncStatus !== 'online' || privacyMode) return;
+    if (windowKind === 'overlay' && hasNativeDesktopRuntime()) {
+      void requestNewTaskInMainWindow().catch((error: unknown) => {
+        setSyncMessage(error instanceof Error ? error.message : '无法打开新任务表单');
+      });
+      return;
+    }
+    beginNewTask();
+    if (windowKind === 'overlay') openOverlay();
+  }, [beginNewTask, openOverlay, privacyMode, syncStatus, windowKind]);
+
+  useEffect(() => {
+    const open = editingTask !== null;
+    if (open && !taskFormWasOpenRef.current && taskFormReturnFocusRef.current === null) {
+      taskFormReturnFocusRef.current =
+        document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    }
+    if (!open && taskFormWasOpenRef.current) {
+      const returnTarget = taskFormReturnFocusRef.current;
+      taskFormReturnFocusRef.current = null;
+      if (returnTarget?.isConnected) returnTarget.focus();
+    }
+    taskFormWasOpenRef.current = open;
+  }, [editingTask]);
   const applyWindowVisibility = useCallback((visible: boolean) => {
     windowVisibleRef.current = visible;
     setWindowVisible(visible);
@@ -339,6 +484,10 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
     setWorkspaceMessage(null);
     setCurrentMemberId(DEFAULT_MEMBER_ID);
     setSettingsOpen(false);
+  }, []);
+  const closeSensitiveTaskEditor = useCallback(() => {
+    setTaskFormError(null);
+    setEditingTask(null);
   }, []);
   const requireAuthentication = useCallback(
     (notice = '登录会话已失效，请重新登录。') => {
@@ -382,6 +531,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
       key: K,
       value: DesktopPreferencePatchValues[K],
     ) => {
+      if (key === 'privacyMode' && value === true) closeSensitiveTaskEditor();
       if (!hasNativeDesktopRuntime()) {
         setPreferences((current) => ({ ...current, [key]: value }));
         return;
@@ -397,7 +547,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
         setDesktopSettingPending((current) => (current === key ? null : current));
       }
     },
-    [],
+    [closeSensitiveTaskEditor],
   );
 
   const selected = tasks.find((task) => task.id === selectedId) ?? null;
@@ -414,13 +564,20 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
       ),
     [activeTasks, currentMemberId],
   );
+  const visiblePlantTasks = useMemo(
+    () => (onlyMine ? activeTasks.filter((task) => myTaskIds.has(task.id)) : activeTasks),
+    [activeTasks, myTaskIds, onlyMine],
+  );
 
   useEffect(() => {
     if (window.__TAURI_INTERNALS__ === undefined) return;
     let disposed = false;
     void loadDesktopPreferences()
       .then((saved) => {
-        if (!disposed && saved !== null) setPreferences(saved);
+        if (!disposed && saved !== null) {
+          if (saved.privacyMode) closeSensitiveTaskEditor();
+          setPreferences(saved);
+        }
       })
       .catch(() => {
         if (!disposed) {
@@ -432,6 +589,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
             reducedMotion: true,
             doNotDisturb: true,
           });
+          closeSensitiveTaskEditor();
           setDesktopSettingMessage('无法读取桌面偏好，已进入隐私保护模式且未写入默认值。');
         }
       })
@@ -441,7 +599,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
     return () => {
       disposed = true;
     };
-  }, []);
+  }, [closeSensitiveTaskEditor]);
 
   useEffect(() => {
     if (window.__TAURI_INTERNALS__ === undefined) return;
@@ -533,6 +691,53 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
   }, [authenticationClient, demoMode, resetAuthenticatedUiState, windowKind]);
 
   useEffect(() => {
+    if (windowKind !== 'main' || !hasNativeDesktopRuntime()) return;
+    let disposed = false;
+    let unlisten: (() => void) | null = null;
+    void watchNativeNewTaskRequest(handleNativeNewTaskRequest)
+      .then((cleanup) => {
+        if (disposed) cleanup();
+        else unlisten = cleanup;
+      })
+      .catch(() => {
+        if (!disposed) setSyncMessage('无法监听新任务入口，请重新启动番薯叶。');
+      });
+    return () => {
+      disposed = true;
+      unlisten?.();
+    };
+  }, [handleNativeNewTaskRequest, windowKind]);
+
+  useEffect(() => {
+    if (!demoMode || windowKind !== 'overlay' || !hasNativeDesktopRuntime()) return;
+    let disposed = false;
+    let unlisten: (() => void) | null = null;
+    void listenNativeDemoTaskCreated((payload) => {
+      const parsed = parseDemoTaskCreatedPayload(payload);
+      if (parsed === null) {
+        setSyncMessage('收到的演示任务格式无效，悬浮树未更新。');
+        return;
+      }
+      setTasks((current) =>
+        current.some((task) => task.id === parsed.taskId)
+          ? current
+          : [...current, buildDemoTaskFromCreatedPayload(parsed, current, members)],
+      );
+    })
+      .then((cleanup) => {
+        if (disposed) cleanup();
+        else unlisten = cleanup;
+      })
+      .catch(() => {
+        if (!disposed) setSyncMessage('无法同步主窗口创建的演示任务，请重新启动番薯叶。');
+      });
+    return () => {
+      disposed = true;
+      unlisten?.();
+    };
+  }, [demoMode, members, windowKind]);
+
+  useEffect(() => {
     if (window.__TAURI_INTERNALS__ === undefined) return;
     const unlisteners: Array<() => void> = [];
     void import('@tauri-apps/api/event').then(async ({ listen }) => {
@@ -545,6 +750,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
         await listen<unknown>('desktop-preferences-changed', (event) => {
           const incoming = parseDesktopPreferences(event.payload);
           if (incoming === null) return;
+          if (incoming.privacyMode) closeSensitiveTaskEditor();
           setPreferences((current) =>
             desktopPreferencesEqual(current, incoming) ? current : incoming,
           );
@@ -554,7 +760,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
     return () => {
       for (const unlisten of unlisteners) unlisten();
     };
-  }, [commitDesktopPreference, preferences.privacyMode]);
+  }, [closeSensitiveTaskEditor, commitDesktopPreference, preferences.privacyMode]);
 
   useEffect(() => {
     if (!settingsOpen || !hasNativeDesktopRuntime()) return;
@@ -773,14 +979,14 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
     void notifyTaskAttention(
       { taskTitle: firstChanged.title, taskCount: changedAttentionTasks.length },
       {
-        privacyMode: preferences.privacyMode,
+        privacyMode,
         quietHoursEnabled: preferences.doNotDisturb,
       },
     );
-  }, [activeTasks, preferences.doNotDisturb, preferences.privacyMode, windowKind]);
+  }, [activeTasks, preferences.doNotDisturb, privacyMode, windowKind]);
 
   const runCommand = async (request: TaskCommandRequest) => {
-    if (syncStatus !== 'online') return;
+    if (syncStatus !== 'online' || privacyMode) return;
     if (demoMode) {
       const currentTask = tasks.find((task) => task.id === request.taskId);
       const currentMemberName =
@@ -832,52 +1038,34 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
         .map((id) => members.find((member) => member.id === id)?.displayName)
         .filter((name): name is string => name !== undefined);
       if (existing === null) {
-        const id = crypto.randomUUID();
-        setTasks((current) => {
-          const prerequisites = draft.prerequisiteTaskIds
-            .map((prerequisiteId) => current.find((task) => task.id === prerequisiteId))
-            .filter((task): task is TaskItem => task !== undefined)
-            .map((task) => ({ taskId: task.id, title: task.title, status: task.status }));
-          return [
-            ...current,
-            {
-              id,
-              title: draft.title,
-              description: draft.description,
-              definitionOfDone: draft.definitionOfDone,
-              status: 'TODO',
-              actionLevel: 'NEXT',
-              actionReason: '新建任务，等待服务端行动等级计算',
-              importance: draft.importance,
-              workstreamId: draft.workstreamId,
-              workstreamName:
-                current.find((task) => task.workstreamId === draft.workstreamId)?.workstreamName ??
-                '默认工作流',
-              ownerId: draft.ownerId,
-              ownerName: owner?.displayName ?? null,
-              collaboratorIds: draft.collaboratorIds,
-              collaboratorNames,
-              dueAt: draft.dueAt,
-              manualBlock: null,
-              prerequisites,
-              incompletePrerequisites: prerequisites.filter((task) => task.status !== 'DONE'),
-              dependents: [],
-              externalReferences: [],
-              timeline: [
-                {
-                  id: crypto.randomUUID(),
-                  text: '创建任务',
-                  actorName: '艾达',
-                  occurredAt: new Date().toISOString(),
-                },
-              ],
-              version: 1,
-              stableOrder: current.length,
-              updatedAt: new Date().toISOString(),
-              archivedAt: null,
-            },
-          ];
-        });
+        const occurredAt = new Date().toISOString();
+        const payload: DemoTaskCreatedPayload = {
+          taskId: crypto.randomUUID(),
+          timelineId: crypto.randomUUID(),
+          occurredAt,
+          actorName:
+            members.find((member) => member.id === currentMemberId)?.displayName ?? '当前成员',
+          draft,
+        };
+        const previewTask = buildDemoTaskFromCreatedPayload(payload, tasks, members);
+        setTasks((current) =>
+          current.some((task) => task.id === payload.taskId)
+            ? current
+            : [...current, buildDemoTaskFromCreatedPayload(payload, current, members)],
+        );
+        const entersVisiblePlant = selectTaskPlantTasks([...tasks, previewTask]).visible.some(
+          (task) => task.id === payload.taskId,
+        );
+        setSyncMessage(
+          entersVisiblePlant
+            ? '任务已创建并长成新叶。'
+            : '任务已创建，但当前重要度未进入悬浮树可见叶位。',
+        );
+        if (windowKind === 'main' && hasNativeDesktopRuntime()) {
+          void publishNativeDemoTaskCreated(payload).catch(() => {
+            setSyncMessage('任务已创建，但同步到悬浮树失败，请重新打开番薯叶。');
+          });
+        }
       } else {
         setTasks((current) => {
           const prerequisites = draft.prerequisiteTaskIds
@@ -1077,11 +1265,14 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
       <main className="fy-overlay-collapsed">
         <TaskPlantOverlay
           tasks={activeTasks}
-          privacyMode={preferences.privacyMode}
+          privacyMode={privacyMode}
           reducedMotion={preferences.reducedMotion}
+          createTaskDisabled={syncStatus !== 'online' || privacyMode}
+          onCreateTask={requestTaskCreation}
           onDragStart={() => void startNativeOverlayDrag()}
           onSelectTask={(task) => {
             setSelectedId(task.id);
+            setDetailExpanded(false);
             overlay.showPreview();
           }}
         />
@@ -1095,10 +1286,15 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
         <TaskPlantOverlay
           tasks={activeTasks}
           selectedTaskId={selectedId}
-          privacyMode={preferences.privacyMode}
+          privacyMode={privacyMode}
           reducedMotion={preferences.reducedMotion}
+          createTaskDisabled={syncStatus !== 'online' || privacyMode}
+          onCreateTask={requestTaskCreation}
           onDragStart={() => void startNativeOverlayDrag()}
-          onSelectTask={(task) => setSelectedId(task.id)}
+          onSelectTask={(task) => {
+            setSelectedId(task.id);
+            setDetailExpanded(false);
+          }}
         />
         {selected === null ? (
           <aside className="fy-overlay-task-preview__empty" aria-label="任务速览">
@@ -1109,11 +1305,7 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
             <span>这里会显示轻量任务信息</span>
           </aside>
         ) : (
-          <TaskQuickPreview
-            task={selected}
-            privacyMode={preferences.privacyMode}
-            onClose={overlay.close}
-          />
+          <TaskQuickPreview task={selected} privacyMode={privacyMode} onClose={overlay.close} />
         )}
       </main>
     );
@@ -1294,11 +1486,9 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
           <button
             className="fy-header-button fy-header-button--primary"
             type="button"
-            disabled={syncStatus !== 'online'}
-            onClick={() => {
-              setTaskFormError(null);
-              setEditingTask('new');
-            }}
+            disabled={syncStatus !== 'online' || privacyMode}
+            title={privacyMode ? '关闭隐私模式后可以新增任务' : undefined}
+            onClick={beginNewTask}
           >
             + 新任务
           </button>
@@ -1331,8 +1521,8 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
           <label>
             <input
               type="checkbox"
-              checked={preferences.privacyMode}
-              disabled={desktopSettingPending !== null}
+              checked={privacyMode}
+              disabled={!preferencesReady || desktopSettingPending !== null}
               onChange={(event) =>
                 void commitDesktopPreference('privacyMode', event.currentTarget.checked)
               }
@@ -1464,66 +1654,132 @@ export function App({ runtimeMode = 'auto' }: AppProps = {}) {
       <div className={`fy-app-body${selected !== null ? ' fy-app-body--detail' : ''}`}>
         <section className="fy-app-content">
           {view === 'tree' ? (
-            <TaskTree
-              tasks={tasks}
-              maximumVisible={windowKind === 'overlay' ? 12 : 15}
-              privacyMode={preferences.privacyMode}
-              reducedMotion={preferences.reducedMotion}
-              {...(selectedId === null ? {} : { selectedTaskId: selectedId })}
-              {...(onlyMine ? { onlyMyTaskIds: myTaskIds } : {})}
-              onSelectTask={(task) => {
-                setSelectedId(task.id);
-                if (windowKind === 'overlay') overlay.open();
-              }}
-              onClusterClick={(overflowTasks) => {
-                setListScope(new Set(overflowTasks.map((task) => task.id)));
-                setView('list');
-                if (windowKind === 'overlay') overlay.open();
-              }}
-            />
+            <section
+              className={`fy-main-plant-view${preferences.reducedMotion ? ' fy-reduced-motion' : ''}`}
+              aria-label="团队任务树"
+            >
+              <div className="fy-main-plant-view__canvas">
+                <TaskPlantOverlay
+                  tasks={visiblePlantTasks}
+                  selectedTaskId={selectedId}
+                  privacyMode={privacyMode}
+                  reducedMotion={preferences.reducedMotion}
+                  createTaskDisabled={syncStatus !== 'online' || privacyMode}
+                  draggable={windowKind === 'overlay'}
+                  showTaskLabels
+                  onCreateTask={requestTaskCreation}
+                  onDragStart={() => void startNativeOverlayDrag()}
+                  onSelectTask={(task) => {
+                    setSelectedId(task.id);
+                    setDetailExpanded(false);
+                  }}
+                />
+              </div>
+              <p className="fy-main-plant-view__caption">顶端优先，左叶先行</p>
+            </section>
           ) : (
             <TaskList
               tasks={tasks}
               currentMemberId={currentMemberId}
-              privacyMode={preferences.privacyMode}
+              privacyMode={privacyMode}
               {...(listScope === null ? {} : { initialTaskIds: listScope })}
-              onSelectTask={(task) => setSelectedId(task.id)}
+              onSelectTask={(task) => {
+                setSelectedId(task.id);
+                setDetailExpanded(false);
+              }}
             />
           )}
         </section>
-        {selected !== null && (
-          <div className="fy-app-detail-drawer">
-            <TaskDetailPanel
-              task={selected}
-              online={syncStatus === 'online'}
-              currentMemberId={currentMemberId}
-              privacyMode={preferences.privacyMode}
-              {...(syncStatus === 'conflict' && syncMessage !== null
-                ? { conflictMessage: syncMessage }
-                : {})}
-              onClose={() => setSelectedId(null)}
-              onEdit={(task) => {
-                setTaskFormError(null);
-                setEditingTask(task);
-              }}
-              onCommand={(request) => void runCommand(request)}
-            />
-          </div>
-        )}
+        {selected !== null &&
+          (detailExpanded ? (
+            <div className="fy-app-detail-drawer">
+              <TaskDetailPanel
+                task={selected}
+                online={syncStatus === 'online'}
+                currentMemberId={currentMemberId}
+                privacyMode={privacyMode}
+                {...(syncStatus === 'conflict' && syncMessage !== null
+                  ? { conflictMessage: syncMessage }
+                  : {})}
+                onClose={() => {
+                  setSelectedId(null);
+                  setDetailExpanded(false);
+                }}
+                {...(privacyMode
+                  ? {}
+                  : {
+                      onEdit: (task: TaskItem) => {
+                        rememberTaskFormTrigger();
+                        setTaskFormError(null);
+                        setEditingTask(task);
+                      },
+                      onCommand: (request: TaskCommandRequest) => void runCommand(request),
+                    })}
+              />
+            </div>
+          ) : (
+            <div className="fy-app-quick-drawer">
+              <TaskQuickPreview
+                task={selected}
+                privacyMode={privacyMode}
+                onClose={() => setSelectedId(null)}
+                {...(privacyMode
+                  ? {}
+                  : {
+                      onEdit: () => {
+                        rememberTaskFormTrigger();
+                        setTaskFormError(null);
+                        setEditingTask(selected);
+                      },
+                    })}
+                onOpenDetails={() => setDetailExpanded(true)}
+              />
+            </div>
+          ))}
       </div>
 
-      {editingTask !== null && !preferences.privacyMode && (
+      {editingTask !== null && !privacyMode && (
         <div
           className="fy-modal-backdrop"
-          role="presentation"
+          role="dialog"
+          aria-modal="true"
+          aria-label={editingTask === 'new' ? '创建任务' : '编辑任务'}
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) {
               setTaskFormError(null);
               setEditingTask(null);
             }
           }}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              event.preventDefault();
+              setTaskFormError(null);
+              setEditingTask(null);
+              return;
+            }
+            if (event.key !== 'Tab') return;
+            const focusable = Array.from(
+              event.currentTarget.querySelectorAll<HTMLElement>(
+                'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])',
+              ),
+            );
+            const first = focusable[0];
+            const last = focusable.at(-1);
+            if (first === undefined || last === undefined) {
+              event.preventDefault();
+              return;
+            }
+            if (event.shiftKey && document.activeElement === first) {
+              event.preventDefault();
+              last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+              event.preventDefault();
+              first.focus();
+            }
+          }}
         >
           <TaskForm
+            key={editingTask === 'new' ? 'new' : editingTask.id}
             {...(editingTask === 'new' ? {} : { task: editingTask })}
             tasks={tasks}
             members={members}

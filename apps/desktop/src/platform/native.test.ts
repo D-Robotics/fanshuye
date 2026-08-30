@@ -243,6 +243,40 @@ describe('cross-window desktop preference validation', () => {
     expect(loginBranch).not.toContain("if (overlay.mode === 'preview') overlay.open()");
   });
 
+  it('opens the main-window task form through one payload-free native intent', () => {
+    expect(nativeSource).toContain("invokeNative('show_new_task_form')");
+    expect(nativeSource).toContain("invokeNative<boolean>('consume_new_task_request')");
+    expect(nativeSource).toContain('export async function listenNativeNewTaskRequest');
+    expect(nativeSource).toContain('export async function watchNativeNewTaskRequest');
+    expect(nativeSource).toContain("'desktop-new-task-requested'");
+    expect(libRustSource).toContain('windows::show_new_task_form');
+    expect(libRustSource).toContain('windows::consume_new_task_request');
+    expect(libRustSource).toContain('.manage(windows::NewTaskRequestState::default())');
+
+    const commandStart = windowsRustSource.indexOf('pub fn show_new_task_form');
+    const commandEnd = windowsRustSource.indexOf('pub fn consume_new_task_request');
+    const commandSource = windowsRustSource.slice(commandStart, commandEnd);
+    expect(commandSource.indexOf('show_main(&app)?')).toBeLessThan(
+      commandSource.indexOf('state.mark_pending()'),
+    );
+    expect(commandSource.indexOf('state.mark_pending()')).toBeLessThan(
+      commandSource.indexOf('.emit_to("main", NEW_TASK_REQUEST_EVENT, ())'),
+    );
+    expect(commandSource).toContain('.emit_to("main", NEW_TASK_REQUEST_EVENT, ())');
+    expect(appSource).toContain('watchNativeNewTaskRequest(handleNativeNewTaskRequest)');
+    expect(windowsRustSource).toContain('new_task_request_is_consumed_exactly_once');
+  });
+
+  it('relays validated demo task creation back to the hidden overlay webview', () => {
+    expect(nativeSource).toContain("invokeNative('publish_demo_task_created', { payload })");
+    expect(nativeSource).toContain('export async function listenNativeDemoTaskCreated');
+    expect(windowsRustSource).toContain('.emit_to("overlay", DEMO_TASK_CREATED_EVENT, payload)');
+    expect(windowsRustSource).toContain('encoded.len() > 32 * 1024');
+    expect(libRustSource).toContain('windows::publish_demo_task_created');
+    expect(appSource).toContain('listenNativeDemoTaskCreated((payload) =>');
+    expect(appSource).toContain('buildDemoTaskFromCreatedPayload(parsed, current, members)');
+  });
+
   it('separates production and local-development network policy', () => {
     const config = JSON.parse(tauriConfigSource) as {
       app: { security: { csp: string; devCsp: string } };

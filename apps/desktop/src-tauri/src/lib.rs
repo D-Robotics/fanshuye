@@ -220,6 +220,7 @@ pub fn run() {
                 .build(),
         )
         .manage(preferences::PreferenceMutationState::new())
+        .manage(windows::NewTaskRequestState::default())
         .setup(|app| {
             // Shortcut conflicts are recorded as a non-sensitive runtime status and
             // must never prevent the independently accessible tray from starting.
@@ -247,6 +248,9 @@ pub fn run() {
             windows::start_overlay_drag,
             windows::list_available_monitors,
             windows::show_main_window,
+            windows::show_new_task_form,
+            windows::consume_new_task_request,
+            windows::publish_demo_task_created,
             windows::hide_current_window,
             windows::quit_application,
         ])

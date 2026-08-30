@@ -91,7 +91,9 @@ describe('TaskPlantOverlay', () => {
     expect(selection.visible).toHaveLength(8);
     expect(selection.overflow).toHaveLength(3);
 
-    const { container } = render(<TaskPlantOverlay tasks={[tasks[0]!]} onSelectTask={vi.fn()} />);
+    const { container } = render(
+      <TaskPlantOverlay tasks={[tasks[0]!]} onSelectTask={vi.fn()} onCreateTask={vi.fn()} />,
+    );
     const onlyLeaf = container.querySelector('[data-task-id]');
     expect(onlyLeaf).toHaveAttribute('data-pair', '0');
     expect(onlyLeaf).toHaveAttribute('data-side', 'left');
@@ -99,7 +101,9 @@ describe('TaskPlantOverlay', () => {
   });
 
   it('renders the hand-drawn natural tree without avatars or an overflow badge', () => {
-    const { container } = render(<TaskPlantOverlay tasks={tasks} onSelectTask={vi.fn()} />);
+    const { container } = render(
+      <TaskPlantOverlay tasks={tasks} onSelectTask={vi.fn()} onCreateTask={vi.fn()} />,
+    );
 
     expect(screen.getByRole('region', { name: '常驻二叉任务树' })).toBeInTheDocument();
     expect(container.querySelectorAll('[data-task-id]')).toHaveLength(8);
@@ -136,12 +140,68 @@ describe('TaskPlantOverlay', () => {
     expect(screen.queryByRole('button', { name: /另有 .*活跃任务/ })).not.toBeInTheDocument();
   });
 
+  it('can expose compact labels on the main task page while keeping the overlay tree clean', () => {
+    const { container, rerender } = render(
+      <TaskPlantOverlay tasks={tasks} onSelectTask={vi.fn()} onCreateTask={vi.fn()} />,
+    );
+
+    expect(container.querySelector('.fy-task-plant')).not.toHaveClass('fy-task-plant--labeled');
+    rerender(
+      <TaskPlantOverlay
+        tasks={tasks}
+        showTaskLabels
+        onSelectTask={vi.fn()}
+        onCreateTask={vi.fn()}
+      />,
+    );
+    expect(container.querySelector('.fy-task-plant')).toHaveClass('fy-task-plant--labeled');
+    expect(container.querySelectorAll('.fy-task-plant__leaf-rank')).toHaveLength(8);
+    expect(container.querySelectorAll('.fy-task-plant__leaf-status')).toHaveLength(8);
+  });
+
+  it('grows a natural new-task bud that creates without selecting or dragging', () => {
+    const onCreateTask = vi.fn();
+    const onSelectTask = vi.fn();
+    const onDragStart = vi.fn();
+    const { container, rerender } = render(
+      <TaskPlantOverlay
+        tasks={tasks}
+        onSelectTask={onSelectTask}
+        onCreateTask={onCreateTask}
+        onDragStart={onDragStart}
+      />,
+    );
+
+    const bud = screen.getByRole('button', { name: '新增任务，让任务树长出新叶' });
+    expect(bud).toHaveAttribute('data-new-task-bud');
+    expect(container.querySelectorAll('[data-new-task-twig]')).toHaveLength(2);
+    expect(container.querySelectorAll('[data-task-id]')).toHaveLength(8);
+    fireEvent.click(bud);
+    expect(onCreateTask).toHaveBeenCalledOnce();
+    expect(onSelectTask).not.toHaveBeenCalled();
+    expect(onDragStart).not.toHaveBeenCalled();
+
+    rerender(
+      <TaskPlantOverlay
+        tasks={tasks}
+        createTaskDisabled
+        onSelectTask={onSelectTask}
+        onCreateTask={onCreateTask}
+      />,
+    );
+    expect(screen.getByRole('button', { name: '新增任务，让任务树长出新叶' })).toBeDisabled();
+  });
+
   it('draws a right twig only when a related right leaf exists', () => {
     const solo = makeTask({ id: 'solo', workstreamId: 'one' });
     const related = makeTask({ id: 'related', importance: 4, workstreamId: 'one' });
     const unrelated = makeTask({ id: 'unrelated', importance: 3, workstreamId: 'two' });
     const { container } = render(
-      <TaskPlantOverlay tasks={[unrelated, related, solo]} onSelectTask={vi.fn()} />,
+      <TaskPlantOverlay
+        tasks={[unrelated, related, solo]}
+        onSelectTask={vi.fn()}
+        onCreateTask={vi.fn()}
+      />,
     );
 
     expect(
@@ -159,7 +219,7 @@ describe('TaskPlantOverlay', () => {
   it('selects tasks only on click or keyboard activation and never on hover', async () => {
     const user = userEvent.setup();
     const onSelectTask = vi.fn();
-    render(<TaskPlantOverlay tasks={tasks} onSelectTask={onSelectTask} />);
+    render(<TaskPlantOverlay tasks={tasks} onSelectTask={onSelectTask} onCreateTask={vi.fn()} />);
     const leaf = screen.getByRole('button', { name: /任务叶0.*第 1 对左叶.*点击展开/ });
 
     fireEvent.mouseEnter(leaf);
@@ -177,7 +237,12 @@ describe('TaskPlantOverlay', () => {
     const onDragStart = vi.fn();
     const onSelectTask = vi.fn();
     render(
-      <TaskPlantOverlay tasks={tasks} onSelectTask={onSelectTask} onDragStart={onDragStart} />,
+      <TaskPlantOverlay
+        tasks={tasks}
+        onSelectTask={onSelectTask}
+        onCreateTask={vi.fn()}
+        onDragStart={onDragStart}
+      />,
     );
 
     const dragHandle = screen.getByRole('button', { name: '拖动悬浮窗' });
@@ -187,6 +252,20 @@ describe('TaskPlantOverlay', () => {
     fireEvent.pointerDown(dragHandle, { button: 0 });
     expect(onDragStart).toHaveBeenCalledOnce();
     expect(onSelectTask).not.toHaveBeenCalled();
+  });
+
+  it('removes the native drag hit area when the plant is embedded in the main task page', () => {
+    render(
+      <TaskPlantOverlay
+        tasks={tasks}
+        draggable={false}
+        onSelectTask={vi.fn()}
+        onCreateTask={vi.fn()}
+      />,
+    );
+
+    expect(screen.queryByRole('button', { name: '拖动悬浮窗' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '新增任务，让任务树长出新叶' })).toBeInTheDocument();
   });
 
   it('marks the selected task and draws its visible prerequisite and dependent on the tree', () => {
@@ -214,6 +293,7 @@ describe('TaskPlantOverlay', () => {
         tasks={[dependent, selected, prerequisite]}
         selectedTaskId="selected"
         onSelectTask={vi.fn()}
+        onCreateTask={vi.fn()}
       />,
     );
 
@@ -237,7 +317,12 @@ describe('TaskPlantOverlay', () => {
   it('removes real titles and people from the collapsed DOM in privacy mode', () => {
     const privateTask = makeTask({ title: '机密发布计划', ownerName: '艾达', importance: 5 });
     const { container } = render(
-      <TaskPlantOverlay tasks={[privateTask]} privacyMode onSelectTask={vi.fn()} />,
+      <TaskPlantOverlay
+        tasks={[privateTask]}
+        privacyMode
+        onSelectTask={vi.fn()}
+        onCreateTask={vi.fn()}
+      />,
     );
 
     expect(container.innerHTML).not.toContain('机密发布计划');

@@ -25,7 +25,7 @@ export function DesktopWindowControls({ placement = 'login' }: DesktopWindowCont
         onClick={() => void run(hideCurrentWindow, '暂时无法收起窗口，请使用系统托盘。')}
       >
         <span aria-hidden="true">—</span>
-        收起到托盘
+        <span className="fy-window-controls__label">收起到托盘</span>
       </button>
       <button
         className="fy-window-controls__quit"
@@ -34,7 +34,7 @@ export function DesktopWindowControls({ placement = 'login' }: DesktopWindowCont
         onClick={() => void run(quitApplication, '暂时无法退出，请从系统托盘选择“退出番薯叶”。')}
       >
         <span aria-hidden="true">×</span>
-        退出番薯叶
+        <span className="fy-window-controls__label">退出番薯叶</span>
       </button>
       {error !== null && (
         <span className="fy-window-controls__error" role="alert">

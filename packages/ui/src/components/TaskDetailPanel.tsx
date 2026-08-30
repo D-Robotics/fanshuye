@@ -79,6 +79,122 @@ function safeExternalUrl(value: string): string | null {
   }
 }
 
+interface TaskDetailActionsProps {
+  task: TaskItem;
+  online: boolean;
+  currentMemberId?: string;
+  commandPending: boolean;
+  dependencyBlocked: boolean;
+  onCommand?: (request: TaskCommandRequest) => void;
+  onEdit?: (task: TaskItem) => void;
+}
+
+function TaskDetailActions({
+  task,
+  online,
+  currentMemberId,
+  commandPending,
+  dependencyBlocked,
+  onCommand,
+  onEdit,
+}: TaskDetailActionsProps) {
+  const [showBlockForm, setShowBlockForm] = useState(false);
+  const [blockType, setBlockType] = useState('technical');
+  const [blockReason, setBlockReason] = useState('');
+  const run = (name: TaskCommandName, payload?: Record<string, unknown>) => {
+    onCommand?.({
+      name,
+      taskId: task.id,
+      expectedVersion: task.version,
+      ...(payload === undefined ? {} : { payload }),
+    });
+  };
+
+  return (
+    <footer className="fy-task-detail__footer">
+      {showBlockForm && (
+        <form
+          className="fy-block-form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            const reason = blockReason.trim();
+            if (reason.length === 0) return;
+            run('block', { type: blockType, reason });
+            setShowBlockForm(false);
+            setBlockReason('');
+          }}
+        >
+          <label>
+            <span>阻塞类型</span>
+            <select value={blockType} onChange={(event) => setBlockType(event.currentTarget.value)}>
+              <option value="technical">技术问题</option>
+              <option value="decision">等待决策</option>
+              <option value="resource">资源不足</option>
+              <option value="external">外部依赖</option>
+              <option value="other">其他</option>
+            </select>
+          </label>
+          <label>
+            <span>阻塞原因 *</span>
+            <input
+              value={blockReason}
+              maxLength={500}
+              onChange={(event) => setBlockReason(event.currentTarget.value)}
+            />
+          </label>
+          <button
+            type="submit"
+            className="fy-button fy-button--primary"
+            disabled={blockReason.trim().length === 0}
+          >
+            确认阻塞
+          </button>
+        </form>
+      )}
+      {onEdit !== undefined && task.archivedAt === null && (
+        <button
+          type="button"
+          className="fy-button fy-button--quiet"
+          disabled={!online}
+          onClick={() => onEdit(task)}
+        >
+          编辑详情
+        </button>
+      )}
+      <div className="fy-task-detail__actions" role="group" aria-label="任务操作">
+        {availableActions(task, currentMemberId).map((action) => (
+          <button
+            key={action.command}
+            type="button"
+            className={`fy-button${action.emphasis === true ? ' fy-button--primary' : ''}`}
+            disabled={
+              !online ||
+              commandPending ||
+              ((action.command === 'start' || action.command === 'claim-and-start') &&
+                dependencyBlocked)
+            }
+            title={
+              (action.command === 'start' || action.command === 'claim-and-start') &&
+              dependencyBlocked
+                ? '完成所有前置任务后才能开始'
+                : undefined
+            }
+            onClick={() => {
+              if (action.command === 'block') {
+                setShowBlockForm(true);
+              } else {
+                run(action.command);
+              }
+            }}
+          >
+            {action.label}
+          </button>
+        ))}
+      </div>
+    </footer>
+  );
+}
+
 export function TaskDetailPanel({
   task,
   online,
@@ -90,18 +206,7 @@ export function TaskDetailPanel({
   onEdit,
   onClose,
 }: TaskDetailPanelProps) {
-  const [showBlockForm, setShowBlockForm] = useState(false);
-  const [blockType, setBlockType] = useState('technical');
-  const [blockReason, setBlockReason] = useState('');
   const dependencyBlocked = isDependencyBlocked(task);
-  const run = (name: TaskCommandName, payload?: Record<string, unknown>) => {
-    onCommand?.({
-      name,
-      taskId: task.id,
-      expectedVersion: task.version,
-      ...(payload === undefined ? {} : { payload }),
-    });
-  };
 
   return (
     <aside className="fy-task-detail" aria-label="任务详情">
@@ -278,90 +383,17 @@ export function TaskDetailPanel({
         </>
       )}
 
-      <footer className="fy-task-detail__footer">
-        {showBlockForm && (
-          <form
-            className="fy-block-form"
-            onSubmit={(event) => {
-              event.preventDefault();
-              const reason = blockReason.trim();
-              if (reason.length === 0) return;
-              run('block', { type: blockType, reason });
-              setShowBlockForm(false);
-              setBlockReason('');
-            }}
-          >
-            <label>
-              <span>阻塞类型</span>
-              <select
-                value={blockType}
-                onChange={(event) => setBlockType(event.currentTarget.value)}
-              >
-                <option value="technical">技术问题</option>
-                <option value="decision">等待决策</option>
-                <option value="resource">资源不足</option>
-                <option value="external">外部依赖</option>
-                <option value="other">其他</option>
-              </select>
-            </label>
-            <label>
-              <span>阻塞原因 *</span>
-              <input
-                value={blockReason}
-                maxLength={500}
-                onChange={(event) => setBlockReason(event.currentTarget.value)}
-              />
-            </label>
-            <button
-              type="submit"
-              className="fy-button fy-button--primary"
-              disabled={blockReason.trim().length === 0}
-            >
-              确认阻塞
-            </button>
-          </form>
-        )}
-        {onEdit !== undefined && task.archivedAt === null && (
-          <button
-            type="button"
-            className="fy-button fy-button--quiet"
-            disabled={!online}
-            onClick={() => onEdit(task)}
-          >
-            编辑详情
-          </button>
-        )}
-        <div className="fy-task-detail__actions" role="group" aria-label="任务操作">
-          {availableActions(task, currentMemberId).map((action) => (
-            <button
-              key={action.command}
-              type="button"
-              className={`fy-button${action.emphasis === true ? ' fy-button--primary' : ''}`}
-              disabled={
-                !online ||
-                commandPending ||
-                ((action.command === 'start' || action.command === 'claim-and-start') &&
-                  dependencyBlocked)
-              }
-              title={
-                (action.command === 'start' || action.command === 'claim-and-start') &&
-                dependencyBlocked
-                  ? '完成所有前置任务后才能开始'
-                  : undefined
-              }
-              onClick={() => {
-                if (action.command === 'block') {
-                  setShowBlockForm(true);
-                } else {
-                  run(action.command);
-                }
-              }}
-            >
-              {action.label}
-            </button>
-          ))}
-        </div>
-      </footer>
+      {!privacyMode && (
+        <TaskDetailActions
+          task={task}
+          online={online}
+          commandPending={commandPending}
+          dependencyBlocked={dependencyBlocked}
+          {...(currentMemberId === undefined ? {} : { currentMemberId })}
+          {...(onCommand === undefined ? {} : { onCommand })}
+          {...(onEdit === undefined ? {} : { onEdit })}
+        />
+      )}
     </aside>
   );
 }

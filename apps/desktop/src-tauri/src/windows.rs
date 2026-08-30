@@ -1,7 +1,9 @@
+use std::sync::atomic::{AtomicBool, Ordering};
+
 use serde::{Deserialize, Serialize};
 use tauri::{
     window::{Color, Monitor},
-    AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize, WebviewWindow, Window,
+    AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize, State, WebviewWindow, Window,
     WindowEvent,
 };
 use tauri_plugin_store::StoreExt;
@@ -18,6 +20,23 @@ const STORE_PATH: &str = "preferences.json";
 const STORE_KEY: &str = "overlayWindowState";
 pub const OVERLAY_STATE_EVENT: &str = "desktop-overlay-state-changed";
 pub const WINDOW_VISIBILITY_EVENT: &str = "desktop-window-visibility-changed";
+pub const NEW_TASK_REQUEST_EVENT: &str = "desktop-new-task-requested";
+pub const DEMO_TASK_CREATED_EVENT: &str = "desktop-demo-task-created";
+
+#[derive(Default)]
+pub struct NewTaskRequestState {
+    pending: AtomicBool,
+}
+
+impl NewTaskRequestState {
+    fn mark_pending(&self) {
+        self.pending.store(true, Ordering::Release);
+    }
+
+    fn consume(&self) -> bool {
+        self.pending.swap(false, Ordering::AcqRel)
+    }
+}
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -459,6 +478,35 @@ pub fn show_main_window(app: AppHandle) -> Result<(), String> {
 }
 
 #[tauri::command]
+pub fn show_new_task_form(
+    app: AppHandle,
+    state: State<'_, NewTaskRequestState>,
+) -> Result<(), String> {
+    show_main(&app)?;
+    state.mark_pending();
+    app.emit_to("main", NEW_TASK_REQUEST_EVENT, ())
+        .map_err(|_| "无法打开新任务表单".to_string())
+}
+
+#[tauri::command]
+pub fn consume_new_task_request(state: State<'_, NewTaskRequestState>) -> bool {
+    state.consume()
+}
+
+#[tauri::command]
+pub fn publish_demo_task_created(app: AppHandle, payload: serde_json::Value) -> Result<(), String> {
+    if !payload.is_object() {
+        return Err("演示任务事件格式无效".to_string());
+    }
+    let encoded = serde_json::to_vec(&payload).map_err(|_| "演示任务事件格式无效".to_string())?;
+    if encoded.len() > 32 * 1024 {
+        return Err("演示任务事件过大".to_string());
+    }
+    app.emit_to("overlay", DEMO_TASK_CREATED_EVENT, payload)
+        .map_err(|_| "无法同步演示任务到悬浮树".to_string())
+}
+
+#[tauri::command]
 pub fn hide_current_window(window: WebviewWindow) -> Result<(), String> {
     window.hide().map_err(|_| "无法收起当前窗口".to_string())?;
     if window.label() == "overlay" {
@@ -685,5 +733,14 @@ mod tests {
             overlay_toggle_action(true, OverlayMode::Pinned),
             OverlayToggleAction::Hide
         );
+    }
+
+    #[test]
+    fn new_task_request_is_consumed_exactly_once() {
+        let state = NewTaskRequestState::default();
+        assert!(!state.consume());
+        state.mark_pending();
+        assert!(state.consume());
+        assert!(!state.consume());
     }
 }

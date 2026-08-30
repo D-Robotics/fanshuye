@@ -351,7 +351,8 @@ textarea:focus-visible,
   }
 
   .fy-task-plant__leaf-title,
-  .fy-task-plant__leaf-status {
+  .fy-task-plant__leaf-status,
+  .fy-task-plant__leaf-rank {
     fill: CanvasText;
     stroke: Canvas;
   }
@@ -367,105 +368,133 @@ textarea:focus-visible,
 .fy-task-plant {
   width: 176px;
   height: 216px;
-  filter: drop-shadow(0 8px 9px rgba(49, 36, 22, 0.2));
+  filter: drop-shadow(0 6px 7px rgba(49, 36, 22, 0.14));
 }
 
 .fy-task-plant__branches {
-  filter: drop-shadow(0 2px 1px rgba(76, 32, 12, 0.26));
+  filter: drop-shadow(0 1px 1px rgba(76, 50, 34, 0.16));
 }
 
 .fy-task-plant__branch-outline {
-  opacity: 0.94;
+  opacity: 0.72;
 }
 
 .fy-task-plant__branch-fill {
-  filter: drop-shadow(-0.6px -0.4px 0 rgba(242, 141, 68, 0.18));
+  filter: none;
 }
 
 .fy-task-plant__tuber {
   fill: url(#fy-binary-root);
-  stroke: #6e284b;
-  stroke-width: 1.8;
+  stroke: #70435a;
+  stroke-width: 1.25;
 }
 
 .fy-task-plant__root-fibers {
   fill: none;
-  stroke: #8b451f;
-  stroke-width: 1.8;
+  stroke: #72503c;
+  stroke-width: 1.4;
   stroke-linecap: round;
 }
 
 .fy-task-plant__tuber-highlight {
   fill: none;
-  stroke: rgba(255, 182, 181, 0.7);
-  stroke-width: 1.5;
+  stroke: rgba(255, 208, 205, 0.54);
+  stroke-width: 1.2;
   stroke-linecap: round;
 }
 
 .fy-task-plant__tuber-texture {
   fill: none;
-  stroke: rgba(91, 27, 68, 0.5);
-  stroke-width: 1.1;
+  stroke: rgba(91, 47, 68, 0.38);
+  stroke-width: 0.9;
   stroke-linecap: round;
 }
 
 .fy-task-plant__leaf {
-  --leaf-fill: #58a52c;
+  --leaf-fill: #83b878;
   width: 38px;
   height: 52px;
-  color: #fbfff2;
-  filter: drop-shadow(0 3px 3px rgba(20, 68, 31, 0.24));
+  color: #f8fbf4;
+  filter: drop-shadow(0 2px 2px rgba(20, 68, 31, 0.16));
   transform-origin: 50% 94%;
 }
 
 .fy-task-plant__leaf--in-progress {
-  --leaf-fill: #3f963d;
+  --leaf-fill: #4f9160;
 }
 
 .fy-task-plant__leaf--in-review {
-  --leaf-fill: #347d60;
+  --leaf-fill: #6d9b85;
 }
 
 .fy-task-plant__leaf--importance-4,
 .fy-task-plant__leaf--importance-5 {
-  --leaf-fill: #68ad24;
+  --leaf-fill: #65a66a;
+}
+
+.fy-task-plant__leaf--importance-1 {
+  scale: 0.84;
+}
+
+.fy-task-plant__leaf--importance-2 {
+  scale: 0.9;
+}
+
+.fy-task-plant__leaf--importance-3 {
+  scale: 0.96;
+}
+
+.fy-task-plant__leaf--importance-4 {
+  scale: 1;
+}
+
+.fy-task-plant__leaf--importance-5 {
+  scale: 1.05;
 }
 
 .fy-task-plant__leaf-shape {
   fill: var(--leaf-fill);
-  stroke: #245f35;
-  stroke-width: 2.1;
+  stroke: #356448;
+  stroke-width: 1.55;
 }
 
 .fy-task-plant__leaf--importance-5 .fy-task-plant__leaf-shape {
-  stroke: #1b5a24;
-  stroke-width: 3.3;
+  stroke: #2c6441;
+  stroke-width: 1.9;
 }
 
-.fy-task-plant__leaf--blocked .fy-task-plant__leaf-shape {
-  stroke: #a53232;
-  stroke-dasharray: 6 2;
+.fy-task-plant__leaf--blocked .fy-task-plant__leaf-shape,
+.fy-task-plant__leaf--overdue .fy-task-plant__leaf-shape,
+.fy-task-plant__leaf--unassigned .fy-task-plant__leaf-shape {
+  stroke-dasharray: none;
+  filter: none;
 }
 
 .fy-task-plant__leaf--unassigned .fy-task-plant__leaf-shape {
-  stroke-dasharray: 3 2;
+  fill: #b8d2aa;
 }
 
 .fy-task-plant__leaf-vein {
   fill: none;
-  stroke: rgba(243, 255, 224, 0.56);
-  stroke-width: 1.35;
+  stroke: rgba(238, 250, 228, 0.52);
+  stroke-width: 1.05;
   stroke-linecap: round;
 }
 
 .fy-task-plant__leaf-title,
 .fy-task-plant__leaf-status,
 .fy-task-plant__leaf-rank {
-  fill: currentColor;
+  display: none;
+}
+
+.fy-task-plant--labeled .fy-task-plant__leaf-status,
+.fy-task-plant--labeled .fy-task-plant__leaf-rank {
+  display: block;
+  fill: #f8fbf4;
   text-anchor: middle;
   paint-order: stroke;
-  stroke: color-mix(in srgb, var(--leaf-fill) 78%, transparent);
-  stroke-width: 2.8px;
+  stroke: rgba(38, 82, 51, 0.72);
+  stroke-width: 1.8px;
   stroke-linejoin: round;
 }
 
@@ -487,19 +516,25 @@ textarea:focus-visible,
 
 .fy-task-plant__leaf:hover,
 .fy-task-plant__leaf:focus-visible {
-  filter: drop-shadow(0 5px 5px rgba(19, 68, 31, 0.36));
+  filter: drop-shadow(0 4px 4px rgba(19, 68, 31, 0.25));
   scale: 1.08;
+}
+
+.fy-task-plant__leaf:focus-visible {
+  box-shadow: none;
+  outline: 2px solid #155f39;
+  outline-offset: 2px;
 }
 
 .fy-task-plant__leaf--selected {
   z-index: 5;
-  filter: drop-shadow(0 0 5px rgba(235, 127, 43, 0.95));
-  scale: 1.09;
+  filter: drop-shadow(0 0 4px rgba(47, 112, 71, 0.45));
+  scale: 1.08;
 }
 
 .fy-task-plant__leaf--selected .fy-task-plant__leaf-shape {
-  stroke: #f09a35;
-  stroke-width: 4.2;
+  stroke: #255d3b;
+  stroke-width: 2.7;
 }
 
 .fy-task-plant__leaf--related-prerequisite .fy-task-plant__leaf-shape {
@@ -522,10 +557,10 @@ textarea:focus-visible,
 
 .fy-task-plant__relation-line {
   fill: none;
-  stroke-width: 2.2;
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-dasharray: 4 3;
-  opacity: 0.92;
+  opacity: 0.76;
 }
 
 .fy-task-plant__relation-line--prerequisite {
@@ -542,14 +577,14 @@ textarea:focus-visible,
   top: -2px;
   left: -4px;
   display: grid;
-  width: 15px;
-  height: 15px;
+  width: 13px;
+  height: 13px;
   border: 1px solid rgba(255, 255, 255, 0.92);
   border-radius: 999px;
   box-shadow: 0 2px 5px rgba(21, 46, 34, 0.25);
   color: white;
   place-items: center;
-  font-size: 7px;
+  font-size: 6px;
   font-weight: 900;
   line-height: 1;
 }
@@ -563,26 +598,98 @@ textarea:focus-visible,
 }
 
 .fy-task-plant__badge {
-  min-width: 12px;
-  height: 12px;
-  padding: 0 2px;
-  border-width: 1px;
-  font-size: 6px;
+  min-width: 7px;
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.86);
+  font-size: 4.5px;
 }
 
 .fy-task-plant__badge--blocked {
-  top: 8px;
-  right: -1px;
+  top: 9px;
+  right: 2px;
+  border-radius: 2px;
 }
 
 .fy-task-plant__badge--overdue {
-  top: 23px;
-  right: -3px;
+  top: 18px;
+  right: 0;
+  border-radius: 999px;
+}
+
+.fy-task-plant__new-bud {
+  position: absolute;
+  z-index: 1;
+  top: 130px;
+  left: 109px;
+  width: 30px;
+  height: 43px;
+  padding: 0;
+  background: transparent;
+  color: #164f2f;
+  cursor: pointer;
+  filter: drop-shadow(0 3px 3px rgba(33, 83, 35, 0.22));
+  transform: rotate(32deg);
+  transform-origin: 50% 96%;
+  transition:
+    filter 150ms ease,
+    scale 150ms ease;
+}
+
+.fy-task-plant__new-bud > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.fy-task-plant__new-bud-shape {
+  fill: #b7d89b;
+  stroke: #4d7654;
+  stroke-width: 2;
+}
+
+.fy-task-plant__new-bud-vein {
+  fill: none;
+  stroke: rgba(34, 95, 49, 0.62);
+  stroke-width: 1.55;
+  stroke-linecap: round;
+}
+
+.fy-task-plant__new-bud-plus {
+  fill: currentColor;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  paint-order: stroke;
+  stroke: rgba(229, 247, 183, 0.82);
+  stroke-width: 2.5px;
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.fy-task-plant__new-bud:hover,
+.fy-task-plant__new-bud:focus-visible {
+  filter: drop-shadow(0 5px 5px rgba(28, 79, 34, 0.34));
+  scale: 1.1;
+}
+
+.fy-task-plant__new-bud:focus-visible {
+  outline: 3px solid #126fd4;
+  outline-offset: 1px;
+}
+
+.fy-task-plant__new-bud:disabled {
+  opacity: 0.46;
+  cursor: not-allowed;
+  filter: none;
+  scale: 1;
 }
 
 .fy-task-plant__drag-handle {
   position: absolute;
-  z-index: 6;
+  z-index: 1;
   top: 126px;
   left: 73px;
   display: block;
@@ -593,6 +700,11 @@ textarea:focus-visible,
   border-radius: 14px;
   background: transparent;
   cursor: grab;
+}
+
+.fy-task-plant--reduced-motion .fy-task-plant__new-bud,
+[data-reduced-motion] .fy-task-plant__new-bud {
+  transition: none;
 }
 
 .fy-task-plant__drag-handle:active {
@@ -619,6 +731,17 @@ textarea:focus-visible,
     stroke: CanvasText;
   }
 
+  .fy-task-plant__new-bud-shape {
+    fill: Canvas;
+    stroke: CanvasText;
+  }
+
+  .fy-task-plant__new-bud-vein,
+  .fy-task-plant__new-bud-plus {
+    fill: CanvasText;
+    stroke: CanvasText;
+  }
+
   .fy-task-plant__relation-line {
     stroke: LinkText;
   }
@@ -634,9 +757,9 @@ textarea:focus-visible,
   padding: 11px 12px 10px;
   overflow: hidden;
   border: 1px solid rgba(51, 92, 65, 0.16);
-  border-radius: 18px;
+  border-radius: 14px;
   background: rgba(255, 254, 248, 0.96);
-  box-shadow: 0 13px 30px rgba(30, 66, 44, 0.18);
+  box-shadow: 0 10px 24px rgba(30, 66, 44, 0.13);
   color: var(--fy-ink);
   backdrop-filter: blur(18px) saturate(1.08);
 }
@@ -663,13 +786,18 @@ textarea:focus-visible,
 
 .fy-task-quick-preview__chips span {
   flex: 0 0 auto;
-  padding: 2px 5px;
-  border-radius: 999px;
-  background: #e7f0df;
-  color: #24563b;
+  padding: 0;
+  background: transparent;
+  color: #587064;
   font-size: 8px;
-  font-weight: 760;
+  font-weight: 650;
   white-space: nowrap;
+}
+
+.fy-task-quick-preview__chips span + span::before {
+  margin-right: 3px;
+  color: #9aa69e;
+  content: '·';
 }
 
 .fy-task-quick-preview__header > button {
@@ -753,6 +881,23 @@ textarea:focus-visible,
 .fy-task-quick-preview footer small {
   margin-left: auto;
   font-size: 8px;
+}
+
+.fy-task-quick-preview__actions {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.fy-task-quick-preview__actions button {
+  min-height: 24px;
+  padding: 0 5px;
+  border: 0;
+  background: transparent;
+  color: var(--fy-green-deep);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
 }
 
 .fy-icon-button {
@@ -1067,30 +1212,6 @@ textarea:focus-visible,
   font-size: 9px;
   font-weight: 900;
   text-anchor: middle;
-}
-
-.fy-task-cluster {
-  cursor: pointer;
-}
-
-.fy-task-cluster path {
-  fill: rgba(255, 254, 246, 0.94);
-  stroke: var(--fy-green-deep);
-  stroke-width: 2px;
-  stroke-dasharray: 4 3;
-}
-
-.fy-task-cluster text {
-  fill: var(--fy-green-deep);
-  font-size: 16px;
-  font-weight: 850;
-  text-anchor: middle;
-}
-
-.fy-task-cluster:hover path,
-.fy-task-cluster:focus-visible path {
-  fill: #e2f1cc;
-  stroke: var(--fy-focus);
 }
 
 .fy-task-hover-card {
@@ -1646,6 +1767,30 @@ textarea:focus-visible,
   margin: 0.9rem 1.25rem;
 }
 
+.fy-task-form__advanced {
+  margin: 0.7rem 1.25rem 0.9rem;
+  border-top: 1px solid var(--fy-line);
+}
+
+.fy-task-form__advanced > summary {
+  padding: 0.75rem 0 0.25rem;
+  color: var(--fy-green-deep);
+  cursor: pointer;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.fy-task-form__advanced-content {
+  display: grid;
+  gap: 0.75rem;
+  padding-top: 0.65rem;
+}
+
+.fy-task-form__advanced-content > .fy-field,
+.fy-task-form__advanced-content > .fy-choice-grid {
+  margin: 0;
+}
+
 .fy-duplicate-notice {
   margin: -0.25rem 1.25rem 1rem;
   padding: 0.75rem 0.9rem;
@@ -1785,7 +1930,6 @@ textarea:focus-visible,
 
 @media (forced-colors: active) {
   .fy-task-leaf__body,
-  .fy-task-cluster path,
   .fy-list-status,
   .fy-sync-status__symbol {
     fill: Canvas !important;

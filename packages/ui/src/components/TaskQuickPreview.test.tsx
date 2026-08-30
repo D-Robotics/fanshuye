@@ -31,4 +31,22 @@ describe('TaskQuickPreview', () => {
     expect(container).not.toHaveTextContent('客户尚未公开');
     expect(container).not.toHaveTextContent('艾达');
   });
+
+  it('offers compact edit and full-detail actions only when supplied by the host', () => {
+    const onEdit = vi.fn();
+    const onOpenDetails = vi.fn();
+    render(
+      <TaskQuickPreview
+        task={makeTask()}
+        onClose={vi.fn()}
+        onEdit={onEdit}
+        onOpenDetails={onOpenDetails}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '编辑详情' }));
+    fireEvent.click(screen.getByRole('button', { name: '完整详情' }));
+    expect(onEdit).toHaveBeenCalledOnce();
+    expect(onOpenDetails).toHaveBeenCalledOnce();
+  });
 });

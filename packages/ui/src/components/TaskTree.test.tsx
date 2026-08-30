@@ -52,16 +52,14 @@ describe('TaskTree', () => {
     expect(leaf.querySelector('.fy-task-leaf__badge--overdue')).toBeInTheDocument();
   });
 
-  it('aggregates excess leaves and opens the matching overflow list', () => {
+  it('keeps excess tasks out of the rendered tree without an overflow badge', () => {
     const tasks = Array.from({ length: 17 }, (_, index) =>
       makeTask({ id: `task-${index}`, title: `任务 ${index}`, stableOrder: index }),
     );
-    const onClusterClick = vi.fn();
-    render(<TaskTree tasks={tasks} maximumVisible={12} onClusterClick={onClusterClick} />);
+    render(<TaskTree tasks={tasks} maximumVisible={12} />);
 
-    fireEvent.click(screen.getByRole('button', { name: '另有 5 个活跃任务，打开列表' }));
-    expect(onClusterClick).toHaveBeenCalledOnce();
-    expect(onClusterClick.mock.calls[0]?.[0]).toHaveLength(5);
+    expect(screen.getAllByRole('button', { name: /任务/ })).toHaveLength(12);
+    expect(screen.queryByRole('button', { name: /另有 .*活跃任务/ })).not.toBeInTheDocument();
   });
 
   it('draws direct dependency lines only for the selected task', () => {
@@ -86,20 +84,12 @@ describe('TaskTree', () => {
     expect(screen.getByRole('button', { name: /^隐私任务/ })).toBeInTheDocument();
   });
 
-  it('supports deterministic keyboard focus and activation for leaves and overflow', () => {
+  it('supports deterministic keyboard focus and activation for visible leaves', () => {
     const tasks = Array.from({ length: 3 }, (_, index) =>
       makeTask({ id: `keyboard-${index}`, title: `键盘任务 ${index}`, stableOrder: index }),
     );
     const onSelectTask = vi.fn();
-    const onClusterClick = vi.fn();
-    render(
-      <TaskTree
-        tasks={tasks}
-        maximumVisible={2}
-        onSelectTask={onSelectTask}
-        onClusterClick={onClusterClick}
-      />,
-    );
+    render(<TaskTree tasks={tasks} maximumVisible={2} onSelectTask={onSelectTask} />);
 
     const leaves = screen.getAllByRole('button', { name: /键盘任务/ });
     expect(leaves.map((leaf) => leaf.getAttribute('tabindex'))).toEqual(['0', '0']);
@@ -108,9 +98,8 @@ describe('TaskTree', () => {
     fireEvent.keyDown(leaves[0]!, { key: 'Enter' });
     expect(onSelectTask).toHaveBeenCalledWith(expect.objectContaining({ id: 'keyboard-0' }));
 
-    const cluster = screen.getByRole('button', { name: '另有 1 个活跃任务，打开列表' });
-    fireEvent.keyDown(cluster, { key: ' ' });
-    expect(onClusterClick).toHaveBeenCalledWith([expect.objectContaining({ id: 'keyboard-2' })]);
+    expect(screen.queryByRole('button', { name: /键盘任务 2/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /另有 .*活跃任务/ })).not.toBeInTheDocument();
   });
 
   it('keeps non-color symbols, outlines and reduced-motion semantics for grayscale use', () => {

@@ -10,6 +10,8 @@ export interface TaskQuickPreviewProps {
   task: TaskItem;
   privacyMode?: boolean;
   onClose: () => void;
+  onEdit?: () => void;
+  onOpenDetails?: () => void;
 }
 
 function compactDueDate(dueAt: string | null): string {
@@ -22,7 +24,13 @@ function compactDueDate(dueAt: string | null): string {
   }).format(new Date(dueAt));
 }
 
-export function TaskQuickPreview({ task, privacyMode = false, onClose }: TaskQuickPreviewProps) {
+export function TaskQuickPreview({
+  task,
+  privacyMode = false,
+  onClose,
+  onEdit,
+  onOpenDetails,
+}: TaskQuickPreviewProps) {
   const blocked = task.manualBlock !== null || isDependencyBlocked(task);
   const overdue = isTaskOverdue(task);
 
@@ -64,7 +72,22 @@ export function TaskQuickPreview({ task, privacyMode = false, onClose }: TaskQui
       <footer>
         <span>前置 {task.prerequisites.length}</span>
         <span>后续 {task.dependents.length}</span>
-        <small>关系已标在树上</small>
+        {onEdit === undefined && onOpenDetails === undefined ? (
+          <small>关系已标在树上</small>
+        ) : (
+          <span className="fy-task-quick-preview__actions">
+            {onEdit !== undefined && (
+              <button type="button" onClick={onEdit}>
+                编辑详情
+              </button>
+            )}
+            {onOpenDetails !== undefined && (
+              <button type="button" onClick={onOpenDetails}>
+                完整详情
+              </button>
+            )}
+          </span>
+        )}
       </footer>
     </aside>
   );

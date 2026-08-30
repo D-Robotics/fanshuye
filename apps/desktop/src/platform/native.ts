@@ -3,6 +3,8 @@ import type { OverlayMode } from '../overlay-machine';
 export const NATIVE_OVERLAY_STATE_EVENT = 'desktop-overlay-state-changed';
 export const NATIVE_WINDOW_VISIBILITY_EVENT = 'desktop-window-visibility-changed';
 export const NATIVE_AUTH_STATE_EVENT = 'desktop-auth-state-changed';
+export const NATIVE_NEW_TASK_REQUEST_EVENT = 'desktop-new-task-requested';
+export const NATIVE_DEMO_TASK_CREATED_EVENT = 'desktop-demo-task-created';
 
 export type NativeAuthState = 'authenticated' | 'cleared';
 
@@ -295,6 +297,48 @@ export async function listenNativeAuthState(
 
 export async function showMainWindow(): Promise<void> {
   await invokeNative('show_main_window');
+}
+
+export async function requestNewTaskInMainWindow(): Promise<void> {
+  await invokeNative('show_new_task_form');
+}
+
+export async function consumeNativeNewTaskRequest(): Promise<boolean> {
+  return (await invokeNative<boolean>('consume_new_task_request')) ?? false;
+}
+
+export async function listenNativeNewTaskRequest(listener: () => void): Promise<() => void> {
+  if (!hasNativeDesktopRuntime()) return () => undefined;
+  const { listen } = await import('@tauri-apps/api/event');
+  return listen(NATIVE_NEW_TASK_REQUEST_EVENT, () => listener());
+}
+
+export async function watchNativeNewTaskRequest(listener: () => void): Promise<() => void> {
+  const consumeAndNotify = async () => {
+    if (await consumeNativeNewTaskRequest()) listener();
+  };
+  const unlisten = await listenNativeNewTaskRequest(() => {
+    void consumeAndNotify();
+  });
+  try {
+    await consumeAndNotify();
+    return unlisten;
+  } catch (error) {
+    unlisten();
+    throw error;
+  }
+}
+
+export async function publishNativeDemoTaskCreated(payload: unknown): Promise<void> {
+  await invokeNative('publish_demo_task_created', { payload });
+}
+
+export async function listenNativeDemoTaskCreated(
+  listener: (payload: unknown) => void,
+): Promise<() => void> {
+  if (!hasNativeDesktopRuntime()) return () => undefined;
+  const { listen } = await import('@tauri-apps/api/event');
+  return listen<unknown>(NATIVE_DEMO_TASK_CREATED_EVENT, (event) => listener(event.payload));
 }
 
 export async function hideCurrentWindow(): Promise<void> {

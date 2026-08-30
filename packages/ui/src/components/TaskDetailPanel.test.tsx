@@ -51,6 +51,40 @@ describe('TaskDetailPanel security and accessibility boundaries', () => {
     expect(screen.getByRole('group', { name: '任务操作' })).toBeInTheDocument();
   });
 
+  it('keeps privacy mode read-only even when mutation callbacks are supplied', () => {
+    const onCommand = vi.fn();
+    const onEdit = vi.fn();
+    render(
+      <TaskDetailPanel
+        online
+        privacyMode
+        task={makeTask()}
+        onCommand={onCommand}
+        onEdit={onEdit}
+      />,
+    );
+
+    expect(screen.queryByRole('group', { name: '任务操作' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '编辑详情' })).not.toBeInTheDocument();
+    expect(onCommand).not.toHaveBeenCalled();
+    expect(onEdit).not.toHaveBeenCalled();
+  });
+
+  it('erases an unfinished block reason when privacy mode turns on', () => {
+    const { rerender } = render(<TaskDetailPanel online task={makeTask()} />);
+
+    fireEvent.click(screen.getByRole('button', { name: '标记阻塞' }));
+    fireEvent.change(screen.getByLabelText('阻塞原因 *'), { target: { value: '私密阻塞原因' } });
+    expect(screen.getByLabelText('阻塞原因 *')).toHaveValue('私密阻塞原因');
+
+    rerender(<TaskDetailPanel online privacyMode task={makeTask()} />);
+    rerender(<TaskDetailPanel online task={makeTask()} />);
+    expect(screen.queryByLabelText('阻塞原因 *')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: '标记阻塞' }));
+    expect(screen.getByLabelText('阻塞原因 *')).toHaveValue('');
+  });
+
   it('offers ordinary non-participants self-join and a non-mutating takeover request', () => {
     const onCommand = vi.fn();
     render(

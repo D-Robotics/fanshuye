@@ -1,4 +1,4 @@
-import { useId, useMemo, useState, type KeyboardEvent, type MouseEvent } from 'react';
+import { useId, useMemo, useState, type KeyboardEvent } from 'react';
 import { buildTaskTreeLayout, type LeafPosition } from '../layout';
 import {
   ACTION_LEVEL_LABELS,
@@ -16,7 +16,6 @@ export interface TaskTreeProps {
   reducedMotion?: boolean;
   onlyMyTaskIds?: ReadonlySet<string>;
   onSelectTask?: (task: TaskItem) => void;
-  onClusterClick?: (tasks: TaskItem[]) => void;
   onHoverTask?: (task: TaskItem | null) => void;
 }
 
@@ -218,7 +217,6 @@ export function TaskTree({
   reducedMotion = false,
   onlyMyTaskIds,
   onSelectTask,
-  onClusterClick,
   onHoverTask,
 }: TaskTreeProps) {
   const markerId = `fy-arrow-${useId().replaceAll(':', '')}`;
@@ -264,11 +262,6 @@ export function TaskTree({
     setHovered(position);
     onHoverTask?.(position?.task ?? null);
   };
-  const activateCluster = (event: MouseEvent<SVGGElement> | KeyboardEvent<SVGGElement>) => {
-    event.stopPropagation();
-    onClusterClick?.(layout.overflow);
-  };
-
   return (
     <section
       className={`fy-task-tree${reducedMotion ? ' fy-reduced-motion' : ''}`}
@@ -401,25 +394,6 @@ export function TaskTree({
             />
           ))}
         </g>
-
-        {layout.overflow.length > 0 && (
-          <g
-            className="fy-task-cluster"
-            role="button"
-            tabIndex={0}
-            aria-label={`另有 ${layout.overflow.length} 个活跃任务，打开列表`}
-            transform="translate(582 570)"
-            onClick={activateCluster}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') activateCluster(event);
-            }}
-          >
-            <path d="M -39 0 C -27 -29 27 -29 39 0 C 27 29 -27 29 -39 0 Z" />
-            <text x="0" y="6">
-              +{layout.overflow.length}
-            </text>
-          </g>
-        )}
       </svg>
       {hovered !== null && <TaskHoverCard position={hovered} privacyMode={privacyMode} />}
       {layout.leaves.length === 0 && (

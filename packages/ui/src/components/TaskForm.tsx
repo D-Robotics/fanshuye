@@ -76,6 +76,13 @@ export function TaskForm({
     task?.prerequisites.map((relation) => relation.taskId) ?? [],
   );
   const [workstreamId, setWorkstreamId] = useState(task?.workstreamId ?? 'default');
+  const [advancedOpen, setAdvancedOpen] = useState(
+    task !== undefined &&
+      (task.description.length > 0 ||
+        task.definitionOfDone.length > 0 ||
+        task.collaboratorIds.length > 0 ||
+        task.prerequisites.length > 0),
+  );
   const [error, setError] = useState<string | null>(null);
 
   const duplicates = useMemo(
@@ -235,56 +242,65 @@ export function TaskForm({
         </label>
       </div>
 
-      <label className="fy-field fy-field--wide">
-        <span>说明</span>
-        <textarea
-          rows={4}
-          maxLength={4000}
-          value={description}
-          onChange={(event) => setDescription(event.currentTarget.value)}
-        />
-      </label>
-      <label className="fy-field fy-field--wide">
-        <span>完成定义</span>
-        <textarea
-          rows={3}
-          maxLength={2000}
-          value={definitionOfDone}
-          onChange={(event) => setDefinitionOfDone(event.currentTarget.value)}
-        />
-      </label>
-
-      <fieldset className="fy-choice-grid">
-        <legend>协作人</legend>
-        {members.map((member) => (
-          <label key={member.id}>
-            <input
-              type="checkbox"
-              checked={collaboratorIds.includes(member.id)}
-              onChange={() => toggleCollaborator(member.id)}
+      <details
+        className="fy-task-form__advanced"
+        open={advancedOpen}
+        onToggle={(event) => setAdvancedOpen(event.currentTarget.open)}
+      >
+        <summary>更多信息</summary>
+        <div className="fy-task-form__advanced-content">
+          <label className="fy-field fy-field--wide">
+            <span>说明</span>
+            <textarea
+              rows={3}
+              maxLength={4000}
+              value={description}
+              onChange={(event) => setDescription(event.currentTarget.value)}
             />
-            <span>{member.displayName}</span>
           </label>
-        ))}
-      </fieldset>
+          <label className="fy-field fy-field--wide">
+            <span>完成定义</span>
+            <textarea
+              rows={2}
+              maxLength={2000}
+              value={definitionOfDone}
+              onChange={(event) => setDefinitionOfDone(event.currentTarget.value)}
+            />
+          </label>
 
-      <fieldset className="fy-choice-grid">
-        <legend>直接前置任务</legend>
-        {dependencyCandidates.length === 0 ? (
-          <p>暂无可选择的活跃任务。</p>
-        ) : (
-          dependencyCandidates.map((candidate) => (
-            <label key={candidate.id}>
-              <input
-                type="checkbox"
-                checked={prerequisiteTaskIds.includes(candidate.id)}
-                onChange={() => togglePrerequisite(candidate.id)}
-              />
-              <span>{candidate.title}</span>
-            </label>
-          ))
-        )}
-      </fieldset>
+          <fieldset className="fy-choice-grid">
+            <legend>协作人</legend>
+            {members.map((member) => (
+              <label key={member.id}>
+                <input
+                  type="checkbox"
+                  checked={collaboratorIds.includes(member.id)}
+                  onChange={() => toggleCollaborator(member.id)}
+                />
+                <span>{member.displayName}</span>
+              </label>
+            ))}
+          </fieldset>
+
+          <fieldset className="fy-choice-grid">
+            <legend>直接前置任务</legend>
+            {dependencyCandidates.length === 0 ? (
+              <p>暂无可选择的活跃任务。</p>
+            ) : (
+              dependencyCandidates.map((candidate) => (
+                <label key={candidate.id}>
+                  <input
+                    type="checkbox"
+                    checked={prerequisiteTaskIds.includes(candidate.id)}
+                    onChange={() => togglePrerequisite(candidate.id)}
+                  />
+                  <span>{candidate.title}</span>
+                </label>
+              ))
+            )}
+          </fieldset>
+        </div>
+      </details>
 
       <footer>
         <button type="button" className="fy-button fy-button--quiet" onClick={onCancel}>
